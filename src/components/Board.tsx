@@ -548,7 +548,7 @@ const TileContents = styled.div<{
     font-size: 24px;
 
     text-align: center;
-    line-height: 50px;
+    line-height: 48px;
 
     user-select: none;
     ${animation}
@@ -562,7 +562,7 @@ const TileContents = styled.div<{
       max-height: 45px;
       max-width: 45px;
 
-      line-height: 45px;
+      line-height: 43px;
     }
 
     @media (max-height: 600px) {
@@ -571,7 +571,7 @@ const TileContents = styled.div<{
       max-height: 40px;
       max-width: 40px;
 
-      line-height: 40px;
+      line-height: 38px;
     }
   `;
 });
@@ -671,7 +671,7 @@ const ScoredTileContents = styled.div<{
     font-size: 24px;
 
     text-align: center;
-    line-height: 50px;
+    line-height: 48px;
 
     user-select: none;
     ${animation}
@@ -685,7 +685,7 @@ const ScoredTileContents = styled.div<{
       max-height: 45px;
       max-width: 45px;
 
-      line-height: 45px;
+      line-height: 43px;
     }
 
     @media (max-height: 600px) {
@@ -694,7 +694,7 @@ const ScoredTileContents = styled.div<{
       max-height: 40px;
       max-width: 40px;
 
-      line-height: 40px;
+      line-height: 38px;
     }
   `;
 });
