@@ -1,6 +1,6 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FC, useContext, useEffect, useMemo, useState } from "react";
+import { FC, useContext, useEffect } from "react";
 import { Canvas } from "./components";
 import { Controls } from "./components/Controls";
 import { Header } from "./components/Header";
@@ -14,7 +14,6 @@ import { PageContext } from "./contexts/page";
 import { useLocalStorageGC } from "./hooks/useLocalStorageGC";
 import { Page } from "./hooks/usePage";
 import createPersistedState from "./libs/use-persisted-state";
-import { countValidLettersOnBoard } from "./utils/board-validator";
 
 const useFirstTime = createPersistedState(PersistedStates.FirstTime);
 const useScoreMode = createPersistedState(PersistedStates.ScoreMode);
@@ -25,15 +24,6 @@ export const Scene: FC = () => {
   const { page } = useContext(PageContext);
   const { board, isGameOver } = useContext(GameContext);
   const [isFirstTime] = useFirstTime(true);
-
-  const score = useMemo(() => countValidLettersOnBoard(board), [board]);
-
-  // Faux loading state, helps with font and vibes.
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const ts = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(ts);
-  }, []);
 
   // Clean up old keys.
   useLocalStorageGC();
@@ -71,21 +61,10 @@ export const Scene: FC = () => {
     }
   }, [page, theme]);
 
-  // ===========================================================================
-  // Disable for now, might want to kill confetti altogether.
-  // ===========================================================================
-  // Showing confetti on load.
-  // useEffect(() => {
-  //   if (!alreadyShowedConfetti.current && isStatsOpen && isGameOver && score === 20) {
-  //     alreadyShowedConfetti.current = true;
-  //     setShowConfetti(true);
-  //   }
-  // }, [isGameOver, isStatsOpen, score]);
-
   function renderScene() {
     switch (page) {
       case Page.Intro:
-        return <Intro loading={loading} />;
+        return <Intro />;
       case Page.Game:
       default:
         return (

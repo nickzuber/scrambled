@@ -186,7 +186,11 @@ const GridTile: FC<GridTileProps> = ({
     }
   }, [tile.state]);
 
-  const shouldShowPivotLine = hasCursorHighlight && tile.col !== 0 && tile.row !== 0;
+  const shouldShowPivotLine =
+    !isGameOver &&
+    hasCursorHighlight &&
+    (cursorDirection === CursorDirections.LeftToRight ? tile.col !== 0 : true) &&
+    (cursorDirection === CursorDirections.TopToBottom ? tile.row !== 0 : true);
 
   return (
     <TileWrapper
@@ -317,7 +321,6 @@ const ScoreValue = styled.span<{ score: number }>`
   `};
   border-radius: 4px;
   padding: 2px 8px;
-  width: 40px;
   text-align: center;
 `;
 

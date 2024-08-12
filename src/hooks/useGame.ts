@@ -4,10 +4,14 @@ import { PersistedStates } from "../constants/state";
 import { ModalsContext } from "../contexts/modals";
 import { ToastContext } from "../contexts/toast";
 import createPersistedState from "../libs/use-persisted-state";
+import { publishEvent } from "../utils/analytics";
 import {
+  countBoardScore,
   countSolutionBoardScore,
   createScoredBoard,
   createUnscoredBoard,
+  getInvalidWords,
+  getValidWords,
   validateBoard,
   validateWordIsland,
 } from "../utils/board-validator";
@@ -118,6 +122,12 @@ export const useGame = (): GameOptions => {
 
     // Score the board.
     const finalBoard = scoreMode ? createScoredBoard(newBoard) : newBoard;
+
+    publishEvent("submit", {
+      final_score: scoreMode ? countBoardScore(createScoredBoard(newBoard)) : -1,
+      valid_words: getValidWords(finalBoard),
+      invalid_words: getInvalidWords(finalBoard),
+    });
 
     // Animate the tiles.
     setBoard(finalBoard);

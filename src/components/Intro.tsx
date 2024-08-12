@@ -1,7 +1,7 @@
 import { useTheme } from "@emotion/react";
 
 import styled from "@emotion/styled";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { AppTheme } from "../constants/themes";
 import { GameContext } from "../contexts/game";
 import { PageContext } from "../contexts/page";
@@ -9,15 +9,22 @@ import { Page } from "../hooks/usePage";
 
 const FADE_OUT_TIMING_MS = 150;
 
-export interface IntroProps {
-  loading: boolean;
-}
-
-export function Intro({ loading }: IntroProps) {
+export function Intro() {
   const theme = useTheme() as AppTheme;
+  const [startLoadingTransitionOut, setStartLoadingTransitionOut] = useState(false);
   const [startTransitionOut, setStartTransitionOut] = useState(false);
   const { hasStartedGame } = useContext(GameContext);
   const { setPage } = useContext(PageContext);
+
+  // Faux loading state, helps with font and vibes.
+  const [loading, setLoading] = useState(true);
+  // useEffect(() => {
+  //   const ts = setTimeout(() => {
+  //     setStartLoadingTransitionOut(true);
+  //     setTimeout(() => setLoading(false), FADE_OUT_TIMING_MS);
+  //   }, 1000);
+  //   return () => clearTimeout(ts);
+  // }, []);
 
   const dateMessage = useMemo(() => {
     const today = new Date();
@@ -35,8 +42,48 @@ export function Intro({ loading }: IntroProps) {
     setTimeout(() => setPage(Page.Game), FADE_OUT_TIMING_MS);
   }
 
+  useEffect(() => {
+    async function check() {
+      await Promise.all([
+        document.fonts.load("normal 300 16px franklin"),
+        document.fonts.load("normal 400 16px franklin"),
+        document.fonts.load("normal 500 16px franklin"),
+        document.fonts.load("normal 600 16px franklin"),
+        document.fonts.load("normal 700 16px franklin"),
+        document.fonts.load("normal 500 16px karnak"),
+        document.fonts.load("normal 700 16px karnak-condensed"),
+      ]);
+
+      setStartLoadingTransitionOut(true);
+      setTimeout(() => setLoading(false), FADE_OUT_TIMING_MS);
+
+      console.info(
+        "Fonts ready?",
+        document.fonts.check("normal 300 16px franklin"),
+        document.fonts.check("normal 400 16px franklin"),
+        document.fonts.check("normal 500 16px franklin"),
+        document.fonts.check("normal 600 16px franklin"),
+        document.fonts.check("normal 700 16px franklin"),
+        document.fonts.check("normal 500 16px karnak"),
+        document.fonts.check("normal 700 16px karnak-condensed"),
+      );
+    }
+
+    void check();
+  }, []);
+
   if (loading) {
-    return <Container theme={theme} fadeOut={startTransitionOut}></Container>;
+    return (
+      <Container theme={theme} fadeOutLoading={startLoadingTransitionOut}>
+        <div className="fadeIn" style={{ paddingTop: "25vh" }}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="44" height="12" viewBox="0 0 44 12">
+            <circle className="dot dot-1" cx="6" cy="6" r="6" />
+            <circle className="dot dot-2" cx="22" cy="6" r="6" />
+            <circle className="dot dot-3" cx="38" cy="6" r="6" />
+          </svg>
+        </div>
+      </Container>
+    );
   }
 
   return (
@@ -67,14 +114,19 @@ export function Intro({ loading }: IntroProps) {
   );
 }
 
-const Container = styled.div<{ theme: AppTheme; fadeOut: boolean }>`
+const Container = styled.div<{ theme: AppTheme; fadeOut?: boolean; fadeOutLoading?: boolean }>`
   position: absolute;
   top: 0;
   bottom: 0;
   right: 0;
   left: 0;
   transition: background ${FADE_OUT_TIMING_MS}ms linear;
-  background: ${(p) => (p.fadeOut ? p.theme.colors.primary : p.theme.colors.app)};
+  background: ${(p) =>
+    p.fadeOut
+      ? p.theme.colors.primary
+      : p.fadeOutLoading
+      ? p.theme.colors.app
+      : p.theme.colors.app};
 
   padding-top: 20vh;
 
@@ -85,7 +137,11 @@ const Container = styled.div<{ theme: AppTheme; fadeOut: boolean }>`
     justify-content: flex-start;
 
     transition: opacity ${FADE_OUT_TIMING_MS}ms linear;
-    opacity: ${(p) => (p.fadeOut ? 0 : 1)};
+    opacity: ${(p) => (p.fadeOut || p.fadeOutLoading ? 0 : 1)};
+
+    & > svg > circle {
+      fill: #353105;
+    }
   }
 `;
 

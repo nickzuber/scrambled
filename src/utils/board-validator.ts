@@ -108,6 +108,18 @@ export function getInvalidWords(board: Board): Array<string> {
   return invalidFoundWords;
 }
 
+export function getValidWords(board: Board): Array<string> {
+  const tiles = board.tiles;
+  const leftToRight = getWordsFromTilesLTR(tiles);
+  const topToBottom = getWordsFromTilesTTB(tiles);
+  const foundWords = leftToRight.concat(topToBottom);
+  const validFoundWords = foundWords
+    .filter(({ word }) => dictionary.has(word))
+    .map(({ word }) => word);
+
+  return validFoundWords;
+}
+
 export function validateBoard(board: Board): [Board, boolean] {
   const tiles = board.tiles;
   const gridBounds = tiles.length;

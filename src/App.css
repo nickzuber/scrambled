@@ -117,3 +117,27 @@ body {
     width: 188px; /* Can make CSS variable if needed */
   }
 }
+
+.dot {
+  transform-origin: 50% 50%;
+  animation: bouncedelay 1s infinite ease-in-out both;
+}
+.dot-1 {
+  animation-delay: -0.54s;
+}
+.dot-2 {
+  animation-delay: -0.48s;
+}
+.dot-3 {
+  animation-delay: -0.32s;
+}
+@keyframes bouncedelay {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.8);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
