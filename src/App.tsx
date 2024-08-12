@@ -1,7 +1,6 @@
 import { ThemeProvider } from "@emotion/react";
 import { Analytics } from "@vercel/analytics/react";
 import { useEffect, useMemo } from "react";
-import createPersistedState from "use-persisted-state";
 import "./App.css";
 import { PersistedStates } from "./constants/state";
 import { Themes } from "./constants/themes";
@@ -10,6 +9,7 @@ import { ModalsProvider } from "./contexts/modals";
 import { PageProvider } from "./contexts/page";
 import { ToastProvider } from "./contexts/toast";
 import "./layout.css";
+import createPersistedState from "./libs/use-persisted-state";
 import { Scene } from "./Scene";
 
 const useDarkTheme = createPersistedState(PersistedStates.DarkTheme);

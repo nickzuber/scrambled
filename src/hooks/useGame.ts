@@ -1,9 +1,9 @@
 import { toBlob } from "html-to-image";
 import React, { useCallback, useContext, useMemo } from "react";
-import createPersistedState from "use-persisted-state";
 import { PersistedStates } from "../constants/state";
 import { ModalsContext } from "../contexts/modals";
 import { ToastContext } from "../contexts/toast";
+import createPersistedState from "../libs/use-persisted-state";
 import {
   countSolutionBoardScore,
   createScoredBoard,

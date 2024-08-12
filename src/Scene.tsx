@@ -1,7 +1,6 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { FC, useContext, useEffect, useMemo, useState } from "react";
-import createPersistedState from "use-persisted-state";
 import { Canvas } from "./components";
 import { Controls } from "./components/Controls";
 import { Header } from "./components/Header";
@@ -14,6 +13,7 @@ import { ModalsContext } from "./contexts/modals";
 import { PageContext } from "./contexts/page";
 import { useLocalStorageGC } from "./hooks/useLocalStorageGC";
 import { Page } from "./hooks/usePage";
+import createPersistedState from "./libs/use-persisted-state";
 import { countValidLettersOnBoard } from "./utils/board-validator";
 
 const useFirstTime = createPersistedState(PersistedStates.FirstTime);

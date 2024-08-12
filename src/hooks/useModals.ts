@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import createPersistedState from "use-persisted-state";
 import { PersistedStates } from "../constants/state";
+import createPersistedState from "../libs/use-persisted-state";
 
 const useFirstTime = createPersistedState(PersistedStates.FirstTime);
 

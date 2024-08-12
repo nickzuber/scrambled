@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
 import { FC, useContext, useMemo } from "react";
-import createPersistedState from "use-persisted-state";
 import { PersistedStates } from "../../constants/state";
 import { GameContext } from "../../contexts/game";
 import { ToastContext } from "../../contexts/toast";
+import createPersistedState from "../../libs/use-persisted-state";
 import { Modal } from "./Modal";
 
 const useDarkTheme = createPersistedState(PersistedStates.DarkTheme);

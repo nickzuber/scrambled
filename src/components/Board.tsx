@@ -10,7 +10,6 @@ import {
   useRef,
   useState,
 } from "react";
-import createPersistedState from "use-persisted-state";
 import {
   FadeIn,
   PopIn,
@@ -22,6 +21,7 @@ import {
 import { PersistedStates } from "../constants/state";
 import { AppTheme } from "../constants/themes";
 import { GameContext } from "../contexts/game";
+import createPersistedState from "../libs/use-persisted-state";
 import { countBoardScore, createScoredBoard } from "../utils/board-validator";
 import {
   CursorDirections,

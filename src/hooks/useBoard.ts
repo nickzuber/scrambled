@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
-import createPersistedState from "use-persisted-state";
 import { v4 as uuidv4 } from "uuid";
 import { PersistedStates } from "../constants/state";
+import createPersistedState from "../libs/use-persisted-state";
 import {
   Board,
   Config,

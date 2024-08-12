@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import createPersistedState from "use-persisted-state";
 import { PersistedStates } from "../constants/state";
+import createPersistedState from "../libs/use-persisted-state";
 import { Letter, shuffle } from "../utils/game";
 import { getTodaysLetters } from "../utils/generator";
 import { SolutionBoard } from "../utils/words-helper";

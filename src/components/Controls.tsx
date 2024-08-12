@@ -1,12 +1,12 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { FC, useCallback, useContext, useEffect, useState } from "react";
-import createPersistedState from "use-persisted-state";
 import { FadeIn, PopIn } from "../constants/animations";
 import { PersistedStates } from "../constants/state";
 import { AppTheme } from "../constants/themes";
 import { GameContext } from "../contexts/game";
 import { ToastContext } from "../contexts/toast";
+import createPersistedState from "../libs/use-persisted-state";
 import { Directions, Letter } from "../utils/game";
 import { BottomDrawer } from "./BottomDrawer";
 
