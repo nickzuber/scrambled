@@ -7,8 +7,14 @@ import { PageContext } from "../contexts/page";
 import { Page } from "../hooks/usePage";
 import { BottomDrawer } from "./BottomDrawer";
 import { InstructionsModalImpl } from "./Modal/InstructionsModal";
+import { StatsModalImpl } from "./Modal/StatsModal";
 
-export const Header: FC = () => {
+export interface HeaderProps {
+  isFirstTime: boolean;
+  setIsFirstTime: (nextState: boolean) => void;
+}
+
+export const Header: FC<HeaderProps> = ({ isFirstTime, setIsFirstTime }) => {
   const theme = useTheme() as AppTheme;
   const { setPage } = useContext(PageContext);
   const { openInstructions, openStats, openSettings } = useContext(ModalsContext);
@@ -38,13 +44,22 @@ export const Header: FC = () => {
 
       <ButtonContainer>
         {/* Help */}
-        <BottomDrawer renderContents={() => <InstructionsModalImpl />}>
+        <BottomDrawer
+          open={isFirstTime}
+          title={"How to play"}
+          renderContents={() => <InstructionsModalImpl />}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) {
+              setIsFirstTime(false);
+            }
+          }}
+        >
           <Button theme={theme}>Help</Button>
         </BottomDrawer>
         {/* Stats */}
-        <Button theme={theme} onClick={openStats}>
-          Stats
-        </Button>
+        <BottomDrawer title={"Statistics"} renderContents={() => <StatsModalImpl />}>
+          <Button theme={theme}>Stats</Button>
+        </BottomDrawer>
         {/* Settings */}
         <Button theme={theme} onClick={openSettings}>
           Settings

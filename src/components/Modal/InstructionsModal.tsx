@@ -25,15 +25,11 @@ export function InstructionsModalImpl() {
 
   return (
     <>
-      <Title>How to play</Title>
       <Paragraph>Build a crossword by connecting all the letters on the board.</Paragraph>
       <Paragraph>
         Each word must be a real English word. Words must be connected to each other.
       </Paragraph>
-      <Paragraph>
-        When you've placed all the letters, hit enter to submit. You can only do this{" "}
-        <b>once</b> per day.
-      </Paragraph>
+      <Paragraph>When you've placed all the letters, hit enter to submit.</Paragraph>
 
       <Divider theme={theme} />
 
@@ -48,8 +44,9 @@ export function InstructionsModalImpl() {
       <MiniBoardDemo />
 
       <Paragraph>
-        It will <b>always</b> be possible to use all 20 letters. Have fun!
+        It will <b>always</b> be possible to use all 20 letters.
       </Paragraph>
+      <Paragraph>Have fun!</Paragraph>
     </>
   );
 }
@@ -245,10 +242,10 @@ const MiniTileContents = styled.div<{ theme: AppTheme }>`
   border: 2px solid ${(p) => p.theme.colors.tileSecondary};
   transition: border 50ms ease-in, background 50ms ease-in;
   color: ${(p) => p.theme.colors.text};
-  min-height: 25px;
-  min-width: 25px;
-  max-height: 25px;
-  max-width: 25px;
+  min-height: 26px;
+  min-width: 26px;
+  max-height: 26px;
+  max-width: 26px;
   height: calc(100% - 10px);
   width: calc(100% - 10px);
   opacity: 1;
@@ -319,8 +316,9 @@ const Title = styled.h1`
 const Paragraph = styled.p`
   margin: 0;
   margin-bottom: 12px;
-  font-weight: 500;
-  font-size: 0.9rem;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
   text-align: left;
 `;
 

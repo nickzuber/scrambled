@@ -511,7 +511,7 @@ video {
   margin-bottom: 1rem;
 }
 .mb-8 {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 .ml-1 {
   margin-left: 0.25rem;
@@ -594,7 +594,7 @@ video {
   background-color: rgb(212 212 216 / var(--tw-bg-opacity));
 }
 .p-4 {
-  padding: 1rem;
+  padding: 1rem 1.5rem;
 }
 .text-xs {
   font-size: 0.75rem;

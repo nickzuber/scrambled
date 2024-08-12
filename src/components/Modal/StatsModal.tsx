@@ -80,6 +80,14 @@ function scoreToCompliment(score: number, target: number) {
 }
 
 export const StatsModal: FC = () => {
+  return (
+    <Modal>
+      <StatsModalImpl />
+    </Modal>
+  );
+};
+
+export const StatsModalImpl: FC = () => {
   const theme = useTheme() as AppTheme;
   const {
     board,
@@ -147,8 +155,7 @@ export const StatsModal: FC = () => {
   }
 
   return (
-    <Modal>
-      <Title>Statistics</Title>
+    <>
       {isGameOver ? (
         <Fragment>
           {showScoredBoard ? (
@@ -303,7 +310,7 @@ export const StatsModal: FC = () => {
       ) : (
         <SpacingContainer />
       )}
-    </Modal>
+    </>
   );
 };
 

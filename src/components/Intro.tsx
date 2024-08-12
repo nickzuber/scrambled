@@ -56,17 +56,6 @@ export function Intro() {
 
       setStartLoadingTransitionOut(true);
       setTimeout(() => setLoading(false), FADE_OUT_TIMING_MS);
-
-      console.info(
-        "Fonts ready?",
-        document.fonts.check("normal 300 16px franklin"),
-        document.fonts.check("normal 400 16px franklin"),
-        document.fonts.check("normal 500 16px franklin"),
-        document.fonts.check("normal 600 16px franklin"),
-        document.fonts.check("normal 700 16px franklin"),
-        document.fonts.check("normal 500 16px karnak"),
-        document.fonts.check("normal 700 16px karnak-condensed"),
-      );
     }
 
     void check();

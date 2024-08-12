@@ -23,31 +23,35 @@ export const Scene: FC = () => {
   const { openInstructions, openStats, isStatsOpen } = useContext(ModalsContext);
   const { page } = useContext(PageContext);
   const { board, isGameOver } = useContext(GameContext);
-  const [isFirstTime] = useFirstTime(true);
+  const [isFirstTime, setIsFirstTime] = useFirstTime(true) as [
+    boolean,
+    (nextState: boolean) => void,
+  ];
 
   // Clean up old keys.
   useLocalStorageGC();
 
-  // Open modal(s) for first-time player and for completed game.
-  useEffect(() => {
-    let ts: ReturnType<typeof setTimeout>;
+  // MOVING THIS TO `<Header />`
+  // // Open modal(s) for first-time player and for completed game.
+  // useEffect(() => {
+  //   let ts: ReturnType<typeof setTimeout>;
 
-    if (isGameOver) {
-      // + 1000ms for all animations to kick off.
-      // + 500ms for the last animation to finish.
-      // + 500 for some buffer room to soak in the tile flipping animation.
-      ts = setTimeout(openStats, 2000);
-    } else if (isFirstTime) {
-      // + 100 for some buffer room.
-      ts = setTimeout(openInstructions, 100);
-    }
+  //   if (isGameOver) {
+  //     // + 1000ms for all animations to kick off.
+  //     // + 500ms for the last animation to finish.
+  //     // + 500 for some buffer room to soak in the tile flipping animation.
+  //     ts = setTimeout(openStats, 2000);
+  //   } else if (isFirstTime) {
+  //     // + 100 for some buffer room.
+  //     ts = setTimeout(openInstructions, 100);
+  //   }
 
-    return () => {
-      if (ts) {
-        clearTimeout(ts);
-      }
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  //   return () => {
+  //     if (ts) {
+  //       clearTimeout(ts);
+  //     }
+  //   };
+  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Change the app theme based on which screen is rendered.
   useEffect(() => {
@@ -69,7 +73,7 @@ export const Scene: FC = () => {
       default:
         return (
           <Container className="fadeIn">
-            <Header />
+            <Header isFirstTime={isFirstTime} setIsFirstTime={setIsFirstTime} />
             <Canvas />
             <Controls />
             <Modal />
