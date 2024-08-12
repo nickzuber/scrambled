@@ -145,8 +145,8 @@ export const Controls: FC = () => {
                 flexDirection: "row",
                 justifyContent: "center",
                 alignItems: "center",
-                gap: 8,
-                paddingBottom: 42,
+                gap: 12,
+                paddingBottom: 32,
               }}
             >
               <div
@@ -155,7 +155,7 @@ export const Controls: FC = () => {
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
-                  gap: 8,
+                  gap: 16,
                 }}
               >
                 <BoardButton
@@ -179,7 +179,7 @@ export const Controls: FC = () => {
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
-                  gap: 8,
+                  gap: 16,
                 }}
               >
                 <BoardButton
