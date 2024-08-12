@@ -40,6 +40,7 @@ type GridTileProps = {
   tile: Tile | ScoredTile;
   hasCursor: boolean;
   hasCursorHighlight: boolean;
+  cursorDirection: CursorDirections;
   handleTileClick: (tile: Tile) => void;
   isGameOver: boolean;
 };
@@ -71,6 +72,7 @@ export const Board: FC = () => {
               <GridTile
                 key={tile.id}
                 tile={tile}
+                cursorDirection={board.cursor.direction}
                 handleTileClick={handleTileClick}
                 hasCursor={board.cursor.row === tile.row && board.cursor.col === tile.col}
                 hasCursorHighlight={
@@ -110,6 +112,7 @@ const GridTile: FC<GridTileProps> = ({
   tile,
   hasCursor,
   handleTileClick,
+  cursorDirection,
   hasCursorHighlight,
   isGameOver,
 }) => {
@@ -183,6 +186,8 @@ const GridTile: FC<GridTileProps> = ({
     }
   }, [tile.state]);
 
+  const shouldShowPivotLine = hasCursorHighlight && tile.col !== 0 && tile.row !== 0;
+
   return (
     <TileWrapper
       onTouchStart={() => handleTileClick(tile)}
@@ -223,6 +228,13 @@ const GridTile: FC<GridTileProps> = ({
           {tile.letter?.letter}
         </TileContents>
       )}
+      {shouldShowPivotLine ? (
+        cursorDirection === CursorDirections.LeftToRight ? (
+          <PivotIndicatorLeftToRight theme={theme} delayOffsetMs={tile.col * 100} />
+        ) : (
+          <PivotIndicatorTopToBottom theme={theme} delayOffsetMs={tile.row * 100} />
+        )
+      ) : null}
     </TileWrapper>
   );
 };
@@ -419,6 +431,34 @@ const ShineWrapper = styled.div<{ score: number | undefined }>(({ score }) => {
   `;
 });
 
+const PivotIndicatorLeftToRight = styled.div<{ theme: AppTheme; delayOffsetMs: number }>`
+  position: absolute;
+  height: 2px;
+  width: 20px;
+  left: -10px;
+  background: ${(p) => p.theme.colors.tileSecondary};
+  z-index: 1;
+
+  opacity: 0;
+  animation: ${FadeIn} 300ms ease-in-out 1;
+  animation-delay: ${(p) => p.delayOffsetMs}ms;
+  animation-fill-mode: forwards;
+`;
+
+const PivotIndicatorTopToBottom = styled.div<{ theme: AppTheme; delayOffsetMs: number }>`
+  position: absolute;
+  height: 20px;
+  width: 2px;
+  top: -10px;
+  background: ${(p) => p.theme.colors.tileSecondary};
+  z-index: 1;
+
+  opacity: 0;
+  animation: ${FadeIn} 300ms ease-in-out 1;
+  animation-delay: ${(p) => p.delayOffsetMs}ms;
+  animation-fill-mode: forwards;
+`;
+
 const TileContents = styled.div<{
   hasLetter: boolean;
   hasCursor: boolean;
@@ -472,12 +512,12 @@ const TileContents = styled.div<{
   }
 
   const cursorColor = theme.colors.app;
-  // const cursorColor = "#228be6";
+  const cursorColorBgTemp = "#fdefc3";
 
   const backgroundColor = hasCursor
-    ? `${cursorColor}4d`
+    ? `${cursorColorBgTemp}`
     : hasLetter && hasCursorHighlight
-    ? `${theme.colors.highlight}88`
+    ? `${theme.colors.highlight}`
     : hasCursorHighlight
     ? theme.colors.highlight
     : theme.colors.primary;
@@ -492,6 +532,7 @@ const TileContents = styled.div<{
   // because when we generate png images in the share modal, the image doesn't
   // respect flexbox for some reason.
   return css`
+    z-index: 2;
     background: ${backgroundColor};
     border: 2px solid ${borderColor};
     transition: border 50ms ease-in, background 50ms ease-in;
@@ -594,10 +635,10 @@ const ScoredTileContents = styled.div<{
   }
 
   const cursorColor = theme.colors.app;
-  // const cursorColor = "#228be6";
+  const cursorColorBgTemp = "#fdefc3";
 
   const backgroundColor = hasCursor
-    ? `${cursorColor}4d`
+    ? `${cursorColorBgTemp}`
     : hasLetter && hasCursorHighlight
     ? `${theme.colors.highlight}88`
     : hasCursorHighlight
@@ -614,6 +655,7 @@ const ScoredTileContents = styled.div<{
   // because when we generate png images in the share modal, the image doesn't
   // respect flexbox for some reason.
   return css`
+    z-index: 2;
     background: ${backgroundColor};
     border: 2px solid ${borderColor};
     transition: border 50ms ease-in, background 50ms ease-in;

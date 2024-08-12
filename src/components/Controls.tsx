@@ -1,8 +1,9 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FC, useCallback, useContext, useEffect } from "react";
+import { FC, useCallback, useContext, useEffect, useState } from "react";
 import createPersistedState from "use-persisted-state";
-import { PopIn } from "../constants/animations";
+import { Drawer } from "vaul";
+import { FadeIn, PopIn } from "../constants/animations";
 import { PersistedStates } from "../constants/state";
 import { AppTheme } from "../constants/themes";
 import { GameContext } from "../contexts/game";
@@ -30,6 +31,8 @@ export const Controls: FC = () => {
   } = useContext(GameContext);
   const { sendToast } = useContext(ToastContext);
   const [hardMode] = useHardMode(false);
+
+  const [isInShiftBoardMode, setIsInShiftBoardMode] = useState(false);
 
   const disableEnterButton = !canFinish || isGameOver;
 
@@ -120,6 +123,11 @@ export const Controls: FC = () => {
     isGameOver,
   ]);
 
+  function handleShiftBoardClick() {
+    // shiftBoard(Directions.Right);
+    setIsInShiftBoardMode((s) => !s);
+  }
+
   const topLetters = letters.slice(0, 8);
   const middleLetters = letters.slice(8, 15);
   const bottomLetters = letters.slice(15, 20);
@@ -136,7 +144,7 @@ export const Controls: FC = () => {
         <BoardButton
           theme={theme}
           disabled={isGameOver}
-          onClick={flipCursorDirection}
+          onClick={handleShiftBoardClick}
           style={{ width: 132 }}
         >
           Shift board
@@ -159,6 +167,7 @@ export const Controls: FC = () => {
       </ButtonsContainer>
 
       <LettersContainer theme={theme}>
+        {isInShiftBoardMode ? <div>hi</div> : null}
         <LettersRow>
           {topLetters.map((letter) =>
             boardLetterIds.has(letter.id) ? (
@@ -376,6 +385,7 @@ const BoardButton = styled(LetterButton)`
   cursor: pointer;
   border: 1px solid ${(p) => p.theme.colors.text};
   background: ${(p) => p.theme.colors.primary};
+  animation: ${FadeIn} 150ms;
 
   height: 44px;
 
@@ -409,3 +419,30 @@ const BoardButton = styled(LetterButton)`
     height: 42px;
   }
 `;
+
+function MyDrawer() {
+  return (
+    <Drawer.Root>
+      <Drawer.Trigger asChild>
+        <button>Open Drawer</button>
+      </Drawer.Trigger>
+      <Drawer.Portal>
+        <Drawer.Overlay className="fixed inset-0 bg-black/40" />
+        <Drawer.Content className="bg-zinc-100 flex flex-col rounded-t-[10px] mt-24 fixed bottom-0 left-0 right-0">
+          <div className="p-4 bg-white rounded-t-[10px] flex-1">
+            <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-zinc-300 mb-8" />
+            <div className="max-w-md mx-auto">
+              <Drawer.Title className="font-medium mb-4">
+                Unstyled drawer for React.
+              </Drawer.Title>
+              <p className="text-zinc-600 mb-2">
+                This component can be used as a replacement for a Dialog on mobile and tablet
+                devices.
+              </p>
+            </div>
+          </div>
+        </Drawer.Content>
+      </Drawer.Portal>
+    </Drawer.Root>
+  );
+}
