@@ -2,13 +2,13 @@ import { keyframes } from "@emotion/react";
 
 export const createAnimatedCursorTile = (background: string, borderColor: string) => keyframes`
   0% {
-    border-color: #228be6;
-    background: #228be622;
+    border-color: #f9c929;
+    background: #f9c92922;
   }
 
   99% {
-    border-color: #228be6;
-    background: #228be622;
+    border-color: #f9c929;
+    background: #f9c92922;
   }
   100% {
     background: ${background};

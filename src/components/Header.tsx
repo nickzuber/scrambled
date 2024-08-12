@@ -5,6 +5,8 @@ import { AppTheme } from "../constants/themes";
 import { ModalsContext } from "../contexts/modals";
 import { PageContext } from "../contexts/page";
 import { Page } from "../hooks/usePage";
+import { BottomDrawer } from "./BottomDrawer";
+import { InstructionsModalImpl } from "./Modal/InstructionsModal";
 
 export const Header: FC = () => {
   const theme = useTheme() as AppTheme;
@@ -36,9 +38,9 @@ export const Header: FC = () => {
 
       <ButtonContainer>
         {/* Help */}
-        <Button theme={theme} onClick={openInstructions}>
-          Help
-        </Button>
+        <BottomDrawer renderContents={() => <InstructionsModalImpl />}>
+          <Button theme={theme}>Help</Button>
+        </BottomDrawer>
         {/* Stats */}
         <Button theme={theme} onClick={openStats}>
           Stats

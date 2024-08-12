@@ -1,22 +1,30 @@
-import { FC } from "react";
-import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
-import { Modal } from "./Modal";
+import styled from "@emotion/styled";
+import { FC } from "react";
 import {
   createAnimatedCursorTile,
   createAnimatedTile,
   createSuccessReveal,
 } from "../../constants/animations";
 import { AppTheme } from "../../constants/themes";
+import { Modal } from "./Modal";
 
 const BaseDelay = 500;
 const TypingDelay = 250;
 
 export const InstructionsModal: FC = () => {
+  return (
+    <Modal>
+      <InstructionsModalImpl />
+    </Modal>
+  );
+};
+
+export function InstructionsModalImpl() {
   const theme = useTheme() as AppTheme;
 
   return (
-    <Modal>
+    <>
       <Title>How to play</Title>
       <Paragraph>Build a crossword by connecting all the letters on the board.</Paragraph>
       <Paragraph>
@@ -42,9 +50,9 @@ export const InstructionsModal: FC = () => {
       <Paragraph>
         It will <b>always</b> be possible to use all 20 letters. Have fun!
       </Paragraph>
-    </Modal>
+    </>
   );
-};
+}
 
 const MiniBoardDemo = () => {
   const theme = useTheme() as AppTheme;
@@ -220,10 +228,10 @@ const MiniRow = styled.div`
 
 const MiniTileWrapper = styled.div`
   position: relative;
-  min-height: 33px;
-  min-width: 33px;
-  max-height: 33px;
-  max-width: 33px;
+  min-height: 30px;
+  min-width: 30px;
+  max-height: 30px;
+  max-width: 30px;
   height: 100%;
   width: 100%;
   display: inline-flex;

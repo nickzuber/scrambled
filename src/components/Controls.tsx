@@ -146,7 +146,7 @@ export const Controls: FC = () => {
                 justifyContent: "center",
                 alignItems: "center",
                 gap: 8,
-                paddingBottom: 18,
+                paddingBottom: 42,
               }}
             >
               <div
