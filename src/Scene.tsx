@@ -1,7 +1,6 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FC, useContext, useEffect, useMemo, useRef, useState } from "react";
-import Confetti from "react-confetti";
+import { FC, useContext, useEffect, useMemo, useState } from "react";
 import { useWindowSize } from "react-use";
 import createPersistedState from "use-persisted-state";
 import { Canvas } from "./components";
@@ -28,8 +27,6 @@ export const Scene: FC = () => {
   const { page } = useContext(PageContext);
   const { board, isGameOver } = useContext(GameContext);
   const [isFirstTime] = useFirstTime(true);
-  const alreadyShowedConfetti = useRef(false);
-  const [showConfetti, setShowConfetti] = useState(false);
 
   const score = useMemo(() => countValidLettersOnBoard(board), [board]);
 
@@ -99,16 +96,6 @@ export const Scene: FC = () => {
             <Canvas />
             <Controls />
             <Modal />
-            {showConfetti ? (
-              <Confetti
-                numberOfPieces={600}
-                opacity={1}
-                gravity={0.175}
-                width={width}
-                height={height}
-                recycle={false}
-              />
-            ) : null}
           </Container>
         );
     }

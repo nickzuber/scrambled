@@ -20,7 +20,6 @@
     "raf-schd": "^4.0.3",
     "random-seed": "^0.3.0",
     "react": "^18.3.1",
-    "react-confetti": "^6.0.1",
     "react-dnd": "^14.0.5",
     "react-dnd-html5-backend": "^14.1.0",
     "react-dnd-touch-backend": "^14.1.1",
