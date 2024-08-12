@@ -1,6 +1,6 @@
 {
-  "short_name": "Crosswordle",
-  "name": "Crosswordle - A daily crossword game",
+  "short_name": "Scrambled",
+  "name": "Scrambled - A daily crossword game",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,7 +20,7 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
-  "description": "Wordle but with crosswords."
+  "theme_color": "#f9c929",
+  "background_color": "#f9c929",
+  "description": "Place letters on a grid to make a crossword."
 }
