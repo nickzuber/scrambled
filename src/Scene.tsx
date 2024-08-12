@@ -1,7 +1,6 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { FC, useContext, useEffect, useMemo, useState } from "react";
-import { useWindowSize } from "react-use";
 import createPersistedState from "use-persisted-state";
 import { Canvas } from "./components";
 import { Controls } from "./components/Controls";
@@ -22,7 +21,6 @@ const useScoreMode = createPersistedState(PersistedStates.ScoreMode);
 
 export const Scene: FC = () => {
   const theme = useTheme() as AppTheme;
-  const { width, height } = useWindowSize();
   const { openInstructions, openStats, isStatsOpen } = useContext(ModalsContext);
   const { page } = useContext(PageContext);
   const { board, isGameOver } = useContext(GameContext);
