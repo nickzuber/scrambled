@@ -537,10 +537,10 @@ const TileContents = styled.div<{
     border: 2px solid ${borderColor};
     transition: border 50ms ease-in, background 50ms ease-in;
     color: ${theme.colors.text};
-    min-height: 50px;
-    min-width: 50px;
-    max-height: 50px;
-    max-width: 50px;
+    min-height: 53px;
+    min-width: 53px;
+    max-height: 53px;
+    max-width: 53px;
     height: calc(100% - 10px);
     width: calc(100% - 10px);
     opacity: 1;
@@ -557,19 +557,19 @@ const TileContents = styled.div<{
     text-transform: uppercase;
 
     @media (max-height: 620px), (max-width: 370px) {
-      min-height: 45px;
-      min-width: 45px;
-      max-height: 45px;
-      max-width: 45px;
+      min-height: 47px;
+      min-width: 47px;
+      max-height: 47px;
+      max-width: 47px;
 
       line-height: 43px;
     }
 
     @media (max-height: 600px) {
-      min-height: 40px;
-      min-width: 40px;
-      max-height: 40px;
-      max-width: 40px;
+      min-height: 42px;
+      min-width: 42px;
+      max-height: 42px;
+      max-width: 42px;
 
       line-height: 38px;
     }
