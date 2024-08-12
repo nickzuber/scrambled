@@ -111,7 +111,7 @@ const Container = styled.div<{ theme: AppTheme; fadeOut: boolean }>`
   transition: background ${FADE_OUT_TIMING_MS}ms linear;
   background: ${(p) => (p.fadeOut ? p.theme.colors.primary : p.theme.colors.app)};
 
-  padding-top: 30%;
+  padding-top: 20vh;
 
   & > div {
     display: flex;
