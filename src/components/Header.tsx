@@ -45,7 +45,7 @@ export const Header: FC<HeaderProps> = ({ isFirstTime, setIsFirstTime }) => {
       <ButtonContainer>
         {/* Help */}
         <BottomDrawer
-          open={isFirstTime}
+          open={isFirstTime === true ? true : undefined}
           title={"How to play"}
           renderContents={() => <InstructionsModalImpl />}
           onOpenChange={(isOpen) => {
