@@ -3,13 +3,14 @@ import { Analytics } from "@vercel/analytics/react";
 import { useEffect, useMemo } from "react";
 import createPersistedState from "use-persisted-state";
 import "./App.css";
-import { Scene } from "./Scene";
 import { PersistedStates } from "./constants/state";
 import { Themes } from "./constants/themes";
 import { GameProvider } from "./contexts/game";
 import { ModalsProvider } from "./contexts/modals";
 import { PageProvider } from "./contexts/page";
 import { ToastProvider } from "./contexts/toast";
+import "./layout.css";
+import { Scene } from "./Scene";
 
 const useDarkTheme = createPersistedState(PersistedStates.DarkTheme);
 

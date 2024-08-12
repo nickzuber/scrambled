@@ -2,13 +2,13 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { FC, useCallback, useContext, useEffect, useState } from "react";
 import createPersistedState from "use-persisted-state";
-import { Drawer } from "vaul";
 import { FadeIn, PopIn } from "../constants/animations";
 import { PersistedStates } from "../constants/state";
 import { AppTheme } from "../constants/themes";
 import { GameContext } from "../contexts/game";
 import { ToastContext } from "../contexts/toast";
 import { Directions, Letter } from "../utils/game";
+import { BottomDrawer } from "./BottomDrawer";
 
 const useHardMode = createPersistedState(PersistedStates.HardMode);
 
@@ -123,11 +123,6 @@ export const Controls: FC = () => {
     isGameOver,
   ]);
 
-  function handleShiftBoardClick() {
-    // shiftBoard(Directions.Right);
-    setIsInShiftBoardMode((s) => !s);
-  }
-
   const topLetters = letters.slice(0, 8);
   const middleLetters = letters.slice(8, 15);
   const bottomLetters = letters.slice(15, 20);
@@ -141,33 +136,96 @@ export const Controls: FC = () => {
         <BoardButton theme={theme} disabled={isGameOver} onClick={flipCursorDirection}>
           Pivot cursor
         </BoardButton>
-        <BoardButton
-          theme={theme}
-          disabled={isGameOver}
-          onClick={handleShiftBoardClick}
-          style={{ width: 132 }}
+        <BottomDrawer
+          onOpenChange={setIsInShiftBoardMode}
+          renderContents={() => (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 8,
+                paddingBottom: 18,
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 8,
+                }}
+              >
+                <BoardButton
+                  theme={theme}
+                  disabled={isGameOver}
+                  onClick={() => shiftBoard(Directions.Up)}
+                >
+                  Shift Up
+                </BoardButton>
+                <BoardButton
+                  theme={theme}
+                  disabled={isGameOver}
+                  onClick={() => shiftBoard(Directions.Left)}
+                >
+                  Shift Left
+                </BoardButton>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 8,
+                }}
+              >
+                <BoardButton
+                  theme={theme}
+                  disabled={isGameOver}
+                  onClick={() => shiftBoard(Directions.Down)}
+                >
+                  Shift Down
+                </BoardButton>
+                <BoardButton
+                  theme={theme}
+                  disabled={isGameOver}
+                  onClick={() => shiftBoard(Directions.Right)}
+                >
+                  Shift Right
+                </BoardButton>
+              </div>
+            </div>
+          )}
         >
-          Shift board
-          <svg
-            width="24"
-            height="24"
-            fill="none"
-            viewBox="0 0 24 24"
-            style={{ marginRight: -10 }}
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1.5"
-              d="M15.25 10.75L12 14.25L8.75 10.75"
-            ></path>
-          </svg>
-        </BoardButton>
+          <BoardButton theme={theme} disabled={isGameOver} style={{ width: 132 }}>
+            Shift board
+            <svg
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+              style={{
+                marginRight: -10,
+                transform: isInShiftBoardMode ? "rotate(180deg)" : "rotate(0deg)",
+                transition: "transform 500ms cubic-bezier(0.08, 0.535, 0.1, 1.025)",
+              }}
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.5"
+                d="M15.25 10.75L12 14.25L8.75 10.75"
+              ></path>
+            </svg>
+          </BoardButton>
+        </BottomDrawer>
       </ButtonsContainer>
 
       <LettersContainer theme={theme}>
-        {isInShiftBoardMode ? <div>hi</div> : null}
         <LettersRow>
           {topLetters.map((letter) =>
             boardLetterIds.has(letter.id) ? (
@@ -419,30 +477,3 @@ const BoardButton = styled(LetterButton)`
     height: 42px;
   }
 `;
-
-function MyDrawer() {
-  return (
-    <Drawer.Root>
-      <Drawer.Trigger asChild>
-        <button>Open Drawer</button>
-      </Drawer.Trigger>
-      <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 bg-black/40" />
-        <Drawer.Content className="bg-zinc-100 flex flex-col rounded-t-[10px] mt-24 fixed bottom-0 left-0 right-0">
-          <div className="p-4 bg-white rounded-t-[10px] flex-1">
-            <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-zinc-300 mb-8" />
-            <div className="max-w-md mx-auto">
-              <Drawer.Title className="font-medium mb-4">
-                Unstyled drawer for React.
-              </Drawer.Title>
-              <p className="text-zinc-600 mb-2">
-                This component can be used as a replacement for a Dialog on mobile and tablet
-                devices.
-              </p>
-            </div>
-          </div>
-        </Drawer.Content>
-      </Drawer.Portal>
-    </Drawer.Root>
-  );
-}

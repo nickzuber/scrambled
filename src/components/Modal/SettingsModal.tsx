@@ -4,7 +4,6 @@ import createPersistedState from "use-persisted-state";
 import { PersistedStates } from "../../constants/state";
 import { GameContext } from "../../contexts/game";
 import { ToastContext } from "../../contexts/toast";
-import { Config } from "../../utils/game";
 import { Modal } from "./Modal";
 
 const useDarkTheme = createPersistedState(PersistedStates.DarkTheme);
@@ -49,20 +48,7 @@ export const SettingsModal: FC = () => {
           <Description>Requires you to place all letters</Description>
         </Label>
         <ToggleContainer>
-          <Toggle
-            onClick={() => {
-              if (hardMode) {
-                setHardMode(false);
-              } else {
-                if (unusedLetters.length === Config.MaxLetters) {
-                  setHardMode(true);
-                } else {
-                  sendToast("You can only turn on hard mode at the start of a game");
-                }
-              }
-            }}
-            enabled={hardMode}
-          />
+          <Toggle onClick={() => setHardMode(!hardMode)} enabled={hardMode} />
         </ToggleContainer>
       </Setting>
       <Setting>
