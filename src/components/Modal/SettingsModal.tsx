@@ -23,6 +23,14 @@ function getAppHash() {
 }
 
 export const SettingsModal: FC = () => {
+  return (
+    <Modal>
+      <SettingsModalImpl />
+    </Modal>
+  );
+};
+
+export const SettingsModalImpl: FC = () => {
   const [darkTheme, setDarkTheme] = useDarkTheme(false) as [boolean, React.Dispatch<boolean>];
   const [hardMode, setHardMode] = useHardMode(false) as [boolean, React.Dispatch<boolean>];
   const [scoreMode, setScoreMode] = useScoreMode(false) as [boolean, React.Dispatch<boolean>];
@@ -31,9 +39,8 @@ export const SettingsModal: FC = () => {
   const hash = useMemo(() => getAppHash(), []);
 
   return (
-    <Modal>
-      <Title>Settings</Title>
-      <Setting>
+    <>
+      <Setting style={{ marginTop: 24 }}>
         <Label>
           <Name>Dark theme</Name>
           <Description>Toggles the theme to appear dark</Description>
@@ -53,9 +60,7 @@ export const SettingsModal: FC = () => {
       </Setting>
       <Setting>
         <Label>
-          <Name>
-            Show score<Badge>new</Badge>
-          </Name>
+          <Name>Show score</Name>
           <Description>Includes a score for each letter</Description>
         </Label>
         <ToggleContainer>
@@ -77,7 +82,7 @@ export const SettingsModal: FC = () => {
         <Tag>© {new Date().getFullYear()} — Nick Zuber</Tag>
         <Tag>Build {`#${hash}`}</Tag>
       </TagContainer>
-    </Modal>
+    </>
   );
 };
 
@@ -111,7 +116,7 @@ const Setting = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 auto 24px;
+  margin: 0 auto 18px;
 `;
 
 const ToggleContainer = styled.div`
@@ -134,6 +139,7 @@ const Name = styled.p`
   margin: 0 0 4px;
   font-weight: 600;
   font-size: 1.1rem;
+  line-height: 0.9rem;
   text-align: left;
   height: 100%;
   flex: 2;

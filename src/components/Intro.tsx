@@ -117,6 +117,7 @@ const Container = styled.div<{ theme: AppTheme; fadeOut?: boolean; fadeOutLoadin
       ? p.theme.colors.app
       : p.theme.colors.app};
 
+  color: ${(p) => p.theme.colors.introText} !important;
   padding-top: 20vh;
 
   & > div {
@@ -166,7 +167,7 @@ const Divider = styled.div<{ theme: AppTheme }>`
   animation-delay: 100ms, 100ms;
 
   position: relative;
-  background: ${(p) => p.theme.colors.text};
+  background: ${(p) => p.theme.colors.introText};
   height: 4px;
   margin: -18px auto 24px;
   border-radius: 12px;
@@ -181,33 +182,6 @@ const Byline = styled.p`
   line-height: 1.167;
   margin: 0;
   margin-bottom: 24px;
-
-  text-align: center;
-  padding-inline: 24px;
-`;
-
-const DateMessage = styled.span`
-  animation-delay: 200ms;
-
-  display: block;
-  font-size: 1em;
-  line-height: 1.25;
-  font-weight: 600;
-  letter-spacing: 0.005em;
-
-  text-align: center;
-  padding-inline: 24px;
-`;
-
-const AuthorMessage = styled.span`
-  animation-delay: 250ms;
-
-  display: block;
-
-  font-size: 0.875em;
-  line-height: 1.286;
-  font-weight: 500;
-  letter-spacing: 0.01em;
 
   text-align: center;
   padding-inline: 24px;
@@ -239,4 +213,31 @@ const Button = styled.button<{ theme: AppTheme }>`
   @media (max-width: 320px) {
     width: 75%;
   }
+`;
+
+const DateMessage = styled.span`
+  animation-delay: 200ms;
+
+  display: block;
+  font-size: 1em;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+
+  text-align: center;
+  padding-inline: 24px;
+`;
+
+const AuthorMessage = styled.span`
+  animation-delay: 250ms;
+
+  display: block;
+
+  font-size: 0.875em;
+  line-height: 1.286;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+
+  text-align: center;
+  padding-inline: 24px;
 `;

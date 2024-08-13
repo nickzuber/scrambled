@@ -1,5 +1,7 @@
+import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { Drawer } from "vaul";
+import { AppTheme } from "../constants/themes";
 
 export interface BottomDrawerProps {
   title?: React.ReactNode;
@@ -16,6 +18,8 @@ export function BottomDrawer({
   onOpenChange,
   renderContents,
 }: BottomDrawerProps) {
+  const theme = useTheme() as AppTheme;
+
   return (
     <Drawer.Root
       open={open}
@@ -31,6 +35,7 @@ export function BottomDrawer({
               maxHeight: "90vh",
               overflowY: "auto",
               paddingBottom: 32,
+              background: theme.colors.primary,
             }}
           >
             <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-zinc-300 mb-8" />

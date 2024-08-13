@@ -60,7 +60,7 @@ body {
 }
 
 .slideUp {
-  animation: slideUp 600ms ease-in;
+  animation: slideUp 700ms ease-in;
   animation-fill-mode: forwards;
   animation-timing-function: cubic-bezier(0.1, 0.2, 0.3, 1);
 
@@ -98,7 +98,7 @@ body {
 }
 
 .slideUpAndWidenOut {
-  animation: slideUp 600ms ease-in, widenOut 800ms ease-in;
+  animation: slideUp 700ms ease-in, widenOut 650ms ease-in;
   animation-fill-mode: forwards, forwards;
   animation-timing-function: cubic-bezier(0.1, 0.2, 0.3, 1),
     cubic-bezier(0.08, 0.535, 0.1, 1.025);
@@ -106,12 +106,12 @@ body {
 
   opacity: 0;
   transform: translateY(20px);
-  width: 40px;
+  width: 0px;
 }
 
 @keyframes widenOut {
   from {
-    width: 40px;
+    width: 0px;
   }
   to {
     width: 188px; /* Can make CSS variable if needed */

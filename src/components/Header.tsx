@@ -7,6 +7,7 @@ import { PageContext } from "../contexts/page";
 import { Page } from "../hooks/usePage";
 import { BottomDrawer } from "./BottomDrawer";
 import { InstructionsModalImpl } from "./Modal/InstructionsModal";
+import { SettingsModalImpl } from "./Modal/SettingsModal";
 import { StatsModalImpl } from "./Modal/StatsModal";
 
 export interface HeaderProps {
@@ -61,9 +62,9 @@ export const Header: FC<HeaderProps> = ({ isFirstTime, setIsFirstTime }) => {
           <Button theme={theme}>Stats</Button>
         </BottomDrawer>
         {/* Settings */}
-        <Button theme={theme} onClick={openSettings}>
-          Settings
-        </Button>
+        <BottomDrawer title={"Settings"} renderContents={() => <SettingsModalImpl />}>
+          <Button theme={theme}>Settings</Button>
+        </BottomDrawer>
       </ButtonContainer>
     </Container>
   );

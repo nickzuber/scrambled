@@ -21,6 +21,9 @@ enum Modal {
   Settings,
 }
 
+/**
+ * @deprecated Use the `<BottomDrawer />` pattern instead.
+ */
 export const useModals = (): ModalsOptions => {
   const [, setIsFirstTime] = useFirstTime(true);
   const [openModal, setOpenModal] = useState<Modal | null>(null);
@@ -34,13 +37,24 @@ export const useModals = (): ModalsOptions => {
   const openSettings = useCallback(() => setOpenModal(Modal.Settings), []);
 
   return {
-    openInstructions,
-    openStats,
-    openSettings,
-    isInstructionsOpen: openModal === Modal.Instructions,
-    isStatsOpen: openModal === Modal.Stats,
-    isSettingsOpen: openModal === Modal.Settings,
-    isAnyModalOpen: openModal !== null,
-    closeModal,
+    openInstructions: () => {},
+    openStats: () => {},
+    openSettings: () => {},
+    isInstructionsOpen: false,
+    isStatsOpen: false,
+    isSettingsOpen: false,
+    isAnyModalOpen: false,
+    closeModal: () => {},
   };
+
+  // return {
+  //   openInstructions,
+  //   openStats,
+  //   openSettings,
+  //   isInstructionsOpen: openModal === Modal.Instructions,
+  //   isStatsOpen: openModal === Modal.Stats,
+  //   isSettingsOpen: openModal === Modal.Settings,
+  //   isAnyModalOpen: openModal !== null,
+  //   closeModal,
+  // };
 };

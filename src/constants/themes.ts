@@ -7,6 +7,7 @@ export type AppTheme = {
   type: ThemeType;
   colors: {
     app: string;
+    appAlt: string;
     primary: string;
     text: string;
     invertedText: string;
@@ -15,6 +16,7 @@ export type AppTheme = {
     highlight: string;
     buttonActive: string;
     highlightBorder: string;
+    introText: string;
   };
   accents: {
     dropShadow: string;
@@ -27,6 +29,7 @@ const LightTheme: AppTheme = {
   type: ThemeType.Light,
   colors: {
     app: "#f9c929",
+    appAlt: "#fdefc3",
     primary: "#ffffff",
     text: "#1a1a1b",
     invertedText: "#ffffff",
@@ -35,6 +38,7 @@ const LightTheme: AppTheme = {
     highlight: "#f0f0f0",
     highlightBorder: "#2e2f2f",
     buttonActive: "#c0c4ca",
+    introText: "#1a1a1b",
   },
   accents: {
     dropShadow: "rgb(99 99 99 / 46%) 0px 2px 8px 2px",
@@ -47,6 +51,7 @@ const DarkTheme: AppTheme = {
   type: ThemeType.Dark,
   colors: {
     app: "#f9c929",
+    appAlt: "#4c4729",
     primary: "#0E1924",
     text: "#ffffff",
     invertedText: "#1a1a1b",
@@ -55,6 +60,7 @@ const DarkTheme: AppTheme = {
     highlight: "#133652",
     highlightBorder: "#c4c5c5",
     buttonActive: "#656b6e",
+    introText: "#1a1a1b",
   },
   accents: {
     dropShadow: "rgb(0 0 0 / 50%) 0px 2px 8px 2px",

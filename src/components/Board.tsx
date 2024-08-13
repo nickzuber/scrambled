@@ -515,7 +515,7 @@ const TileContents = styled.div<{
   }
 
   const cursorColor = theme.colors.app;
-  const cursorColorBgTemp = "#fdefc3";
+  const cursorColorBgTemp = theme.colors.appAlt;
 
   const backgroundColor = hasCursor
     ? `${cursorColorBgTemp}`
@@ -638,7 +638,7 @@ const ScoredTileContents = styled.div<{
   }
 
   const cursorColor = theme.colors.app;
-  const cursorColorBgTemp = "#fdefc3";
+  const cursorColorBgTemp = theme.colors.appAlt;
 
   const backgroundColor = hasCursor
     ? `${cursorColorBgTemp}`
