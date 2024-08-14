@@ -508,10 +508,10 @@ const MiniTileContents = styled.div<{ theme: AppTheme }>`
   border: 2px solid ${(p) => p.theme.colors.tileSecondary};
   transition: border 50ms ease-in, background 50ms ease-in;
   color: ${(p) => p.theme.colors.text};
-  min-height: 33px;
-  min-width: 33px;
-  max-height: 33px;
-  max-width: 33px;
+  min-height: 36px;
+  min-width: 36px;
+  max-height: 36px;
+  max-width: 36px;
   height: calc(100% - 10px);
   width: calc(100% - 10px);
   opacity: 1;

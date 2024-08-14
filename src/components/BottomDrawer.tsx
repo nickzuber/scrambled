@@ -39,8 +39,10 @@ export function BottomDrawer({
             }}
           >
             <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-zinc-300 mb-8" />
-            {title ? <Title className="max-w-md mx-auto">{title}</Title> : null}
-            <div className="max-w-md mx-auto">{renderContents()}</div>
+            <div className="max-w-md mx-auto">
+              {title ? <Title className="max-w-md mx-auto">{title}</Title> : null}
+              {renderContents()}
+            </div>
           </div>
         </Drawer.Content>
       </Drawer.Portal>

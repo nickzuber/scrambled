@@ -181,7 +181,7 @@ const Toggle = styled.div<{ enabled: boolean }>`
 `;
 
 const TagContainer = styled.div`
-  margin: 48px auto 24px;
+  margin: 36px auto 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;

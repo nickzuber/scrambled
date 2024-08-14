@@ -61,7 +61,16 @@ export const Controls: FC = () => {
         sendToast(message);
       }
     } else {
-      requestFinish();
+      if (hardMode) {
+        const shouldContinue = window.confirm(
+          "You're playing on hard mode, so you only get one chance to submit! Are you sure you're done?",
+        );
+        if (shouldContinue) {
+          requestFinish();
+        }
+      } else {
+        requestFinish();
+      }
     }
   }, [
     hardMode,
