@@ -73,7 +73,11 @@ export const Scene: FC = () => {
       default:
         return (
           <Container className="fadeIn">
-            <Header isFirstTime={isFirstTime} setIsFirstTime={setIsFirstTime} />
+            <Header
+              isFirstTime={isFirstTime}
+              setIsFirstTime={setIsFirstTime}
+              isGameOver={isGameOver}
+            />
             <Canvas />
             <Controls />
             <Modal />

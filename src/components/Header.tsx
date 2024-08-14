@@ -1,8 +1,7 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FC, useContext } from "react";
+import { FC, useContext, useEffect, useRef, useState } from "react";
 import { AppTheme } from "../constants/themes";
-import { ModalsContext } from "../contexts/modals";
 import { PageContext } from "../contexts/page";
 import { Page } from "../hooks/usePage";
 import { BottomDrawer } from "./BottomDrawer";
@@ -13,12 +12,27 @@ import { StatsModalImpl } from "./Modal/StatsModal";
 export interface HeaderProps {
   isFirstTime: boolean;
   setIsFirstTime: (nextState: boolean) => void;
+  isGameOver: boolean;
 }
 
-export const Header: FC<HeaderProps> = ({ isFirstTime, setIsFirstTime }) => {
+export const Header: FC<HeaderProps> = ({ isFirstTime, setIsFirstTime, isGameOver }) => {
   const theme = useTheme() as AppTheme;
+  const [showStats, setShowStats] = useState<boolean>(false);
   const { setPage } = useContext(PageContext);
-  const { openInstructions, openStats, openSettings } = useContext(ModalsContext);
+
+  const updaterRef = useRef(false);
+
+  useEffect(() => {
+    if (isGameOver && !updaterRef.current) {
+      // + 1000ms for all animations to kick off.
+      // + 500ms for the last animation to finish.
+      // + 250 for some buffer room to soak in the tile flipping animation.
+      setTimeout(() => setShowStats(true), 1750);
+
+      // Only do this once per lifecycle.
+      updaterRef.current = true;
+    }
+  }, [isGameOver]);
 
   return (
     <Container theme={theme}>
@@ -58,7 +72,16 @@ export const Header: FC<HeaderProps> = ({ isFirstTime, setIsFirstTime }) => {
           <Button theme={theme}>Help</Button>
         </BottomDrawer>
         {/* Stats */}
-        <BottomDrawer title={"Statistics"} renderContents={() => <StatsModalImpl />}>
+        <BottomDrawer
+          open={showStats === true ? true : undefined}
+          title={"Statistics"}
+          renderContents={() => <StatsModalImpl />}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) {
+              setShowStats(false);
+            }
+          }}
+        >
           <Button theme={theme}>Stats</Button>
         </BottomDrawer>
         {/* Settings */}

@@ -588,9 +588,15 @@ const ShareContainer = styled.div`
 `;
 
 const Clock = styled.div`
-  font-size: 18px;
+  display: block;
+
+  font-size: 1.25em;
+  line-height: 1.286;
   font-weight: 500;
-  font-family: "IBM Plex Mono", monospace;
+  letter-spacing: 0.01em;
+
+  text-align: center;
+  padding-inline: 24px;
 `;
 
 const ShareSection = styled.div`
