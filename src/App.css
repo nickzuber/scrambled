@@ -26,16 +26,18 @@ body {
   position: fixed;
   z-index: 9999;
   width: fit-content;
+  white-space: nowrap;
   margin: 0 24px;
-  top: 5%;
+  top: 64px;
   left: calc(50% - 24px);
   user-select: none;
   transform: translate(-50%, 0);
-  background: #ffffff;
+  background: #1a1a1a;
+  color: #ffffff;
   text-align: center;
   box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
-  border-radius: 4px;
-  padding: 24px 36px;
+  border-radius: 8px;
+  padding: 8px 16px;
   font-weight: 500;
   font-size: 1rem;
   animation: slideIn 200ms ease-in;
@@ -44,6 +46,7 @@ body {
 }
 .__toast-dark-styles__ {
   color: #1a1a1a;
+  background: #ffffff;
   box-shadow: rgb(0 0 0 / 24%) 0px 2px 8px 2px;
 }
 

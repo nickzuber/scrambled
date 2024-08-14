@@ -106,12 +106,16 @@ export const useGame = (): GameOptions => {
   );
 
   const canFinish = useMemo(() => {
+    const [_, allWordsAreValid] = validateBoard(board);
+    const isBoardComplete = tilesAreConnected && boardLetterIds.size === Config.MaxLetters;
+
+    // Hard mode lets you submit without every word guarenteed to be valid.
     if (hardMode) {
-      return tilesAreConnected && boardLetterIds.size === Config.MaxLetters;
+      return isBoardComplete;
     } else {
-      return tilesAreConnected && boardLetterIds.size > 5;
+      return isBoardComplete && allWordsAreValid;
     }
-  }, [hardMode, tilesAreConnected, boardLetterIds]);
+  }, [hardMode, board, tilesAreConnected, boardLetterIds]);
 
   const requestFinish = useCallback(() => {
     if (!canFinish) return;

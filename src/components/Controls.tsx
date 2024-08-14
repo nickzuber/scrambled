@@ -1,12 +1,13 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FC, useCallback, useContext, useEffect, useState } from "react";
+import { FC, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { FadeIn, PopIn } from "../constants/animations";
 import { PersistedStates } from "../constants/state";
 import { AppTheme } from "../constants/themes";
 import { GameContext } from "../contexts/game";
 import { ToastContext } from "../contexts/toast";
 import createPersistedState from "../libs/use-persisted-state";
+import { validateBoard } from "../utils/board-validator";
 import { Directions, Letter } from "../utils/game";
 import { BottomDrawer } from "./BottomDrawer";
 
@@ -15,6 +16,7 @@ const useHardMode = createPersistedState(PersistedStates.HardMode);
 export const Controls: FC = () => {
   const theme = useTheme() as AppTheme;
   const {
+    board,
     letters,
     boardLetterIds,
     setLetterOnBoard,
@@ -36,27 +38,39 @@ export const Controls: FC = () => {
 
   const disableEnterButton = !canFinish || isGameOver;
 
+  const allWordsAreValid = useMemo(() => {
+    const [_, allWordsAreValid] = validateBoard(board);
+    return allWordsAreValid;
+  }, [board]);
+
   const onEnterPress = useCallback(() => {
     if (disableEnterButton) {
       if (hardMode) {
         const message =
           unusedLetters.length > 0
-            ? `You still have to place ${unusedLetters.length} letter${
-                unusedLetters.length !== 1 ? "s" : ""
-              } on the board.`
-            : "All words must be connected like a crossword.";
+            ? "You have to place every letter on the board"
+            : "All words must be connected like a crossword"; // Assumed based on this is the only scenario left
         sendToast(message);
       } else {
         const message =
-          unusedLetters.length > 15
-            ? "Try using some more letters to make as many words as you can - you got this!"
-            : "All words must be connected like a crossword.";
+          unusedLetters.length > 0
+            ? "You have to place every letter on the board"
+            : !allWordsAreValid
+            ? "At least one of your words aren't valid"
+            : "All words must be connected like a crossword"; // Assumed based on this is the only scenario left
         sendToast(message);
       }
     } else {
       requestFinish();
     }
-  }, [hardMode, sendToast, disableEnterButton, unusedLetters, requestFinish]);
+  }, [
+    hardMode,
+    sendToast,
+    allWordsAreValid,
+    disableEnterButton,
+    unusedLetters,
+    requestFinish,
+  ]);
 
   const onLetterButtonPress = useCallback(
     (letter: Letter) => {

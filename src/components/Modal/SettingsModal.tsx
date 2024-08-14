@@ -52,7 +52,7 @@ export const SettingsModalImpl: FC = () => {
       <Setting>
         <Label>
           <Name>Hard mode</Name>
-          <Description>Requires you to place all letters</Description>
+          <Description>You only get one attempt to submit</Description>
         </Label>
         <ToggleContainer>
           <Toggle onClick={() => setHardMode(!hardMode)} enabled={hardMode} />
