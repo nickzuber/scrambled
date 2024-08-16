@@ -18,10 +18,9 @@ import {
   createMixedReveal,
   createSuccessReveal,
 } from "../constants/animations";
-import { PersistedStates } from "../constants/state";
 import { AppTheme } from "../constants/themes";
 import { GameContext } from "../contexts/game";
-import createPersistedState from "../libs/use-persisted-state";
+import { GlobalStatesContext } from "../contexts/global";
 import { countBoardScore, createScoredBoard } from "../utils/board-validator";
 import {
   CursorDirections,
@@ -34,8 +33,6 @@ import {
   shouldShowTileScore,
 } from "../utils/game";
 
-const useScoreMode = createPersistedState(PersistedStates.ScoreMode);
-
 type GridTileProps = {
   tile: Tile | ScoredTile;
   hasCursor: boolean;
@@ -47,7 +44,7 @@ type GridTileProps = {
 
 export const Board: FC = () => {
   const theme = useTheme() as AppTheme;
-  const [scoreMode] = useScoreMode(false);
+  const { scoreMode } = useContext(GlobalStatesContext);
   const { board, updateCursor, isGameOver } = useContext(GameContext);
 
   const score = useMemo(

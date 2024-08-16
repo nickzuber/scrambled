@@ -1,9 +1,9 @@
 import { toBlob } from "html-to-image";
 import React, { useCallback, useContext, useMemo } from "react";
-import { PersistedStates } from "../constants/state";
 import { ModalsContext } from "../contexts/modals";
 import { ToastContext } from "../contexts/toast";
-import createPersistedState from "../libs/use-persisted-state";
+
+import { GlobalStatesContext } from "../contexts/global";
 import { publishEvent } from "../utils/analytics";
 import {
   countBoardScore,
@@ -26,10 +26,6 @@ import {
 import { ScoredSolutionBoard, SolutionBoard } from "../utils/words-helper";
 import { useBoard } from "./useBoard";
 import { useLetters } from "./useLetters";
-
-const useIsGameOver = createPersistedState(PersistedStates.GameOver);
-const useHardMode = createPersistedState(PersistedStates.HardMode);
-const useScoreMode = createPersistedState(PersistedStates.ScoreMode);
 
 export type GameOptions = {
   solutionBoard: SolutionBoard;
@@ -58,9 +54,7 @@ export type GameOptions = {
 export const useGame = (): GameOptions => {
   const { openStats } = useContext(ModalsContext);
   const { clearToast } = useContext(ToastContext);
-  const [isGameOver, setIsGameOver] = useIsGameOver(false);
-  const [hardMode] = useHardMode(false);
-  const [scoreMode] = useScoreMode(false);
+  const { isGameOver, setIsGameOver, hardMode, scoreMode } = useContext(GlobalStatesContext);
   const { letters, solutionBoard, shuffleLetters, positionOfShuffle } = useLetters();
   const {
     board,

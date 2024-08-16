@@ -1,14 +1,8 @@
 import styled from "@emotion/styled";
 import { FC, useContext, useMemo } from "react";
-import { PersistedStates } from "../../constants/state";
 import { GameContext } from "../../contexts/game";
-import { ToastContext } from "../../contexts/toast";
-import createPersistedState from "../../libs/use-persisted-state";
+import { GlobalStatesContext } from "../../contexts/global";
 import { Modal } from "./Modal";
-
-const useDarkTheme = createPersistedState(PersistedStates.DarkTheme);
-const useHardMode = createPersistedState(PersistedStates.HardMode);
-const useScoreMode = createPersistedState(PersistedStates.ScoreMode);
 
 type CrosswordleObj = {
   hash: string;
@@ -22,20 +16,26 @@ function getAppHash() {
   return loadedWindow.crosswordle?.hash || "0000000";
 }
 
+/**
+ * @deprecated
+ * Eventually remove these modal components.
+ */
 export const SettingsModal: FC = () => {
   return (
     <Modal>
-      <SettingsModalImpl />
+      <SettingsModalImpl darkTheme={false} setDarkTheme={() => {}} />
     </Modal>
   );
 };
 
-export const SettingsModalImpl: FC = () => {
-  const [darkTheme, setDarkTheme] = useDarkTheme(false) as [boolean, React.Dispatch<boolean>];
-  const [hardMode, setHardMode] = useHardMode(false) as [boolean, React.Dispatch<boolean>];
-  const [scoreMode, setScoreMode] = useScoreMode(false) as [boolean, React.Dispatch<boolean>];
-  const { unusedLetters, updateBoardWithNewScoreMode } = useContext(GameContext);
-  const { sendToast } = useContext(ToastContext);
+export interface SettingsModalImplProps {
+  darkTheme: boolean;
+  setDarkTheme: (state: boolean) => void;
+}
+
+export const SettingsModalImpl: FC<SettingsModalImplProps> = ({ darkTheme, setDarkTheme }) => {
+  const { hardMode, setHardMode, scoreMode, setScoreMode } = useContext(GlobalStatesContext);
+  const { updateBoardWithNewScoreMode } = useContext(GameContext);
   const hash = useMemo(() => getAppHash(), []);
 
   return (

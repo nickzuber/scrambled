@@ -2,11 +2,10 @@ import { css, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { FC, Fragment, useContext, useEffect, useMemo, useState } from "react";
 import { FadeIn, Shine, createSuccessReveal } from "../../constants/animations";
-import { PersistedStates } from "../../constants/state";
 import { AppTheme } from "../../constants/themes";
 import { GameContext } from "../../contexts/game";
+import { GlobalStatesContext } from "../../contexts/global";
 import { ToastContext } from "../../contexts/toast";
-import createPersistedState from "../../libs/use-persisted-state";
 import {
   countBoardScore,
   countSolutionBoardScore,
@@ -17,8 +16,6 @@ import {
 } from "../../utils/board-validator";
 import { Config, isBoardScored } from "../../utils/game";
 import { Modal } from "./Modal";
-
-const useScoreMode = createPersistedState(PersistedStates.ScoreMode);
 
 function zeroPad(num: number, places: number) {
   return String(num).padStart(places, "0");
@@ -99,7 +96,7 @@ export const StatsModalImpl: FC = () => {
   const { sendToast } = useContext(ToastContext);
   const [timeLeft, setTimeLeft] = useState(getTimeLeftInDay());
   const [showPreview, setShowPreview] = useState(false);
-  const [scoreMode] = useScoreMode(false);
+  const { scoreMode } = useContext(GlobalStatesContext);
 
   const getShareClipboardItemForBoard = scoreMode
     ? getScoredShareClipboardItem

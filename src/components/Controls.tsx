@@ -2,16 +2,13 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { FC, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { FadeIn, PopIn } from "../constants/animations";
-import { PersistedStates } from "../constants/state";
 import { AppTheme } from "../constants/themes";
 import { GameContext } from "../contexts/game";
+import { GlobalStatesContext } from "../contexts/global";
 import { ToastContext } from "../contexts/toast";
-import createPersistedState from "../libs/use-persisted-state";
 import { validateBoard } from "../utils/board-validator";
 import { Directions, Letter } from "../utils/game";
 import { BottomDrawer } from "./BottomDrawer";
-
-const useHardMode = createPersistedState(PersistedStates.HardMode);
 
 export const Controls: FC = () => {
   const theme = useTheme() as AppTheme;
@@ -32,7 +29,7 @@ export const Controls: FC = () => {
     unusedLetters,
   } = useContext(GameContext);
   const { sendToast } = useContext(ToastContext);
-  const [hardMode] = useHardMode(false);
+  const { hardMode } = useContext(GlobalStatesContext);
 
   const [isInShiftBoardMode, setIsInShiftBoardMode] = useState(false);
 

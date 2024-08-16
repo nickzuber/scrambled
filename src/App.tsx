@@ -5,6 +5,7 @@ import "./App.css";
 import { PersistedStates } from "./constants/state";
 import { Themes } from "./constants/themes";
 import { GameProvider } from "./contexts/game";
+import { GlobalStatesProvider } from "./contexts/global";
 import { ModalsProvider } from "./contexts/modals";
 import { PageProvider } from "./contexts/page";
 import { ToastProvider } from "./contexts/toast";
@@ -12,10 +13,10 @@ import "./layout.css";
 import createPersistedState from "./libs/use-persisted-state";
 import { Scene } from "./Scene";
 
-const useDarkTheme = createPersistedState(PersistedStates.DarkTheme);
+const useDarkTheme = createPersistedState<boolean>(PersistedStates.DarkTheme);
 
 function App() {
-  const [darkTheme] = useDarkTheme() as [boolean, unknown];
+  const [darkTheme, setDarkTheme] = useDarkTheme(false);
 
   const theme = useMemo(() => (darkTheme ? Themes.Dark : Themes.Light), [darkTheme]);
 
@@ -27,15 +28,17 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Analytics />
-      <ModalsProvider>
-        <ToastProvider>
-          <PageProvider>
-            <GameProvider>
-              <Scene />
-            </GameProvider>
-          </PageProvider>
-        </ToastProvider>
-      </ModalsProvider>
+      <GlobalStatesProvider>
+        <ModalsProvider>
+          <ToastProvider>
+            <PageProvider>
+              <GameProvider>
+                <Scene darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
+              </GameProvider>
+            </PageProvider>
+          </ToastProvider>
+        </ModalsProvider>
+      </GlobalStatesProvider>
     </ThemeProvider>
   );
 }

@@ -13,9 +13,17 @@ export interface HeaderProps {
   isFirstTime: boolean;
   setIsFirstTime: (nextState: boolean) => void;
   isGameOver: boolean;
+  darkTheme: boolean;
+  setDarkTheme: (nextState: boolean) => void;
 }
 
-export const Header: FC<HeaderProps> = ({ isFirstTime, setIsFirstTime, isGameOver }) => {
+export const Header: FC<HeaderProps> = ({
+  isFirstTime,
+  setIsFirstTime,
+  isGameOver,
+  darkTheme,
+  setDarkTheme,
+}) => {
   const theme = useTheme() as AppTheme;
   const [showStats, setShowStats] = useState<boolean>(false);
   const { setPage } = useContext(PageContext);
@@ -85,7 +93,12 @@ export const Header: FC<HeaderProps> = ({ isFirstTime, setIsFirstTime, isGameOve
           <Button theme={theme}>Stats</Button>
         </BottomDrawer>
         {/* Settings */}
-        <BottomDrawer title={"Settings"} renderContents={() => <SettingsModalImpl />}>
+        <BottomDrawer
+          title={"Settings"}
+          renderContents={() => (
+            <SettingsModalImpl darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
+          )}
+        >
           <Button theme={theme}>Settings</Button>
         </BottomDrawer>
       </ButtonContainer>

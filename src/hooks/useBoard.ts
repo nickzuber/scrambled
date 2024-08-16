@@ -12,7 +12,6 @@ import {
   incrementCursor,
   Letter,
   moveBoard,
-  ScoredBoard,
   TileChangeReason,
   TileState,
   updateCursorInDirection,
@@ -21,19 +20,7 @@ import {
 const usePersistedBoard = createPersistedState(PersistedStates.Board);
 const defaultBoard = initalizeBoard();
 
-type BoardOptions = {
-  board: Board | ScoredBoard;
-  setLetterOnBoard: (letter: Letter) => void;
-  resetBoard: () => void;
-  setBoard: (board: Board) => void;
-  updateCursor: (row: number, col: number) => void;
-  flipCursorDirection: () => void;
-  backspaceBoard: () => void;
-  shiftBoard: (direction: Directions) => void;
-  moveCursorInDirection: (direction: Directions) => void;
-};
-
-export const useBoard = (): BoardOptions => {
+export const useBoard = () => {
   const [board, setBoard] = usePersistedBoard(defaultBoard) as [Board, React.Dispatch<Board>];
 
   const shiftBoard = useCallback(

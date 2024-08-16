@@ -6,52 +6,28 @@ import { Controls } from "./components/Controls";
 import { Header } from "./components/Header";
 import { Intro } from "./components/Intro";
 import { Modal } from "./components/Modal";
-import { PersistedStates } from "./constants/state";
 import { AppTheme } from "./constants/themes";
 import { GameContext } from "./contexts/game";
+import { GlobalStatesContext } from "./contexts/global";
 import { ModalsContext } from "./contexts/modals";
 import { PageContext } from "./contexts/page";
 import { useLocalStorageGC } from "./hooks/useLocalStorageGC";
 import { Page } from "./hooks/usePage";
-import createPersistedState from "./libs/use-persisted-state";
 
-const useFirstTime = createPersistedState(PersistedStates.FirstTime);
-const useScoreMode = createPersistedState(PersistedStates.ScoreMode);
+export interface SceneProps {
+  darkTheme: boolean;
+  setDarkTheme: (state: boolean) => void;
+}
 
-export const Scene: FC = () => {
+export const Scene: FC<SceneProps> = ({ darkTheme, setDarkTheme }) => {
   const theme = useTheme() as AppTheme;
   const { openInstructions, openStats, isStatsOpen } = useContext(ModalsContext);
   const { page } = useContext(PageContext);
   const { board, isGameOver } = useContext(GameContext);
-  const [isFirstTime, setIsFirstTime] = useFirstTime(true) as [
-    boolean,
-    (nextState: boolean) => void,
-  ];
+  const { isFirstTime, setIsFirstTime } = useContext(GlobalStatesContext);
 
   // Clean up old keys.
   useLocalStorageGC();
-
-  // MOVING THIS TO `<Header />`
-  // // Open modal(s) for first-time player and for completed game.
-  // useEffect(() => {
-  //   let ts: ReturnType<typeof setTimeout>;
-
-  //   if (isGameOver) {
-  //     // + 1000ms for all animations to kick off.
-  //     // + 500ms for the last animation to finish.
-  //     // + 500 for some buffer room to soak in the tile flipping animation.
-  //     ts = setTimeout(openStats, 2000);
-  //   } else if (isFirstTime) {
-  //     // + 100 for some buffer room.
-  //     ts = setTimeout(openInstructions, 100);
-  //   }
-
-  //   return () => {
-  //     if (ts) {
-  //       clearTimeout(ts);
-  //     }
-  //   };
-  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Change the app theme based on which screen is rendered.
   useEffect(() => {
@@ -77,6 +53,8 @@ export const Scene: FC = () => {
               isFirstTime={isFirstTime}
               setIsFirstTime={setIsFirstTime}
               isGameOver={isGameOver}
+              darkTheme={darkTheme}
+              setDarkTheme={setDarkTheme}
             />
             <Canvas />
             <Controls />
@@ -104,7 +82,7 @@ const Container = styled.div`
 `;
 
 function useResetScoreMode() {
-  const [scoreMode, setScoreMode] = useScoreMode(false);
+  const { scoreMode, setScoreMode } = useContext(GlobalStatesContext);
 
   useEffect(() => {
     if (scoreMode) {
