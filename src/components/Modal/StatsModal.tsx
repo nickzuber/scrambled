@@ -731,7 +731,7 @@ const FireSvg = () => {
       viewBox="0 0 16 26"
       fill="#fa5252"
       stroke={theme.colors.text}
-      strokeWidth="1.5"
+      strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     >
