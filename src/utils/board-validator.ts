@@ -120,9 +120,29 @@ export function getValidWords(board: Board): Array<string> {
   return validFoundWords;
 }
 
-export function validateBoard(board: Board): [Board, boolean] {
+export function resetBoardTileState(board: Board): Board {
+  const tiles = board.tiles;
+
+  // Default all tiles to be idle.
+  const defaultBoard = {
+    cursor: board.cursor,
+    tiles: tiles.map((row) => row.map((tile) => ({ ...tile, state: TileState.IDLE }))),
+  };
+
+  return defaultBoard;
+}
+
+export function validateBoard({
+  board,
+  mode,
+}: {
+  board: Board;
+  mode: "validate" | "submit";
+}): [Board, boolean] {
   const tiles = board.tiles;
   const gridBounds = tiles.length;
+  const validTileState = mode === "validate" ? TileState.IDLE : TileState.VALID;
+  const invalidTileState = mode === "validate" ? TileState.INCORRECT : TileState.INVALID;
 
   // Get all words going left to right.
   const leftToRight = getWordsFromTilesLTR(tiles);
@@ -142,7 +162,7 @@ export function validateBoard(board: Board): [Board, boolean] {
     tiles: tiles.map((row) =>
       row.map((tile) =>
         tile.letter
-          ? { ...tile, state: TileState.INVALID }
+          ? { ...tile, state: invalidTileState }
           : { ...tile, state: TileState.IDLE },
       ),
     ),
@@ -158,14 +178,14 @@ export function validateBoard(board: Board): [Board, boolean] {
       case WordDirection.LeftToRight:
         for (let c = 0; c < length; c++) {
           const tile = validatedBoard.tiles[word.row][word.col + c];
-          tile.state = TileState.VALID;
+          tile.state = validTileState;
         }
         break;
       case WordDirection.TopToBottom:
         for (let r = 0; r < length; r++) {
           if (word.row + r > gridBounds - 1) continue;
           const tile = validatedBoard.tiles[word.row + r][word.col];
-          tile.state = TileState.VALID;
+          tile.state = validTileState;
         }
         break;
     }
@@ -182,14 +202,14 @@ export function validateBoard(board: Board): [Board, boolean] {
       case WordDirection.LeftToRight:
         for (let c = 0; c < length; c++) {
           const tile = validatedBoard.tiles[word.row][word.col + c];
-          tile.state = tile.state === TileState.VALID ? TileState.INVALID : tile.state;
+          tile.state = tile.state === validTileState ? invalidTileState : tile.state;
         }
         break;
       case WordDirection.TopToBottom:
         for (let r = 0; r < length; r++) {
           if (word.row + r > gridBounds - 1) continue;
           const tile = validatedBoard.tiles[word.row + r][word.col];
-          tile.state = tile.state === TileState.VALID ? TileState.INVALID : tile.state;
+          tile.state = tile.state === validTileState ? invalidTileState : tile.state;
         }
         break;
     }

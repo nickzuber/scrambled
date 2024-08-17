@@ -14,6 +14,7 @@ import {
   FadeIn,
   PopIn,
   Shine,
+  createIncorrectReveal,
   createInvalidReveal,
   createMixedReveal,
   createSuccessReveal,
@@ -35,6 +36,7 @@ import {
 
 type GridTileProps = {
   tile: Tile | ScoredTile;
+  innerKey: string;
   hasCursor: boolean;
   hasCursorHighlight: boolean;
   cursorDirection: CursorDirections;
@@ -44,7 +46,7 @@ type GridTileProps = {
 
 export const Board: FC = () => {
   const theme = useTheme() as AppTheme;
-  const { scoreMode } = useContext(GlobalStatesContext);
+  const { scoreMode, submitCount } = useContext(GlobalStatesContext);
   const { board, updateCursor, isGameOver } = useContext(GameContext);
 
   const score = useMemo(
@@ -54,6 +56,11 @@ export const Board: FC = () => {
 
   const handleTileClick = useCallback(
     (tile: Tile) => {
+      const activeElement = document.activeElement as HTMLElement;
+      if (activeElement) {
+        activeElement?.blur();
+      }
+
       updateCursor(tile.row, tile.col);
     },
     [updateCursor],
@@ -68,6 +75,7 @@ export const Board: FC = () => {
             {row.map((tile) => (
               <GridTile
                 key={tile.id}
+                innerKey={`submit-key--${submitCount}`}
                 tile={tile}
                 cursorDirection={board.cursor.direction}
                 handleTileClick={handleTileClick}
@@ -97,16 +105,18 @@ export const Board: FC = () => {
 };
 
 enum GridTileState {
-  Idle,
-  PopIn,
-  RevealSuccess,
-  RevealMixed,
-  RevealFail,
-  CursorTile,
+  Idle = "idle",
+  PopIn = "pop-in",
+  RevealSuccess = "reveal-success",
+  RevealMixed = "reveal-mixed",
+  RevealFail = "reveal-fail",
+  RevealIncorrect = "reveal-incorrect",
+  CursorTile = "cursor-tile",
 }
 
 const GridTile: FC<GridTileProps> = ({
   tile,
+  innerKey,
   hasCursor,
   handleTileClick,
   cursorDirection,
@@ -180,8 +190,17 @@ const GridTile: FC<GridTileProps> = ({
       setGridTileState(GridTileState.RevealMixed);
     } else if (state === TileState.INVALID) {
       setGridTileState(GridTileState.RevealFail);
+    } else if (state === TileState.INCORRECT) {
+      setGridTileState(GridTileState.RevealIncorrect);
+    } else if (state === TileState.IDLE) {
+      setGridTileState(GridTileState.Idle);
     }
-  }, [tile.state]);
+  }, [tile]);
+
+  // @DEBUGGING
+  // if (tile.row === 3 && tile.col === 0) {
+  //   console.info(tile.letter?.letter, gridTileState);
+  // }
 
   const shouldShowPivotLine =
     !isGameOver &&
@@ -199,6 +218,7 @@ const GridTile: FC<GridTileProps> = ({
     >
       {isTileScored(tile) ? (
         <ScoredTileContents
+          key={gridTileState === GridTileState.RevealIncorrect ? innerKey : undefined}
           score={tile.score}
           hasLetter={!!tile.letter?.letter}
           hasCursor={hasCursor && !isGameOver}
@@ -219,6 +239,7 @@ const GridTile: FC<GridTileProps> = ({
         </ScoredTileContents>
       ) : (
         <TileContents
+          key={gridTileState === GridTileState.RevealIncorrect ? innerKey : undefined}
           hasLetter={!!tile.letter?.letter}
           hasCursor={hasCursor && !isGameOver}
           hasCursorHighlight={hasCursorHighlight && !isGameOver}
@@ -509,6 +530,17 @@ const TileContents = styled.div<{
           500ms ease-in;
       `;
       break;
+    case GridTileState.RevealIncorrect:
+      animationDelay = `100ms`;
+      animation = css`
+        animation: ${createIncorrectReveal(
+            theme.colors.text,
+            theme.colors.tileSecondary,
+            theme.colors.primary,
+          )}
+          500ms ease-in;
+      `;
+      break;
   }
 
   const cursorColor = theme.colors.app;
@@ -646,6 +678,8 @@ const ScoredTileContents = styled.div<{
     : theme.colors.primary;
   const borderColor = hasCursor
     ? cursorColor
+    : state === GridTileState.RevealIncorrect
+    ? "#f03e3e"
     : hasLetter
     ? theme.colors.highlightBorder
     : theme.colors.tileSecondary;

@@ -15,43 +15,14 @@ import {
   validateBoard,
   validateWordIsland,
 } from "../utils/board-validator";
-import {
-  Board,
-  Config,
-  Directions,
-  Letter,
-  getPuzzleNumber,
-  isBoardScored,
-} from "../utils/game";
-import { ScoredSolutionBoard, SolutionBoard } from "../utils/words-helper";
+import { Config, Letter, getPuzzleNumber, isBoardScored } from "../utils/game";
+import { ScoredSolutionBoard } from "../utils/words-helper";
 import { useBoard } from "./useBoard";
 import { useLetters } from "./useLetters";
 
-export type GameOptions = {
-  solutionBoard: SolutionBoard;
-  isGameOver: boolean;
-  board: Board;
-  letters: Letter[];
-  unusedLetters: Letter[];
-  boardLetterIds: Set<string>;
-  setLetterOnBoard: (letter: Letter) => void;
-  shuffleLetters: () => void;
-  positionOfShuffle: number;
-  hasStartedGame: boolean;
-  requestFinish: () => void;
-  clearBoard: () => void;
-  flipCursorDirection: () => void;
-  canFinish: boolean;
-  updateCursor: (row: number, col: number) => void;
-  backspaceBoard: () => void;
-  getShareClipboardItem: () => Promise<[ClipboardItem, File] | null>;
-  getScoredShareClipboardItem: () => Promise<[ClipboardItem, File] | null>;
-  shiftBoard: (direction: Directions) => void;
-  moveCursorInDirection: (direction: Directions) => void;
-  updateBoardWithNewScoreMode: (newScoreMode: boolean) => void;
-};
+export type GameOptions = ReturnType<typeof useGame>;
 
-export const useGame = (): GameOptions => {
+export const useGame = () => {
   const { openStats } = useContext(ModalsContext);
   const { clearToast } = useContext(ToastContext);
   const { isGameOver, setIsGameOver, hardMode, scoreMode } = useContext(GlobalStatesContext);
@@ -100,7 +71,7 @@ export const useGame = (): GameOptions => {
   );
 
   const canFinish = useMemo(() => {
-    const [_, allWordsAreValid] = validateBoard(board);
+    const [_, allWordsAreValid] = validateBoard({ board, mode: "submit" });
     const isBoardComplete = tilesAreConnected && boardLetterIds.size === Config.MaxLetters;
 
     // Hard mode lets you submit without every word guarenteed to be valid.
@@ -116,7 +87,7 @@ export const useGame = (): GameOptions => {
     clearToast();
 
     // Validate the board.
-    const [newBoard] = validateBoard(board);
+    const [newBoard] = validateBoard({ board, mode: "submit" });
 
     // Score the board.
     const finalBoard = scoreMode ? createScoredBoard(newBoard) : newBoard;
@@ -226,6 +197,7 @@ export const useGame = (): GameOptions => {
     getShareClipboardItem,
     getScoredShareClipboardItem,
     updateBoardWithNewScoreMode,
+    setBoard,
   };
 };
 

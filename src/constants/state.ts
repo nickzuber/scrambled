@@ -6,6 +6,7 @@ export const PersistedStorage = {
 };
 
 export const PersistedStates = {
+  SubmitCounter: PersistedStorage.Stamp + "submit-counter",
   FirstTime: PersistedStorage.Stamp + "first-time",
   GameOver: seed + PersistedStorage.SeedDivider + PersistedStorage.Stamp + "game-over",
   Board: seed + PersistedStorage.SeedDivider + PersistedStorage.Stamp + "todays-board",

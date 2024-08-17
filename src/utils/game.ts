@@ -33,11 +33,19 @@ export enum TileState {
   VALID = "valid",
   INVALID = "invalid",
   MIXED = "mixed",
+  INCORRECT = "incorrect",
 }
 
 export enum TileChangeReason {
+  // ??
   MOVED = "moved",
+
+  // ???
   LETTER = "letter",
+
+  // When we validate the board to find any incorrect words, and want to show
+  // those tiles to the user so they can fix it.
+  VALIDATE = "validate",
 }
 
 export interface Tile {

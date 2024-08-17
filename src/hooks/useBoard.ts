@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { PersistedStates } from "../constants/state";
 import createPersistedState from "../libs/use-persisted-state";
+import { resetBoardTileState } from "../utils/board-validator";
 import {
   Board,
   Config,
@@ -41,7 +42,7 @@ export const useBoard = () => {
     (letter: Letter) => {
       const { row, col } = board.cursor;
       const newCursor = incrementCursor(board);
-      const newTiles = board.tiles.slice();
+      const newTiles = resetBoardTileState(board).tiles;
 
       // Set new tile.
       newTiles[row][col].letter = letter;
@@ -57,9 +58,9 @@ export const useBoard = () => {
     const { row, col } = board.cursor;
     const currentTileHasLetter = getTileAtCursor(board);
 
-    // Letter on current tile, just delete it and move backwards like normal.
+    // Letter on current tile, just delete it but don't move cursor backwards.
+    // This is how the NYT crossword UX works and its nice.
     if (currentTileHasLetter.letter) {
-      const newCursor = decrementCursor(board);
       const newTiles = board.tiles.slice();
 
       // Set new tile.
@@ -67,7 +68,7 @@ export const useBoard = () => {
       newTiles[row][col].state = TileState.IDLE;
       newTiles[row][col].changeReason = undefined;
 
-      return setBoard({ cursor: newCursor, tiles: newTiles });
+      return setBoard({ cursor: board.cursor, tiles: newTiles });
     }
 
     // No letter on current tile, we want to delete the letter before the next

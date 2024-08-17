@@ -1,6 +1,6 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FC, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useContext, useEffect, useState } from "react";
 import { FadeIn, PopIn } from "../constants/animations";
 import { AppTheme } from "../constants/themes";
 import { GameContext } from "../contexts/game";
@@ -27,20 +27,19 @@ export const Controls: FC = () => {
     isGameOver,
     flipCursorDirection,
     unusedLetters,
+    setBoard,
   } = useContext(GameContext);
   const { sendToast } = useContext(ToastContext);
-  const { hardMode } = useContext(GlobalStatesContext);
+  const { hardMode, setSubmitCount } = useContext(GlobalStatesContext);
 
   const [isInShiftBoardMode, setIsInShiftBoardMode] = useState(false);
 
   const disableEnterButton = !canFinish || isGameOver;
 
-  const allWordsAreValid = useMemo(() => {
-    const [_, allWordsAreValid] = validateBoard(board);
-    return allWordsAreValid;
-  }, [board]);
-
   const onEnterPress = useCallback(() => {
+    const [checkedBoard, allWordsAreValid] = validateBoard({ board, mode: "validate" });
+    setSubmitCount((curCount) => curCount + 1);
+
     if (disableEnterButton) {
       if (hardMode) {
         const message =
@@ -56,6 +55,11 @@ export const Controls: FC = () => {
             ? "At least one of your words aren't valid"
             : "All words must be connected like a crossword"; // Assumed based on this is the only scenario left
         sendToast(message);
+
+        // If every letter is used and there are some invalid words, call those out.
+        if (unusedLetters.length === 0 && !allWordsAreValid) {
+          setBoard(checkedBoard);
+        }
       }
     } else {
       if (hardMode) {
@@ -72,10 +76,12 @@ export const Controls: FC = () => {
   }, [
     hardMode,
     sendToast,
-    allWordsAreValid,
     disableEnterButton,
     unusedLetters,
     requestFinish,
+    board,
+    setBoard,
+    setSubmitCount,
   ]);
 
   const onLetterButtonPress = useCallback(

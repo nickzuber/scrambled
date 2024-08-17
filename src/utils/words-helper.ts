@@ -38,7 +38,7 @@ export const MaxLetters = Config.MaxLetters;
 
 // Create the seeded random number generator for the day.
 const date = new Date();
-export const seed = `zx${date.getMonth()}${date.getDate()}${date.getFullYear()}`;
+export const seed = `${date.getMonth()}${date.getDate()}${date.getFullYear()}`;
 export const randomGenerator = generator.create(seed);
 
 // @DEBUGGING
