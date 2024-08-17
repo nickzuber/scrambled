@@ -37,10 +37,10 @@ export enum TileState {
 }
 
 export enum TileChangeReason {
-  // ??
+  // When a tile updated because the board was shifted.
   MOVED = "moved",
 
-  // ???
+  // When a tile updated because a letter was just placed down.
   LETTER = "letter",
 
   // When we validate the board to find any incorrect words, and want to show
