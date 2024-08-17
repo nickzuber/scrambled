@@ -195,7 +195,7 @@ const GridTile: FC<GridTileProps> = ({
     } else if (state === TileState.IDLE) {
       setGridTileState(GridTileState.Idle);
     }
-  }, [tile]);
+  }, [tile.state]);
 
   // @DEBUGGING
   // if (tile.row === 3 && tile.col === 0) {
