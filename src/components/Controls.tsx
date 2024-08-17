@@ -106,7 +106,7 @@ export const Controls: FC = () => {
 
       switch (key) {
         case "enter":
-          requestFinish();
+          onEnterPress();
           break;
         case "backspace":
           backspaceBoard();
@@ -146,7 +146,7 @@ export const Controls: FC = () => {
     setLetterOnBoard,
     flipCursorDirection,
     moveCursorInDirection,
-    requestFinish,
+    onEnterPress,
     isGameOver,
   ]);
 

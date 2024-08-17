@@ -598,3 +598,15 @@ export function getPuzzleNumber() {
   const day = Math.floor(diff / oneDay);
   return day;
 }
+
+export function formatAsTimer(time: number): string {
+  const minutes = Math.floor(time / 60);
+  const seconds = time % 60;
+
+  // This is the cap that I am willing to show.
+  if (minutes > 99) {
+    return "99:99";
+  }
+
+  return `${String(minutes)}:${String(seconds).padStart(2, "0")}`;
+}

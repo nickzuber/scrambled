@@ -171,7 +171,7 @@ export const useGame = () => {
       const clipboardItem = new ClipboardItem({
         "image/png": imgBlob as Blob,
       });
-      const blobFile = new File([imgBlob], `Crosswordle-${getPuzzleNumber()}.png`, {
+      const blobFile = new File([imgBlob], `Scrambled #${getPuzzleNumber()}.png`, {
         type: "image/png",
       });
       return [clipboardItem, blobFile] as [ClipboardItem, File];
@@ -203,7 +203,7 @@ export const useGame = () => {
       const clipboardItem = new ClipboardItem({
         "image/png": imgBlob as Blob,
       });
-      const blobFile = new File([imgBlob], `Crosswordle-${getPuzzleNumber()}.png`, {
+      const blobFile = new File([imgBlob], `Scrambled #${getPuzzleNumber()}.png`, {
         type: "image/png",
       });
 

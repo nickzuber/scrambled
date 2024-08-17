@@ -1,17 +1,18 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FC, useContext, useEffect } from "react";
+import { FC, useContext, useEffect, useRef } from "react";
 import { Canvas } from "./components";
 import { Controls } from "./components/Controls";
 import { Header } from "./components/Header";
 import { Intro } from "./components/Intro";
-import { Modal } from "./components/Modal";
 import { AppTheme } from "./constants/themes";
 import { GameContext } from "./contexts/game";
 import { GlobalStatesContext } from "./contexts/global";
 import { PageContext } from "./contexts/page";
+import { TimerStateContext } from "./contexts/timer";
 import { useLocalStorageGC } from "./hooks/useLocalStorageGC";
 import { Page } from "./hooks/usePage";
+import { useSyncTimerToSession } from "./hooks/useSyncTimerToSession";
 
 export interface SceneProps {
   darkTheme: boolean;
@@ -56,7 +57,7 @@ export const Scene: FC<SceneProps> = ({ darkTheme, setDarkTheme }) => {
             />
             <Canvas />
             <Controls />
-            <Modal />
+            <Timer />
           </Container>
         );
     }
@@ -64,6 +65,33 @@ export const Scene: FC<SceneProps> = ({ darkTheme, setDarkTheme }) => {
 
   return <>{renderScene()}</>;
 };
+
+/**
+ * This is its own component so that the syncer doesn't disrupt the rest of the
+ * components' lifecycles that don't really want to subscribe to timer updates.
+ */
+function Timer() {
+  const { isGameOver } = useContext(GameContext);
+  const { timer, setTimer } = useContext(TimerStateContext);
+  const { setFastedCompletion } = useContext(GlobalStatesContext);
+  const alreadySetRef = useRef(false);
+
+  useSyncTimerToSession();
+
+  useEffect(() => {
+    if (isGameOver && !alreadySetRef.current) {
+      setFastedCompletion((prevFastest) => {
+        if (!prevFastest) {
+          return timer;
+        } else {
+          return Math.min(prevFastest, timer);
+        }
+      });
+    }
+  }, [isGameOver, timer, setFastedCompletion, setTimer]);
+
+  return null;
+}
 
 const Container = styled.div`
   max-width: 600px;

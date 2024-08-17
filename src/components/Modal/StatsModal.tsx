@@ -5,13 +5,14 @@ import { FadeIn, Shine, createSuccessReveal } from "../../constants/animations";
 import { AppTheme } from "../../constants/themes";
 import { GameContext } from "../../contexts/game";
 import { GlobalStatesContext } from "../../contexts/global";
+import { TimerStateContext } from "../../contexts/timer";
 import { ToastContext } from "../../contexts/toast";
 import {
   createScoredBoard,
   createScoredSolutionBoard,
   createUnscoredBoard,
 } from "../../utils/board-validator";
-import { isBoardScored } from "../../utils/game";
+import { formatAsTimer, isBoardScored } from "../../utils/game";
 import { Modal } from "./Modal";
 
 function zeroPad(num: number, places: number) {
@@ -93,8 +94,15 @@ export const StatsModalImpl: FC = () => {
   const { sendToast } = useContext(ToastContext);
   const [timeLeft, setTimeLeft] = useState(getTimeLeftInDay());
   const [showPreview, setShowPreview] = useState(true);
-  const { scoreMode, streakCount, totalCompletionCount, totalWordCount, mostWordsInAPuzzle } =
-    useContext(GlobalStatesContext);
+  const {
+    scoreMode,
+    showTimer,
+    streakCount,
+    totalCompletionCount,
+    totalWordCount,
+    mostWordsInAPuzzle,
+    fastedCompletion,
+  } = useContext(GlobalStatesContext);
 
   const getShareClipboardItemForBoard = scoreMode
     ? getScoredShareClipboardItem
@@ -126,7 +134,7 @@ export const StatsModalImpl: FC = () => {
 
     const results = await getShareClipboardItemForBoard();
     if (!results) {
-      sendToast("Something went wrong.");
+      sendToast("Unable to share\nTry taking a screenshot instead");
       return;
     }
 
@@ -148,7 +156,7 @@ export const StatsModalImpl: FC = () => {
         .then(() => sendToast("Copied to clipboard!"))
         .catch(() => sendToast("Unable to copy\nTry taking a screenshot instead"));
     } else {
-      sendToast("Something went wrong.");
+      sendToast("Unable to share\nTry taking a screenshot instead");
     }
   }
 
@@ -161,7 +169,7 @@ export const StatsModalImpl: FC = () => {
         <StatItem
           title={streakCount.toLocaleString()}
           byline={"Streak"}
-          titleIcon={streakCount > 7 ? <FireSvg /> : undefined}
+          bylineIcon={streakCount >= 7 ? <FireSvg /> : undefined}
         />
       </FlexContainer>
       <Divider theme={theme} />
@@ -171,7 +179,12 @@ export const StatsModalImpl: FC = () => {
           byline={"Most words"}
           bylineIcon={<QuoteSvg />}
         />
-        <StatItem title={"3:22"} byline={"Quickest finish"} bylineIcon={<LightningSvg />} />
+        {showTimer ? <RunningTimerStatItem /> : null}
+        <StatItem
+          title={fastedCompletion ? formatAsTimer(fastedCompletion) : "—"}
+          byline={"Quickest finish"}
+          bylineIcon={<LightningSvg />}
+        />
       </FlexContainer>
       <Divider theme={theme} />
       {!isGameOver ? (
@@ -249,6 +262,14 @@ export const StatsModalImpl: FC = () => {
   );
 };
 
+function RunningTimerStatItem() {
+  const { timer } = useContext(TimerStateContext);
+
+  return (
+    <StatItem title={formatAsTimer(timer)} byline={"Today's time"} bylineIcon={<PauseSvg />} />
+  );
+}
+
 const Button = styled.button<{ theme: AppTheme; presentAsDisabled?: boolean }>`
   animation-delay: 150ms;
   user-select: none;
@@ -296,7 +317,7 @@ function StatItem(props: {
 
 const StatItemContainer = styled.div`
   flex: 1;
-  padding-block: 10px;
+  padding-block: 14px 12px;
 
   display: flex;
   flex-direction: column;
@@ -337,134 +358,6 @@ const FlexContainer = styled.div`
   align-items: center;
   justify-content: space-around;
 `;
-
-const MiniBoardEmptyRows = () => {
-  const theme = useTheme() as AppTheme;
-  return (
-    <>
-      <MiniRow>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-      </MiniRow>
-      <MiniRow>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-      </MiniRow>
-      <MiniRow>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-      </MiniRow>
-      <MiniRow>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-      </MiniRow>
-      <MiniRow>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-      </MiniRow>
-      <MiniRow>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-        <MiniTileWrapper>
-          <MiniTileContents theme={theme} />
-        </MiniTileWrapper>
-      </MiniRow>
-    </>
-  );
-};
 
 const MiniBoard = styled.div<{
   isGameOver: boolean;
@@ -768,26 +661,40 @@ const TimerSvg = () => {
   const theme = useTheme() as AppTheme;
   return (
     <svg
-      width="16px"
-      height="16px"
-      viewBox="0 0 24 24"
-      fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      color="#000000"
-      strokeWidth="1.5"
+      width="18"
+      height="18"
+      viewBox="0 0 22 25"
+      fill={"#51cf66"}
+      stroke={theme.colors.text}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M12 5.25C7.16751 5.25 3.25 9.16751 3.25 14C3.25 18.8325 7.16751 22.75 12 22.75C16.8325 22.75 20.75 18.8325 20.75 14C20.75 9.16751 16.8325 5.25 12 5.25ZM12.75 10C12.75 9.58579 12.4142 9.25 12 9.25C11.5858 9.25 11.25 9.58579 11.25 10L11.25 14C11.25 14.4142 11.5858 14.75 12 14.75C12.4142 14.75 12.75 14.4142 12.75 14L12.75 10Z"
-        fill={theme.colors.app}
-      ></path>
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M8.25 2C8.25 1.58579 8.58579 1.25 9 1.25L15 1.25C15.4142 1.25 15.75 1.58579 15.75 2C15.75 2.41421 15.4142 2.75 15 2.75L9 2.75C8.58579 2.75 8.25 2.41421 8.25 2Z"
-        fill={theme.colors.app}
-      ></path>
+      <circle cx="12" cy="12" r="6" />
+      <polyline points="12 10 12 12 13 13" />
+      <path d="m16.13 7.66-.81-4.05a2 2 0 0 0-2-1.61h-2.68a2 2 0 0 0-2 1.61l-.78 4.05" />
+      <path d="m7.88 16.36.8 4a2 2 0 0 0 2 1.61h2.72a2 2 0 0 0 2-1.61l.81-4.05" />
+    </svg>
+  );
+};
+
+const PauseSvg = () => {
+  const theme = useTheme() as AppTheme;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="18"
+      height="18"
+      viewBox="0 0 22 25"
+      fill={"#51cf66"}
+      stroke={theme.colors.text}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="14" y="4" width="4" height="16" rx="1" />
+      <rect x="6" y="4" width="4" height="16" rx="1" />
     </svg>
   );
 };
@@ -817,14 +724,18 @@ const LightningSvg = () => {
 const FireSvg = () => {
   const theme = useTheme() as AppTheme;
   return (
-    <svg width="20" height="24" viewBox="0 0 24 24">
-      <path
-        fill="#ee3044"
-        stroke="#000000"
-        strokeWidth={1.5}
-        d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"
-      />
-      <path d="M0 0h24v24H0z" fill="none" />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="18px"
+      height="18px"
+      viewBox="0 0 16 26"
+      fill="#fa5252"
+      stroke={theme.colors.text}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
     </svg>
   );
 };
@@ -857,28 +768,18 @@ const QuoteSvg = () => {
   const theme = useTheme() as AppTheme;
   return (
     <svg
-      width="18px"
-      height="18px"
-      viewBox="0 0 24 24"
-      fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      color="#000000"
-      stroke-width="1.5"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="#fd7e14"
+      stroke={theme.colors.text}
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     >
-      <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M9.21255 12.75C9.12943 13.5242 8.9054 14.1421 8.5147 14.6891C7.99181 15.4211 7.11571 16.1036 5.66459 16.8292C5.29411 17.0144 5.14394 17.4649 5.32918 17.8354C5.51442 18.2059 5.96493 18.3561 6.33541 18.1708C7.88429 17.3964 9.00819 16.5789 9.7353 15.5609C10.4761 14.5238 10.75 13.3571 10.75 12V7.5C10.75 6.53351 9.96649 5.75 9 5.75H5C4.03351 5.75 3.25 6.53351 3.25 7.5V11C3.25 11.9665 4.03352 12.75 5 12.75H9.21255Z"
-        fill="#ff922b"
-        stroke="#000000"
-      ></path>
-      <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M19.2125 12.75C19.1294 13.5242 18.9054 14.1421 18.5147 14.6891C17.9918 15.4211 17.1157 16.1036 15.6646 16.8292C15.2941 17.0144 15.1439 17.4649 15.3292 17.8354C15.5144 18.2059 15.9649 18.3561 16.3354 18.1708C17.8843 17.3964 19.0082 16.5789 19.7353 15.5609C20.4761 14.5238 20.75 13.3571 20.75 12V7.5C20.75 6.53352 19.9665 5.75 19 5.75H15C14.0335 5.75 13.25 6.53352 13.25 7.5V11C13.25 11.9665 14.0335 12.75 15 12.75H19.2125Z"
-        fill="#ff922b"
-        stroke="#000000"
-      ></path>
+      <path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z" />
+      <path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z" />
     </svg>
   );
 };

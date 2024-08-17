@@ -2,7 +2,6 @@ import { useState } from "react";
 import { PersistedStates } from "../constants/state";
 import createPersistedState from "../libs/use-persisted-state";
 
-const useSubmitCounter = createPersistedState<number>(PersistedStates.SubmitCounter);
 const useFirstTime = createPersistedState<boolean>(PersistedStates.FirstTime);
 const useIsGameOver = createPersistedState<boolean>(PersistedStates.GameOver);
 const useHardMode = createPersistedState<boolean>(PersistedStates.HardMode);
@@ -17,6 +16,10 @@ const useLastCompletedPuzzleNumber = createPersistedState<number | undefined>(
   PersistedStates.LastCompledPuzzleNumber,
 );
 const useMostWordsInAPuzzle = createPersistedState<number>(PersistedStates.MostWordsInAPuzzle);
+const useFastedCompletion = createPersistedState<number | undefined>(
+  PersistedStates.FastedCompletion,
+);
+const useShowTimer = createPersistedState<boolean>(PersistedStates.ShowTimer);
 
 export type GlobalStatesOptions = ReturnType<typeof useGlobalStates>;
 
@@ -26,6 +29,7 @@ export function useGlobalStates() {
   const [isGameOver, setIsGameOver] = useIsGameOver(false);
   const [hardMode, setHardMode] = useHardMode(false);
   const [scoreMode, setScoreMode] = useScoreMode(false);
+  const [showTimer, setShowTimer] = useShowTimer(false);
 
   const [streakCount, setStreakCount] = useStreak(0);
   const [totalWordCount, setTotalWordCount] = useTotalWordCount(0);
@@ -33,6 +37,7 @@ export function useGlobalStates() {
   const [lastCompletedPuzzleNumber, setLastCompletedPuzzleNumber] =
     useLastCompletedPuzzleNumber(undefined);
   const [mostWordsInAPuzzle, setMostWordsInAPuzzle] = useMostWordsInAPuzzle(0);
+  const [fastedCompletion, setFastedCompletion] = useFastedCompletion(undefined);
 
   return {
     submitCount,
@@ -50,6 +55,9 @@ export function useGlobalStates() {
     scoreMode,
     setScoreMode,
 
+    showTimer,
+    setShowTimer,
+
     streakCount,
     setStreakCount,
 
@@ -64,5 +72,8 @@ export function useGlobalStates() {
 
     mostWordsInAPuzzle,
     setMostWordsInAPuzzle,
+
+    fastedCompletion,
+    setFastedCompletion,
   };
 }

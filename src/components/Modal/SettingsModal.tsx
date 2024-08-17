@@ -40,7 +40,8 @@ export const SettingsModalImpl: FC<SettingsModalImplProps> = ({
   setDarkTheme,
   secret,
 }) => {
-  const { hardMode, setHardMode, scoreMode, setScoreMode } = useContext(GlobalStatesContext);
+  const { hardMode, setHardMode, scoreMode, setScoreMode, showTimer, setShowTimer } =
+    useContext(GlobalStatesContext);
   const { updateBoardWithNewScoreMode } = useContext(GameContext);
   const hash = useMemo(() => getAppHash(), []);
 
@@ -62,6 +63,15 @@ export const SettingsModalImpl: FC<SettingsModalImplProps> = ({
         </Label>
         <ToggleContainer>
           <Toggle onClick={() => setHardMode(!hardMode)} enabled={hardMode} />
+        </ToggleContainer>
+      </Setting>
+      <Setting>
+        <Label>
+          <Name>Show timer</Name>
+          <Description>See your speed in stats</Description>
+        </Label>
+        <ToggleContainer>
+          <Toggle onClick={() => setShowTimer(!showTimer)} enabled={showTimer} />
         </ToggleContainer>
       </Setting>
       <Setting>

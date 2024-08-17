@@ -323,7 +323,8 @@ const Paragraph = styled.p`
 `;
 
 const Divider = styled.div<{ theme: AppTheme }>`
-  border-bottom: 1px solid ${(p) => p.theme.colors.tileSecondary};
+  background: ${(p) => p.theme.colors.text};
   width: 100%;
-  margin: 12px auto 18px;
+  height: 1px;
+  margin: 14px auto 16px;
 `;

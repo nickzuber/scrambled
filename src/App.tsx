@@ -8,6 +8,7 @@ import { GameProvider } from "./contexts/game";
 import { GlobalStatesProvider } from "./contexts/global";
 import { ModalsProvider } from "./contexts/modals";
 import { PageProvider } from "./contexts/page";
+import { TimerStateProvider } from "./contexts/timer";
 import { ToastProvider } from "./contexts/toast";
 import "./layout.css";
 import createPersistedState from "./libs/use-persisted-state";
@@ -29,15 +30,17 @@ function App() {
     <ThemeProvider theme={theme}>
       <Analytics />
       <GlobalStatesProvider>
-        <ModalsProvider>
-          <ToastProvider>
-            <PageProvider>
-              <GameProvider>
-                <Scene darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
-              </GameProvider>
-            </PageProvider>
-          </ToastProvider>
-        </ModalsProvider>
+        <TimerStateProvider>
+          <ModalsProvider>
+            <ToastProvider>
+              <PageProvider>
+                <GameProvider>
+                  <Scene darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
+                </GameProvider>
+              </PageProvider>
+            </ToastProvider>
+          </ModalsProvider>
+        </TimerStateProvider>
       </GlobalStatesProvider>
     </ThemeProvider>
   );

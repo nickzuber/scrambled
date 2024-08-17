@@ -84,7 +84,7 @@ export function Intro() {
           <Byline className="slideUp">Continue playing?</Byline>
         ) : (
           <Byline className="slideUp">
-            How many words can you
+            Which words can you
             <br /> cook up on our grid–dle?
           </Byline>
         )}

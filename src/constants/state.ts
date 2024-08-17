@@ -19,8 +19,10 @@ export const PersistedStates = {
   GameOver: seed + PersistedStorage.SeedDivider + PersistedStorage.Stamp + "game-over",
   Board: seed + PersistedStorage.SeedDivider + PersistedStorage.Stamp + "todays-board",
   Letters: seed + PersistedStorage.SeedDivider + PersistedStorage.Stamp + "todays-letters",
+  Timer: seed + PersistedStorage.SeedDivider + PersistedStorage.Stamp + "timer",
 
   // Long lasting bits of data.
+  /** @deprecated */
   SubmitCounter: PersistedStorage.Stamp + "submit-counter",
   FirstTime: PersistedStorage.Stamp + "first-time",
   /** @deprecated */
@@ -33,4 +35,6 @@ export const PersistedStates = {
   TotalCompletionCount: PersistedStorage.Stamp + "total-completion-count",
   LastCompledPuzzleNumber: PersistedStorage.Stamp + "last-completion-ts",
   MostWordsInAPuzzle: PersistedStorage.Stamp + "most-words-in-a-puzzle",
+  FastedCompletion: PersistedStorage.Stamp + "fasted-completion",
+  ShowTimer: PersistedStorage.Stamp + "show-timer",
 };

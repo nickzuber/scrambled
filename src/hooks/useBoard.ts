@@ -40,6 +40,11 @@ export const useBoard = () => {
 
   const setLetterOnBoard = useCallback(
     (letter: Letter) => {
+      const activeElement = document.activeElement as HTMLElement;
+      if (activeElement) {
+        activeElement?.blur();
+      }
+
       const { row, col } = board.cursor;
       const newCursor = incrementCursor(board);
       const newTiles = resetBoardTileState(board).tiles;
@@ -55,6 +60,11 @@ export const useBoard = () => {
   );
 
   const backspaceBoard = useCallback(() => {
+    const activeElement = document.activeElement as HTMLElement;
+    if (activeElement) {
+      activeElement?.blur();
+    }
+
     const { row, col } = board.cursor;
     const currentTileHasLetter = getTileAtCursor(board);
 
