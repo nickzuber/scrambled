@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { FC, useContext, useMemo } from "react";
 import { GameContext } from "../../contexts/game";
 import { GlobalStatesContext } from "../../contexts/global";
+import { deleteEphemeralData } from "../../hooks/useLocalStorageGC";
 import { Modal } from "./Modal";
 
 type CrosswordleObj = {
@@ -31,9 +32,14 @@ export const SettingsModal: FC = () => {
 export interface SettingsModalImplProps {
   darkTheme: boolean;
   setDarkTheme: (state: boolean) => void;
+  secret?: boolean;
 }
 
-export const SettingsModalImpl: FC<SettingsModalImplProps> = ({ darkTheme, setDarkTheme }) => {
+export const SettingsModalImpl: FC<SettingsModalImplProps> = ({
+  darkTheme,
+  setDarkTheme,
+  secret,
+}) => {
   const { hardMode, setHardMode, scoreMode, setScoreMode } = useContext(GlobalStatesContext);
   const { updateBoardWithNewScoreMode } = useContext(GameContext);
   const hash = useMemo(() => getAppHash(), []);
@@ -74,6 +80,23 @@ export const SettingsModalImpl: FC<SettingsModalImplProps> = ({ darkTheme, setDa
           />
         </ToggleContainer>
       </Setting>
+      {secret ? (
+        <Setting>
+          <Label>
+            <Name>Reset puzzle</Name>
+            <Description>Start today's puzzle over again</Description>
+          </Label>
+          <ToggleContainer>
+            <Toggle
+              onClick={() => {
+                deleteEphemeralData();
+                window.location.reload();
+              }}
+              enabled={false}
+            />
+          </ToggleContainer>
+        </Setting>
+      ) : null}
       <TagContainer
         onClick={() => {
           window.open("https://github.com/nickzuber/cross-wordle", "_blank");

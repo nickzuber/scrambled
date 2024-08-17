@@ -9,7 +9,6 @@ import { Modal } from "./components/Modal";
 import { AppTheme } from "./constants/themes";
 import { GameContext } from "./contexts/game";
 import { GlobalStatesContext } from "./contexts/global";
-import { ModalsContext } from "./contexts/modals";
 import { PageContext } from "./contexts/page";
 import { useLocalStorageGC } from "./hooks/useLocalStorageGC";
 import { Page } from "./hooks/usePage";
@@ -21,9 +20,8 @@ export interface SceneProps {
 
 export const Scene: FC<SceneProps> = ({ darkTheme, setDarkTheme }) => {
   const theme = useTheme() as AppTheme;
-  const { openInstructions, openStats, isStatsOpen } = useContext(ModalsContext);
   const { page } = useContext(PageContext);
-  const { board, isGameOver } = useContext(GameContext);
+  const { isGameOver } = useContext(GameContext);
   const { isFirstTime, setIsFirstTime } = useContext(GlobalStatesContext);
 
   // Clean up old keys.

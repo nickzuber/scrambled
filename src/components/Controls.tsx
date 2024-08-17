@@ -57,7 +57,8 @@ export const Controls: FC = () => {
         sendToast(message);
 
         // If every letter is used and there are some invalid words, call those out.
-        if (unusedLetters.length === 0 && !allWordsAreValid) {
+        // Intentionally allow for a shake-check even if all the letters aren't placed.
+        if (!allWordsAreValid) {
           setBoard(checkedBoard);
         }
       }

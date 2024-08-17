@@ -13,18 +13,11 @@ export function Intro() {
   const theme = useTheme() as AppTheme;
   const [startLoadingTransitionOut, setStartLoadingTransitionOut] = useState(false);
   const [startTransitionOut, setStartTransitionOut] = useState(false);
-  const { hasStartedGame } = useContext(GameContext);
+  const { hasStartedGame, isGameOver } = useContext(GameContext);
   const { setPage } = useContext(PageContext);
 
-  // Faux loading state, helps with font and vibes.
+  // Loading state that completes when our font assets are ready.
   const [loading, setLoading] = useState(true);
-  // useEffect(() => {
-  //   const ts = setTimeout(() => {
-  //     setStartLoadingTransitionOut(true);
-  //     setTimeout(() => setLoading(false), FADE_OUT_TIMING_MS);
-  //   }, 1000);
-  //   return () => clearTimeout(ts);
-  // }, []);
 
   const dateMessage = useMemo(() => {
     const today = new Date();
@@ -85,7 +78,9 @@ export function Intro() {
           Scrambled
         </Title>
         <Divider className="slideUpAndWidenOut" theme={theme} />
-        {hasStartedGame ? (
+        {isGameOver ? (
+          <Byline className="slideUp">Miss us already?</Byline>
+        ) : hasStartedGame ? (
           <Byline className="slideUp">Continue playing?</Byline>
         ) : (
           <Byline className="slideUp">
@@ -94,7 +89,7 @@ export function Intro() {
           </Byline>
         )}
         <Button className="slideUp" theme={theme} onClick={handlePlayClick}>
-          Play
+          {isGameOver ? "View your puzzle" : "Play"}
         </Button>
         <DateMessage className="slideUp">{dateMessage}</DateMessage>
         <AuthorMessage className="slideUp">Created by Nick Zuber</AuthorMessage>

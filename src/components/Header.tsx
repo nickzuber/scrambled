@@ -1,6 +1,6 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FC, useContext, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { AppTheme } from "../constants/themes";
 import { PageContext } from "../contexts/page";
 import { Page } from "../hooks/usePage";
@@ -28,7 +28,25 @@ export const Header: FC<HeaderProps> = ({
   const [showStats, setShowStats] = useState<boolean>(false);
   const { setPage } = useContext(PageContext);
 
+  const [secret, setSecret] = useState(false);
+  const tapsRef = useRef(0);
+  const tapsTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const updaterRef = useRef(false);
+
+  const handleSecretTaps = useCallback(() => {
+    tapsRef.current += 1;
+    if (tapsTimeoutRef.current) {
+      clearTimeout(tapsTimeoutRef.current);
+    }
+
+    if (tapsRef.current >= 10) {
+      setSecret(true);
+    }
+
+    tapsTimeoutRef.current = setTimeout(() => {
+      tapsRef.current = 0;
+    }, 500);
+  }, []);
 
   useEffect(() => {
     if (isGameOver && !updaterRef.current) {
@@ -94,9 +112,13 @@ export const Header: FC<HeaderProps> = ({
         </BottomDrawer>
         {/* Settings */}
         <BottomDrawer
-          title={"Settings"}
+          title={<span onTouchStart={handleSecretTaps}>Settings</span>}
           renderContents={() => (
-            <SettingsModalImpl darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
+            <SettingsModalImpl
+              darkTheme={darkTheme}
+              setDarkTheme={setDarkTheme}
+              secret={secret}
+            />
           )}
         >
           <Button theme={theme}>Settings</Button>

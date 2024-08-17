@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { PersistedStates } from "../constants/state";
 import createPersistedState from "../libs/use-persisted-state";
 
@@ -15,11 +16,12 @@ const useTotalCompletionCount = createPersistedState<number>(
 const useLastCompletedPuzzleNumber = createPersistedState<number | undefined>(
   PersistedStates.LastCompledPuzzleNumber,
 );
+const useMostWordsInAPuzzle = createPersistedState<number>(PersistedStates.MostWordsInAPuzzle);
 
 export type GlobalStatesOptions = ReturnType<typeof useGlobalStates>;
 
 export function useGlobalStates() {
-  const [submitCount, setSubmitCount] = useSubmitCounter(0);
+  const [submitCount, setSubmitCount] = useState(0);
   const [isFirstTime, setIsFirstTime] = useFirstTime(false);
   const [isGameOver, setIsGameOver] = useIsGameOver(false);
   const [hardMode, setHardMode] = useHardMode(false);
@@ -30,6 +32,7 @@ export function useGlobalStates() {
   const [totalCompletionCount, setTotalCompletionCount] = useTotalCompletionCount(0);
   const [lastCompletedPuzzleNumber, setLastCompletedPuzzleNumber] =
     useLastCompletedPuzzleNumber(undefined);
+  const [mostWordsInAPuzzle, setMostWordsInAPuzzle] = useMostWordsInAPuzzle(0);
 
   return {
     submitCount,
@@ -58,5 +61,8 @@ export function useGlobalStates() {
 
     lastCompletedPuzzleNumber,
     setLastCompletedPuzzleNumber,
+
+    mostWordsInAPuzzle,
+    setMostWordsInAPuzzle,
   };
 }
