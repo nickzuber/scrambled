@@ -1,6 +1,5 @@
 import { toBlob } from "html-to-image";
 import React, { useCallback, useContext, useMemo } from "react";
-import { ModalsContext } from "../contexts/modals";
 import { ToastContext } from "../contexts/toast";
 
 import { GlobalStatesContext } from "../contexts/global";
@@ -8,6 +7,7 @@ import { publishEvent } from "../utils/analytics";
 import {
   countBoardScore,
   countSolutionBoardScore,
+  countValidWordsOnBoard,
   createScoredBoard,
   createUnscoredBoard,
   getInvalidWords,
@@ -23,9 +23,18 @@ import { useLetters } from "./useLetters";
 export type GameOptions = ReturnType<typeof useGame>;
 
 export const useGame = () => {
-  const { openStats } = useContext(ModalsContext);
   const { clearToast } = useContext(ToastContext);
-  const { isGameOver, setIsGameOver, hardMode, scoreMode } = useContext(GlobalStatesContext);
+  const {
+    isGameOver,
+    setIsGameOver,
+    hardMode,
+    scoreMode,
+    setStreakCount,
+    setTotalWordCount,
+    setTotalCompletionCount,
+    setLastCompletedPuzzleNumber,
+    lastCompletedPuzzleNumber,
+  } = useContext(GlobalStatesContext);
   const { letters, solutionBoard, shuffleLetters, positionOfShuffle } = useLetters();
   const {
     board,
@@ -104,9 +113,40 @@ export const useGame = () => {
     // End the game.
     setIsGameOver(true);
 
-    // Show the stats modal.
-    setTimeout(openStats, 2000);
-  }, [board, canFinish, clearToast, scoreMode]); // eslint-disable-line react-hooks/exhaustive-deps
+    // Update stats.
+    setTotalWordCount((prevCount) => prevCount + countValidWordsOnBoard(board));
+    setTotalCompletionCount((prevCount) => prevCount + 1);
+    setStreakCount((prevStreak) => {
+      if (!lastCompletedPuzzleNumber) {
+        // First completion.
+        return 1;
+      } else if (getPuzzleNumber() - lastCompletedPuzzleNumber <= 1) {
+        // If the current puzzle is 1 away from the last completed puzzle, then
+        // they just completed the next one so streak continues.
+        //
+        // E.g. 265 - 264 = 1
+        //
+        // Note that this supports the same puzzle being completed twice as a streak;
+        // this is for testing since its not normally possible.
+        return prevStreak + 1;
+      } else {
+        // If this wasn't the next puzzle, reset the streak.
+        return 1;
+      }
+    });
+    setLastCompletedPuzzleNumber(getPuzzleNumber());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    board,
+    canFinish,
+    clearToast,
+    scoreMode,
+    setStreakCount,
+    setTotalWordCount,
+    setTotalCompletionCount,
+    setLastCompletedPuzzleNumber,
+    lastCompletedPuzzleNumber,
+  ]);
 
   const unusedLetters = letters.filter((letter) => !boardLetterIds.has(letter.id));
   const hasStartedGame = unusedLetters.length !== Config.MaxLetters;

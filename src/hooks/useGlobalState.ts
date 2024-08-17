@@ -7,6 +7,15 @@ const useIsGameOver = createPersistedState<boolean>(PersistedStates.GameOver);
 const useHardMode = createPersistedState<boolean>(PersistedStates.HardMode);
 const useScoreMode = createPersistedState<boolean>(PersistedStates.ScoreMode);
 
+const useStreak = createPersistedState<number>(PersistedStates.Streak);
+const useTotalWordCount = createPersistedState<number>(PersistedStates.TotalWordCount);
+const useTotalCompletionCount = createPersistedState<number>(
+  PersistedStates.TotalCompletionCount,
+);
+const useLastCompletedPuzzleNumber = createPersistedState<number | undefined>(
+  PersistedStates.LastCompledPuzzleNumber,
+);
+
 export type GlobalStatesOptions = ReturnType<typeof useGlobalStates>;
 
 export function useGlobalStates() {
@@ -15,6 +24,12 @@ export function useGlobalStates() {
   const [isGameOver, setIsGameOver] = useIsGameOver(false);
   const [hardMode, setHardMode] = useHardMode(false);
   const [scoreMode, setScoreMode] = useScoreMode(false);
+
+  const [streakCount, setStreakCount] = useStreak(0);
+  const [totalWordCount, setTotalWordCount] = useTotalWordCount(0);
+  const [totalCompletionCount, setTotalCompletionCount] = useTotalCompletionCount(0);
+  const [lastCompletedPuzzleNumber, setLastCompletedPuzzleNumber] =
+    useLastCompletedPuzzleNumber(undefined);
 
   return {
     submitCount,
@@ -31,5 +46,17 @@ export function useGlobalStates() {
 
     scoreMode,
     setScoreMode,
+
+    streakCount,
+    setStreakCount,
+
+    totalWordCount,
+    setTotalWordCount,
+
+    totalCompletionCount,
+    setTotalCompletionCount,
+
+    lastCompletedPuzzleNumber,
+    setLastCompletedPuzzleNumber,
   };
 }

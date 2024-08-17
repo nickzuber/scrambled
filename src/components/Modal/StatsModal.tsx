@@ -1,20 +1,17 @@
 import { css, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FC, Fragment, useContext, useEffect, useMemo, useState } from "react";
+import { FC, useContext, useEffect, useMemo, useState } from "react";
 import { FadeIn, Shine, createSuccessReveal } from "../../constants/animations";
 import { AppTheme } from "../../constants/themes";
 import { GameContext } from "../../contexts/game";
 import { GlobalStatesContext } from "../../contexts/global";
 import { ToastContext } from "../../contexts/toast";
 import {
-  countBoardScore,
-  countSolutionBoardScore,
-  countValidLettersOnBoard,
   createScoredBoard,
   createScoredSolutionBoard,
   createUnscoredBoard,
 } from "../../utils/board-validator";
-import { Config, isBoardScored } from "../../utils/game";
+import { isBoardScored } from "../../utils/game";
 import { Modal } from "./Modal";
 
 function zeroPad(num: number, places: number) {
@@ -95,8 +92,9 @@ export const StatsModalImpl: FC = () => {
   } = useContext(GameContext);
   const { sendToast } = useContext(ToastContext);
   const [timeLeft, setTimeLeft] = useState(getTimeLeftInDay());
-  const [showPreview, setShowPreview] = useState(false);
-  const { scoreMode } = useContext(GlobalStatesContext);
+  const [showPreview, setShowPreview] = useState(true);
+  const { scoreMode, streakCount, totalCompletionCount, totalWordCount } =
+    useContext(GlobalStatesContext);
 
   const getShareClipboardItemForBoard = scoreMode
     ? getScoredShareClipboardItem
@@ -137,15 +135,13 @@ export const StatsModalImpl: FC = () => {
           navigator.clipboard
             .write([clipboardItem])
             .then(() => sendToast("Copied to clipboard!"))
-            .catch(() =>
-              sendToast("Something went wrong with your device's native sharing options."),
-            ),
+            .catch(() => sendToast("Unable to share\nTry taking a screenshot instead")),
         );
     } else if (navigator.clipboard) {
       navigator.clipboard
         .write([clipboardItem])
         .then(() => sendToast("Copied to clipboard!"))
-        .catch(() => sendToast("Something went wrong with your device's clipboard."));
+        .catch(() => sendToast("Unable to copy\nTry taking a screenshot instead"));
     } else {
       sendToast("Something went wrong.");
     }
@@ -153,36 +149,19 @@ export const StatsModalImpl: FC = () => {
 
   return (
     <>
-      {isGameOver ? (
-        <Fragment>
-          {showScoredBoard ? (
-            <Paragraph>
-              Your score today was
-              <Result>
-                {countBoardScore(yourBoard)}/{countSolutionBoardScore(scoredSolutionBoard)}
-              </Result>
-              compared to today's target.
-              <br />
-              <b>
-                {scoreToCompliment(
-                  countBoardScore(yourBoard),
-                  countSolutionBoardScore(scoredSolutionBoard),
-                )}
-              </b>
-            </Paragraph>
-          ) : (
-            <Paragraph>
-              You were able to correctly use
-              <Result>
-                {countValidLettersOnBoard(board)}/{Config.MaxLetters}
-              </Result>
-              letters on your board.
-              <br />
-              <b>{letterCountToCompliment(countValidLettersOnBoard(board))}</b>
-            </Paragraph>
-          )}
-        </Fragment>
-      ) : null}
+      <Divider theme={theme} />
+      <FlexContainer>
+        <StatItem title={totalCompletionCount} byline={"Puzzles"} />
+        <StatItem title={totalWordCount} byline={"Words"} />
+        <StatItem title={streakCount} byline={"Streak"} />
+      </FlexContainer>
+      <Divider theme={theme} />
+      <FlexContainer>
+        <StatItem title={"149"} byline={"Puzzles"} />
+        <StatItem title={"149"} byline={"Puzzles"} />
+      </FlexContainer>
+      <Divider theme={theme} />
+      <Paragraph>The author's solution for today's puzzle</Paragraph>
       {!isGameOver ? (
         <MiniBoard
           theme={theme}
@@ -252,69 +231,246 @@ export const StatsModalImpl: FC = () => {
       )}
 
       {isGameOver ? (
-        <ShareContainer>
-          <ShareSection>
-            <Clock>{timeLeft}</Clock>
-          </ShareSection>
-          <ShareSection>
-            <ShareButton onClick={onShareResults}>
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M19.25 7C19.25 8.24264 18.2426 9.25 17 9.25C15.7574 9.25 14.75 8.24264 14.75 7C14.75 5.75736 15.7574 4.75 17 4.75C18.2426 4.75 19.25 5.75736 19.25 7Z"
-                  stroke="#ffffff"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                ></path>
-                <path
-                  d="M9.25 12C9.25 13.2426 8.24264 14.25 7 14.25C5.75736 14.25 4.75 13.2426 4.75 12C4.75 10.7574 5.75736 9.75 7 9.75C8.24264 9.75 9.25 10.7574 9.25 12Z"
-                  stroke="#ffffff"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                ></path>
-                <path
-                  d="M19.25 17C19.25 18.2426 18.2426 19.25 17 19.25C15.7574 19.25 14.75 18.2426 14.75 17C14.75 15.7574 15.7574 14.75 17 14.75C18.2426 14.75 19.25 15.7574 19.25 17Z"
-                  stroke="#ffffff"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                ></path>
-                <path
-                  d="M14.5 16L9 13.5"
-                  stroke="#ffffff"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                ></path>
-                <path
-                  d="M14.5 8.5L9 11"
-                  stroke="#ffffff"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                ></path>
-              </svg>
-            </ShareButton>
-          </ShareSection>
-        </ShareContainer>
-      ) : (
-        <SpacingContainer />
-      )}
+        <Button theme={theme} onClick={onShareResults}>
+          Share your puzzle
+        </Button>
+      ) : null}
     </>
   );
+
+  // return (
+  //   <>
+  //     {isGameOver ? (
+  //       <>
+  //         {showScoredBoard ? (
+  //           <Paragraph>
+  //             Your score today was
+  //             <Result>
+  //               {countBoardScore(yourBoard)}/{countSolutionBoardScore(scoredSolutionBoard)}
+  //             </Result>
+  //             compared to today's target.
+  //             <br />
+  //             <b>
+  //               {scoreToCompliment(
+  //                 countBoardScore(yourBoard),
+  //                 countSolutionBoardScore(scoredSolutionBoard),
+  //               )}
+  //             </b>
+  //           </Paragraph>
+  //         ) : (
+  //           <Paragraph>
+  //             You were able to correctly use
+  //             <Result>
+  //               {countValidLettersOnBoard(board)}/{Config.MaxLetters}
+  //             </Result>
+  //             letters on your board.
+  //             <br />
+  //             <b>{letterCountToCompliment(countValidLettersOnBoard(board))}</b>
+  //           </Paragraph>
+  //         )}
+  //       </>
+  //     ) : null}
+  //     {!isGameOver ? (
+  //       <MiniBoard
+  //         theme={theme}
+  //         hidePreview={true}
+  //         message="You must submit your board before you can see today's original solution"
+  //         isGameOver={isGameOver}
+  //       >
+  //         <MiniBoardEmptyRows />
+  //       </MiniBoard>
+  //     ) : (
+  //       <MiniBoard
+  //         theme={theme}
+  //         hidePreview={!showPreview}
+  //         message="Tap to see today's original solution"
+  //         isGameOver={isGameOver}
+  //         onClick={() => setShowPreview(true)}
+  //       >
+  //         {showScoredBoard
+  //           ? scoredSolutionBoard.map((row, r) => {
+  //               return (
+  //                 <MiniRow key={r}>
+  //                   {row.map((tile, c) => (
+  //                     <MiniTileWrapper key={`${r}${c}`}>
+  //                       {tile.letter && showPreview ? (
+  //                         <MiniTileContentsSuccess
+  //                           theme={theme}
+  //                           animationDelay={r * 100 + c * 100}
+  //                           score={tile.score}
+  //                         >
+  //                           {tile.letter}
+  //                           <>
+  //                             <ShineContainer>
+  //                               <ShineWrapper score={tile.score} />
+  //                             </ShineContainer>
+  //                             <Score revealDelay={r * 100 + c * 100}>{tile.score}</Score>
+  //                           </>
+  //                         </MiniTileContentsSuccess>
+  //                       ) : (
+  //                         <MiniTileContents theme={theme} />
+  //                       )}
+  //                     </MiniTileWrapper>
+  //                   ))}
+  //                 </MiniRow>
+  //               );
+  //             })
+  //           : solutionBoard.map((row, r) => {
+  //               return (
+  //                 <MiniRow key={r}>
+  //                   {row.map((letter, c) => (
+  //                     <MiniTileWrapper key={`${r}${c}`}>
+  //                       {letter && showPreview ? (
+  //                         <MiniTileContentsSuccess
+  //                           theme={theme}
+  //                           animationDelay={r * 100 + c * 100}
+  //                         >
+  //                           {letter}
+  //                         </MiniTileContentsSuccess>
+  //                       ) : (
+  //                         <MiniTileContents theme={theme} />
+  //                       )}
+  //                     </MiniTileWrapper>
+  //                   ))}
+  //                 </MiniRow>
+  //               );
+  //             })}
+  //       </MiniBoard>
+  //     )}
+
+  //     {isGameOver ? (
+  //       <ShareContainer>
+  //         <ShareSection>
+  //           <Clock>{timeLeft}</Clock>
+  //         </ShareSection>
+  //         <ShareSection>
+  //           <ShareButton onClick={onShareResults}>
+  //             <svg
+  //               width="24"
+  //               height="24"
+  //               viewBox="0 0 24 24"
+  //               fill="none"
+  //               xmlns="http://www.w3.org/2000/svg"
+  //             >
+  //               <path
+  //                 d="M19.25 7C19.25 8.24264 18.2426 9.25 17 9.25C15.7574 9.25 14.75 8.24264 14.75 7C14.75 5.75736 15.7574 4.75 17 4.75C18.2426 4.75 19.25 5.75736 19.25 7Z"
+  //                 stroke="#ffffff"
+  //                 strokeWidth="1.5"
+  //                 strokeLinecap="round"
+  //                 strokeLinejoin="round"
+  //               ></path>
+  //               <path
+  //                 d="M9.25 12C9.25 13.2426 8.24264 14.25 7 14.25C5.75736 14.25 4.75 13.2426 4.75 12C4.75 10.7574 5.75736 9.75 7 9.75C8.24264 9.75 9.25 10.7574 9.25 12Z"
+  //                 stroke="#ffffff"
+  //                 strokeWidth="1.5"
+  //                 strokeLinecap="round"
+  //                 strokeLinejoin="round"
+  //               ></path>
+  //               <path
+  //                 d="M19.25 17C19.25 18.2426 18.2426 19.25 17 19.25C15.7574 19.25 14.75 18.2426 14.75 17C14.75 15.7574 15.7574 14.75 17 14.75C18.2426 14.75 19.25 15.7574 19.25 17Z"
+  //                 stroke="#ffffff"
+  //                 strokeWidth="1.5"
+  //                 strokeLinecap="round"
+  //                 strokeLinejoin="round"
+  //               ></path>
+  //               <path
+  //                 d="M14.5 16L9 13.5"
+  //                 stroke="#ffffff"
+  //                 strokeWidth="1.5"
+  //                 strokeLinecap="round"
+  //                 strokeLinejoin="round"
+  //               ></path>
+  //               <path
+  //                 d="M14.5 8.5L9 11"
+  //                 stroke="#ffffff"
+  //                 strokeWidth="1.5"
+  //                 strokeLinecap="round"
+  //                 strokeLinejoin="round"
+  //               ></path>
+  //             </svg>
+  //           </ShareButton>
+  //         </ShareSection>
+  //       </ShareContainer>
+  //     ) : (
+  //       <SpacingContainer />
+  //     )}
+  //   </>
+  // );
 };
+
+const Button = styled.button<{ theme: AppTheme }>`
+  animation-delay: 150ms;
+  user-select: none;
+
+  margin: 24px auto 24px;
+  padding: 14px 32px;
+  text-transform: none;
+  white-space: nowrap;
+
+  font-size: 1em;
+  font-weight: 600;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  border-radius: 32px;
+  cursor: pointer;
+
+  color: ${(p) => p.theme.colors.invertedText};
+  border: 1px solid ${(p) => p.theme.colors.text};
+  background: ${(p) => p.theme.colors.text};
+
+  @media (max-width: 320px) {
+    width: 75%;
+  }
+`;
+
+function StatItem(props: { title: React.ReactNode; byline: React.ReactNode }) {
+  return (
+    <StatItemContainer>
+      <StatItemTitle>{props.title}</StatItemTitle>
+      <StatItemByline>{props.byline}</StatItemByline>
+    </StatItemContainer>
+  );
+}
+
+const StatItemContainer = styled.div`
+  flex: 1;
+  padding-block: 12px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+const StatItemTitle = styled.div`
+  font-size: 1.5em;
+  line-height: 1.3em;
+  font-family: karnak;
+  font-weight: 500;
+`;
+
+const StatItemByline = styled.div`
+  font-size: 0.8em;
+`;
+
+const Divider = styled.div<{ theme: AppTheme }>`
+  background: ${(p) => p.theme.colors.text};
+  width: 100%;
+  height: 1px;
+`;
+
+const FlexContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+`;
 
 const MiniBoardEmptyRows = () => {
   const theme = useTheme() as AppTheme;
   return (
-    <Fragment>
+    <>
       <MiniRow>
         <MiniTileWrapper>
           <MiniTileContents theme={theme} />
@@ -435,7 +591,7 @@ const MiniBoardEmptyRows = () => {
           <MiniTileContents theme={theme} />
         </MiniTileWrapper>
       </MiniRow>
-    </Fragment>
+    </>
   );
 };
 
@@ -551,10 +707,10 @@ const Title = styled.h1`
 
 const Paragraph = styled.p`
   font-weight: 500;
-  font-size: 1rem;
+  font-size: 1em;
   text-align: center;
-  width: 75%;
-  margin: 0 auto 24px;
+  width: 100%;
+  margin: 18px auto 8px;
 `;
 
 const Result = styled.span`

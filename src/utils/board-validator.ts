@@ -132,6 +132,24 @@ export function resetBoardTileState(board: Board): Board {
   return defaultBoard;
 }
 
+export function countValidWordsOnBoard(board: Board): number {
+  const tiles = board.tiles;
+
+  // Get all words going left to right.
+  const leftToRight = getWordsFromTilesLTR(tiles);
+
+  // Get all words going top to bottom.
+  const topToBottom = getWordsFromTilesTTB(tiles);
+
+  // Collect all the words together.
+  const foundWords = leftToRight.concat(topToBottom);
+
+  // Validate the found words tiles.
+  const validFoundWords = foundWords.filter(({ word }) => dictionary.has(word));
+
+  return validFoundWords.length;
+}
+
 export function validateBoard({
   board,
   mode,
