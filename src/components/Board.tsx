@@ -111,7 +111,6 @@ enum GridTileState {
   RevealMixed = "reveal-mixed",
   RevealFail = "reveal-fail",
   RevealIncorrect = "reveal-incorrect",
-  CursorTile = "cursor-tile",
 }
 
 const GridTile: FC<GridTileProps> = ({
@@ -144,16 +143,6 @@ const GridTile: FC<GridTileProps> = ({
       }
     };
   }, [isGameOver]);
-
-  useEffect(() => {
-    if (isGameOver) return;
-
-    if (hasCursor) {
-      setGridTileState(GridTileState.CursorTile);
-    } else {
-      setGridTileState(GridTileState.Idle);
-    }
-  }, [hasCursor, isGameOver]);
 
   useEffect(() => {
     if (isGameOver) return;
@@ -198,8 +187,8 @@ const GridTile: FC<GridTileProps> = ({
   }, [tile.state]);
 
   // @DEBUGGING
-  // if (tile.row === 3 && tile.col === 0) {
-  //   console.info(tile.letter?.letter, gridTileState);
+  // if (tile.row === 3 && tile.col === 3) {
+  //   console.info(tile.letter?.letter, tile.state, gridTileState);
   // }
 
   const shouldShowPivotLine =

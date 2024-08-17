@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { PersistedStates } from "../constants/state";
 import createPersistedState from "../libs/use-persisted-state";
@@ -18,11 +18,11 @@ import {
   updateCursorInDirection,
 } from "../utils/game";
 
-const usePersistedBoard = createPersistedState(PersistedStates.Board);
+const usePersistedBoard = createPersistedState<Board>(PersistedStates.Board);
 const defaultBoard = initalizeBoard();
 
 export const useBoard = () => {
-  const [board, setBoard] = usePersistedBoard(defaultBoard) as [Board, React.Dispatch<Board>];
+  const [board, setBoard] = usePersistedBoard(defaultBoard);
 
   const shiftBoard = useCallback(
     (direction: Directions) => {
@@ -61,7 +61,7 @@ export const useBoard = () => {
     // Letter on current tile, just delete it but don't move cursor backwards.
     // This is how the NYT crossword UX works and its nice.
     if (currentTileHasLetter.letter) {
-      const newTiles = board.tiles.slice();
+      const newTiles = resetBoardTileState(board).tiles;
 
       // Set new tile.
       newTiles[row][col].letter = null;
@@ -99,7 +99,7 @@ export const useBoard = () => {
   );
 
   const flipCursorDirection = useCallback(() => {
-    setBoard({
+    setBoard((board) => ({
       ...board,
       cursor: {
         ...board.cursor,
@@ -108,34 +108,36 @@ export const useBoard = () => {
             ? CursorDirections.TopToBottom
             : CursorDirections.LeftToRight,
       },
-    });
-  }, [board]); // eslint-disable-line react-hooks/exhaustive-deps
+    }));
+  }, [setBoard]);
 
   const updateCursor = useCallback(
     (row: number, col: number) => {
-      if (board.cursor.row === row && board.cursor.col === col) {
-        setBoard({
-          ...board,
-          cursor: {
-            ...board.cursor,
-            direction:
-              board.cursor.direction === CursorDirections.LeftToRight
-                ? CursorDirections.TopToBottom
-                : CursorDirections.LeftToRight,
-          },
-        });
-      } else {
-        setBoard({
-          ...board,
-          cursor: {
-            ...board.cursor,
-            row,
-            col,
-          },
-        });
-      }
+      setBoard((board) => {
+        if (board.cursor.row === row && board.cursor.col === col) {
+          return {
+            ...board,
+            cursor: {
+              ...board.cursor,
+              direction:
+                board.cursor.direction === CursorDirections.LeftToRight
+                  ? CursorDirections.TopToBottom
+                  : CursorDirections.LeftToRight,
+            },
+          };
+        } else {
+          return {
+            ...board,
+            cursor: {
+              ...board.cursor,
+              row,
+              col,
+            },
+          };
+        }
+      });
     },
-    [board], // eslint-disable-line react-hooks/exhaustive-deps
+    [setBoard],
   );
 
   return {
