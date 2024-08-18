@@ -25,6 +25,7 @@ import { GlobalStatesContext } from "../contexts/global";
 import { countBoardScore, createScoredBoard } from "../utils/board-validator";
 import {
   CursorDirections,
+  Directions,
   Letter,
   ScoredTile,
   Tile,
@@ -47,7 +48,7 @@ type GridTileProps = {
 export const Board: FC = () => {
   const theme = useTheme() as AppTheme;
   const { scoreMode, submitCount } = useContext(GlobalStatesContext);
-  const { board, updateCursor, isGameOver } = useContext(GameContext);
+  const { board, updateCursor, shiftBoard, isGameOver } = useContext(GameContext);
 
   const score = useMemo(
     () => (isGameOver ? countBoardScore(createScoredBoard(board)) : null),
@@ -66,8 +67,61 @@ export const Board: FC = () => {
     [updateCursor],
   );
 
+  const [isShifting, setIsShifting] = useState(false);
+  const xRef = useRef<number | null>(null);
+  const yRef = useRef<number | null>(null);
+
   return (
-    <Container id="inner-canvas" theme={theme}>
+    <Container
+      id="inner-canvas"
+      theme={theme}
+      onTouchStart={(event: React.TouchEvent<HTMLDivElement>) => {
+        const firstTouch = event.touches[0];
+        xRef.current = firstTouch.clientX;
+        yRef.current = firstTouch.clientY;
+      }}
+      onTouchMove={(event: React.TouchEvent<HTMLDivElement>) => {
+        if (!xRef.current || !yRef.current) {
+          return;
+        }
+
+        if (!isShifting) {
+          setIsShifting(true);
+        }
+
+        const xUp = event.touches[0].clientX;
+        const yUp = event.touches[0].clientY;
+        const xDiff = xRef.current - xUp;
+        const yDiff = yRef.current - yUp;
+
+        if (Math.abs(xDiff) > Math.abs(yDiff)) {
+          if (xDiff < -50) {
+            shiftBoard(Directions.Right);
+            xRef.current = xUp;
+            yRef.current = yUp;
+          } else if (xDiff > 50) {
+            shiftBoard(Directions.Left);
+            xRef.current = xUp;
+            yRef.current = yUp;
+          }
+        } else {
+          if (yDiff < -50) {
+            shiftBoard(Directions.Down);
+            xRef.current = xUp;
+            yRef.current = yUp;
+          } else if (yDiff > 50) {
+            shiftBoard(Directions.Up);
+            xRef.current = xUp;
+            yRef.current = yUp;
+          }
+        }
+      }}
+      onTouchEnd={() => {
+        setIsShifting(false);
+        xRef.current = null;
+        yRef.current = null;
+      }}
+    >
       {board.tiles.map((row) => {
         const rowId = row.map(({ id }) => id).join(",");
         return (
@@ -197,13 +251,24 @@ const GridTile: FC<GridTileProps> = ({
     (cursorDirection === CursorDirections.LeftToRight ? tile.col !== 0 : true) &&
     (cursorDirection === CursorDirections.TopToBottom ? tile.row !== 0 : true);
 
+  const didMoveRef = useRef(false);
+
   return (
     <TileWrapper
-      onTouchStart={() => handleTileClick(tile)}
+      // onTouchStart={() => handleTileClick(tile)}
       onClick={() => handleTileClick(tile)}
+      onTouchMove={() => {
+        didMoveRef.current = true;
+      }}
       // This prevents `onClick` from being fired if `onTouchStart` was fired.
       // https://stackoverflow.com/a/56970849/5055063
-      onTouchEnd={(e) => e.preventDefault()}
+      onTouchEnd={(e) => {
+        e.preventDefault();
+        if (!didMoveRef.current) {
+          handleTileClick(tile);
+        }
+        didMoveRef.current = false;
+      }}
     >
       {isTileScored(tile) ? (
         <ScoredTileContents
