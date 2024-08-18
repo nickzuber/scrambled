@@ -252,21 +252,51 @@ const GridTile: FC<GridTileProps> = ({
     (cursorDirection === CursorDirections.TopToBottom ? tile.row !== 0 : true);
 
   const didMoveRef = useRef(false);
+  const xRef = useRef<number | null>(null);
+  const yRef = useRef<number | null>(null);
 
   return (
     <TileWrapper
-      // onTouchStart={() => handleTileClick(tile)}
-      onClick={() => handleTileClick(tile)}
-      onTouchMove={() => {
-        didMoveRef.current = true;
+      onTouchStart={(event: React.TouchEvent<HTMLDivElement>) => {
+        const firstTouch = event.touches[0];
+        xRef.current = firstTouch.clientX;
+        yRef.current = firstTouch.clientY;
       }}
-      // This prevents `onClick` from being fired if `onTouchStart` was fired.
-      // https://stackoverflow.com/a/56970849/5055063
+      onClick={() => handleTileClick(tile)}
+      onTouchMove={(event: React.TouchEvent<HTMLDivElement>) => {
+        if (!xRef.current || !yRef.current) {
+          return;
+        }
+
+        const xUp = event.touches[0].clientX;
+        const yUp = event.touches[0].clientY;
+        const xDiff = xRef.current - xUp;
+        const yDiff = yRef.current - yUp;
+
+        if (Math.abs(xDiff) > Math.abs(yDiff)) {
+          if (xDiff < -50) {
+            didMoveRef.current = true;
+          } else if (xDiff > 50) {
+            didMoveRef.current = true;
+          }
+        } else {
+          if (yDiff < -50) {
+            didMoveRef.current = true;
+          } else if (yDiff > 50) {
+            didMoveRef.current = true;
+          }
+        }
+      }}
       onTouchEnd={(e) => {
+        // This prevents `onClick` from being fired if `onTouchStart` was fired.
+        // https://stackoverflow.com/a/56970849/5055063
         e.preventDefault();
+
         if (!didMoveRef.current) {
           handleTileClick(tile);
         }
+        xRef.current = null;
+        yRef.current = null;
         didMoveRef.current = false;
       }}
     >

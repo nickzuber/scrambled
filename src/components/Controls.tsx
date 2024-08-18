@@ -165,11 +165,11 @@ export const Controls: FC = () => {
         </BoardButton>
         <BottomDrawer
           onOpenChange={setIsInShiftBoardMode}
-          title={"Shift the board"}
+          title={"Move letters around"}
           renderContents={() => <BoardShiftDrawerImpl />}
         >
           <BoardButton theme={theme} disabled={isGameOver} style={{ width: 132 }}>
-            Shift board
+            Move letters
             <svg
               width="24"
               height="24"
@@ -279,7 +279,7 @@ function BoardShiftDrawerImpl() {
   return (
     <>
       <Paragraph>
-        Make way for more words by moving every letter on the board at once in the same
+        Make way for more words by shifting every letter on the board at once in the same
         direction.
       </Paragraph>
 
