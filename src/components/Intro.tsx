@@ -93,6 +93,7 @@ export function Intro() {
         </Button>
         <DateMessage className="slideUp">{dateMessage}</DateMessage>
         <AuthorMessage className="slideUp">Created by Nick Zuber</AuthorMessage>
+        {/* <DisclaimerMessage className="slideUp">New puzzle every day</DisclaimerMessage> */}
       </div>
     </Container>
   );
@@ -235,4 +236,19 @@ const AuthorMessage = styled.span`
 
   text-align: center;
   padding-inline: 24px;
+`;
+
+const DisclaimerMessage = styled.span`
+  animation-delay: 300ms;
+
+  display: block;
+  font-size: 1em;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+
+  text-align: center;
+  padding-inline: 24px;
+
+  margin-top: 24px;
 `;

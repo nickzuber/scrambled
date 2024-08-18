@@ -25,7 +25,7 @@ export type GlobalStatesOptions = ReturnType<typeof useGlobalStates>;
 
 export function useGlobalStates() {
   const [submitCount, setSubmitCount] = useState(0);
-  const [isFirstTime, setIsFirstTime] = useFirstTime(false);
+  const [isFirstTime, setIsFirstTime] = useFirstTime(true);
   const [isGameOver, setIsGameOver] = useIsGameOver(false);
   const [hardMode, setHardMode] = useHardMode(false);
   const [scoreMode, setScoreMode] = useScoreMode(false);

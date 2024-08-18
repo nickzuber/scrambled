@@ -24,7 +24,7 @@ export const PersistedStates = {
   // Long lasting bits of data.
   /** @deprecated */
   SubmitCounter: PersistedStorage.Stamp + "submit-counter",
-  FirstTime: PersistedStorage.Stamp + "first-time",
+  FirstTime: PersistedStorage.Stamp + "first-time-v2",
   /** @deprecated */
   Stats: PersistedStorage.Stamp + "stats",
   DarkTheme: PersistedStorage.Stamp + "dark-theme",
