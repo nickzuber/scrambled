@@ -1,6 +1,6 @@
 import { css, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FC, useContext, useEffect, useMemo, useState } from "react";
+import { FC, useContext, useMemo, useState } from "react";
 import { FadeIn, Shine, createSuccessReveal } from "../../constants/animations";
 import { AppTheme } from "../../constants/themes";
 import { GameContext } from "../../contexts/game";
@@ -36,44 +36,6 @@ function getTimeLeftInDay() {
   )}`;
 }
 
-function letterCountToCompliment(score: number) {
-  if (score < 10) {
-    return "Better luck next time!";
-  }
-  if (score < 14) {
-    return "Not too shabby!";
-  }
-  if (score < 16) {
-    return "Nice.";
-  }
-  if (score < 20) {
-    return "Awesome!";
-  }
-  if (score >= 20) {
-    return "Perfect — you're amazing!";
-  }
-  return "";
-}
-
-function scoreToCompliment(score: number, target: number) {
-  if (score < target) {
-    return "Better luck next time!";
-  }
-  if (score === target) {
-    return "Right on point!";
-  }
-  if (score > 30) {
-    return "Wow, great score!";
-  }
-  if (score > 40) {
-    return "You are a legend — this score is insanely rare!";
-  }
-  if (score > target) {
-    return "Great job!";
-  }
-  return "";
-}
-
 export const StatsModal: FC = () => {
   return (
     <Modal>
@@ -92,7 +54,6 @@ export const StatsModalImpl: FC = () => {
     isGameOver,
   } = useContext(GameContext);
   const { sendToast } = useContext(ToastContext);
-  const [timeLeft, setTimeLeft] = useState(getTimeLeftInDay());
   const [showPreview, setShowPreview] = useState(true);
   const {
     scoreMode,
@@ -121,10 +82,11 @@ export const StatsModalImpl: FC = () => {
 
   const showScoredBoard = scoreMode && isBoardScored(yourBoard);
 
-  useEffect(() => {
-    const ts = setInterval(() => setTimeLeft(getTimeLeftInDay()), 1000);
-    return () => clearInterval(ts);
-  }, []);
+  // const [timeLeft, setTimeLeft] = useState(getTimeLeftInDay());
+  // useEffect(() => {
+  //   const ts = setInterval(() => setTimeLeft(getTimeLeftInDay()), 1000);
+  //   return () => clearInterval(ts);
+  // }, []);
 
   async function onShareResults() {
     if (!isGameOver) {
@@ -142,19 +104,26 @@ export const StatsModalImpl: FC = () => {
     if (navigator.share) {
       navigator
         .share({
+          text: "https://play-scrambled.com/",
           files: [imageFile],
         })
         .catch(() =>
           navigator.clipboard
             .write([clipboardItem])
             .then(() => sendToast("Copied to clipboard!"))
-            .catch(() => sendToast("Unable to share\nTry taking a screenshot instead")),
+            .catch((e) => {
+              console.error(e);
+              sendToast("Unable to share\nTry taking a screenshot instead");
+            }),
         );
     } else if (navigator.clipboard) {
       navigator.clipboard
         .write([clipboardItem])
         .then(() => sendToast("Copied to clipboard!"))
-        .catch(() => sendToast("Unable to copy\nTry taking a screenshot instead"));
+        .catch((e) => {
+          console.error(e);
+          sendToast("Unable to copy\nTry taking a screenshot instead");
+        });
     } else {
       sendToast("Unable to share\nTry taking a screenshot instead");
     }
@@ -774,9 +743,9 @@ const QuoteSvg = () => {
       viewBox="0 0 24 24"
       fill="#fd7e14"
       stroke={theme.colors.text}
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z" />
       <path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z" />

@@ -67,7 +67,7 @@ export const Board: FC = () => {
   );
 
   return (
-    <Container theme={theme}>
+    <Container id="inner-canvas" theme={theme}>
       {board.tiles.map((row) => {
         const rowId = row.map(({ id }) => id).join(",");
         return (
