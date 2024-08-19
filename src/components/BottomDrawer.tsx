@@ -32,7 +32,7 @@ export function BottomDrawer({
           <div
             className="p-4 bg-white rounded-t-[10px] flex-1"
             style={{
-              maxHeight: "90vh",
+              maxHeight: "90dvh",
               overflowY: "auto",
               paddingBottom: 32,
               background: theme.colors.primary,

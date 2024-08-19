@@ -2,8 +2,11 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { FC, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { AppTheme } from "../constants/themes";
+import { GlobalStatesContext } from "../contexts/global";
 import { PageContext } from "../contexts/page";
+import { TimerStateContext } from "../contexts/timer";
 import { Page } from "../hooks/usePage";
+import { formatAsTimer } from "../utils/game";
 import { BottomDrawer } from "./BottomDrawer";
 import { InstructionsModalImpl } from "./Modal/InstructionsModal";
 import { SettingsModalImpl } from "./Modal/SettingsModal";
@@ -27,6 +30,7 @@ export const Header: FC<HeaderProps> = ({
   const theme = useTheme() as AppTheme;
   const [showStats, setShowStats] = useState<boolean>(false);
   const { setPage } = useContext(PageContext);
+  const { showTimer } = useContext(GlobalStatesContext);
 
   const [secret, setSecret] = useState(false);
   const tapsRef = useRef(0);
@@ -84,6 +88,8 @@ export const Header: FC<HeaderProps> = ({
       </ButtonContainer>
 
       <ButtonContainer>
+        {/* Timer */}
+        {showTimer ? <RunningTimer /> : null}
         {/* Help */}
         <BottomDrawer
           open={isFirstTime === true ? true : undefined}
@@ -125,6 +131,60 @@ export const Header: FC<HeaderProps> = ({
         </BottomDrawer>
       </ButtonContainer>
     </Container>
+  );
+};
+
+function RunningTimer() {
+  const theme = useTheme() as AppTheme;
+  const { timer } = useContext(TimerStateContext);
+
+  return (
+    <TimerContainer theme={theme}>
+      <PauseSvg />
+      {formatAsTimer(timer)}
+    </TimerContainer>
+  );
+}
+
+const TimerContainer = styled.div<{ theme: AppTheme }>`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  border: 0;
+  background: none;
+  width: fit-content;
+  padding: 6px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${(p) => p.theme.colors.text};
+  cursor: pointer;
+  transition: all 50ms ease-in;
+
+  padding-top: 10px;
+  gap: 4px;
+`;
+
+const PauseSvg = () => {
+  const theme = useTheme() as AppTheme;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="14"
+      height="14"
+      viewBox="0 0 22 25"
+      fill={theme.colors.text}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="14" y="4" width="4" height="16" rx="1" />
+      <rect x="6" y="4" width="4" height="16" rx="1" />
+    </svg>
   );
 };
 
