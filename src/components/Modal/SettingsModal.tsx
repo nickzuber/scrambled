@@ -109,7 +109,7 @@ export const SettingsModalImpl: FC<SettingsModalImplProps> = ({
       ) : null}
       <TagContainer
         onClick={() => {
-          window.open("https://github.com/nickzuber/cross-wordle", "_blank");
+          window.open("https://github.com/nickzuber/scrambled", "_blank");
         }}
       >
         <Tag>© {new Date().getFullYear()} — Nick Zuber</Tag>
