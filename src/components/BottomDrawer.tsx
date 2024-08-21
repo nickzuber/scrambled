@@ -1,5 +1,6 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
+import { useInView } from "react-intersection-observer";
 import { Drawer } from "vaul";
 import { AppTheme } from "../constants/themes";
 
@@ -19,6 +20,7 @@ export function BottomDrawer({
   renderContents,
 }: BottomDrawerProps) {
   const theme = useTheme() as AppTheme;
+  const bottomView = useInView({ threshold: 0 });
 
   return (
     <Drawer.Root
@@ -42,6 +44,8 @@ export function BottomDrawer({
             <div className="max-w-md mx-auto">
               {title ? <Title className="max-w-md mx-auto">{title}</Title> : null}
               {renderContents()}
+              <BottomShadow theme={theme} show={!bottomView.inView} />
+              <div ref={bottomView.ref} />
             </div>
           </div>
         </Drawer.Content>
@@ -49,6 +53,26 @@ export function BottomDrawer({
     </Drawer.Root>
   );
 }
+
+const BottomShadow = styled.div<{ theme: AppTheme; show: boolean }>`
+  position: absolute;
+  pointer-events: none;
+
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  transition: opacity 200ms ease-in-out;
+  opacity: ${(p) => (p.show ? 1 : 0)};
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0) 0%,
+    ${(p) => p.theme.colors.primary}cc 56.65%,
+    ${(p) => p.theme.colors.primary} 100%
+  );
+  height: 48px;
+`;
 
 const Title = styled.h1`
   font-family: karnak-condensed;

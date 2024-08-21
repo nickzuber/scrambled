@@ -1,6 +1,6 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import {
   createAnimatedCursorTile,
   createAnimatedTile,
@@ -23,33 +23,140 @@ export const InstructionsModal: FC = () => {
 export function InstructionsModalImpl() {
   const theme = useTheme() as AppTheme;
 
+  const timezoneAbrev = useMemo(() => {
+    const tz = new Date().toLocaleTimeString("en-us", { timeZoneName: "short" }).split(" ");
+    if (tz[2]) {
+      return `${tz[2]}.`;
+    }
+
+    return "";
+  }, []);
+
   return (
     <>
-      <Paragraph>Build a crossword by connecting all the letters on the board.</Paragraph>
       <Paragraph>
-        Each word must be a real English word. Words must be connected to each other.
+        Create words on the board by connecting all of the letters provided.
       </Paragraph>
-      <Paragraph>When you've placed all the letters, hit enter to submit.</Paragraph>
-
-      <Divider theme={theme} />
-
       <Paragraph>
-        You can place letters anywhere on the entire board by tapping a square.
-      </Paragraph>
-
-      <Paragraph>
-        You can change the direction your letters flow by tapping the highlighted square.
+        Each word must be a real English word. Words must be connected to each other, like a
+        crossword.
       </Paragraph>
 
       <MiniBoardDemo />
 
+      <MiniTitle>Submitting your solution</MiniTitle>
+
+      <List>
+        <ListItem>When you've placed all of today's letters, submit your puzzle!</ListItem>
+        <ListItem>
+          If all of your words are connected and valid, you win! Otherwise, we'll let you know
+          which words need to be fixed.
+        </ListItem>
+        <ListItem>You can attempt to submit as many times as you'd like.</ListItem>
+      </List>
+
+      <MiniTitle>Tips and tricks</MiniTitle>
+
+      <List>
+        <ListItem>
+          You can place letters anywhere on the entire board by tapping any tile you'd like.
+        </ListItem>
+
+        <ListItem>
+          You can control if your next letter will appear left-to-right or top-to-bottom by
+          pressing the <DemoActionButton theme={theme}>Pivot cursor</DemoActionButton> button
+          or by pressing the highlighted yellow square.
+        </ListItem>
+
+        <ListItem>
+          Move all the letters around the board to make space for new words by pressing the{" "}
+          <DemoActionButton theme={theme}>Move letters</DemoActionButton> button or using your
+          finger to drag the board around.
+        </ListItem>
+      </List>
+
+      <Paragraph>New puzzles are released daily at 12 a.m. {timezoneAbrev}</Paragraph>
+      <Paragraph>
+        Think a word is wrong or missing? Email me at{" "}
+        <EmailLink href="mailto:zuber.nicholas@gmail.com">zuber.nicholas@gmail.com</EmailLink>.
+      </Paragraph>
+      <Paragraph>
+        Have feedback? Email me at{" "}
+        <EmailLink href="mailto:zuber.nicholas@gmail.com">zuber.nicholas@gmail.com</EmailLink>.
+      </Paragraph>
       <Paragraph>
         It will <b>always</b> be possible to use all 20 letters.
       </Paragraph>
       <Paragraph>Have fun!</Paragraph>
+      <br />
     </>
   );
+
+  // return (
+  //   <>
+  //     <Paragraph>Build a crossword by connecting all the letters on the board.</Paragraph>
+  //     <Paragraph>
+  //       Each word must be a real English word. Words must be connected to each other.
+  //     </Paragraph>
+  //     <Paragraph>When you've placed all the letters, hit enter to submit.</Paragraph>
+
+  //     <Divider theme={theme} />
+
+  //     <Paragraph>
+  //       You can place letters anywhere on the entire board by tapping a square.
+  //     </Paragraph>
+
+  //     <Paragraph>
+  //       You can change the direction your letters flow by tapping the highlighted square.
+  //     </Paragraph>
+
+  //     <MiniBoardDemo />
+
+  //     <Paragraph>
+  //       It will <b>always</b> be possible to use all 20 letters.
+  //     </Paragraph>
+  //     <Paragraph>Have fun!</Paragraph>
+  //   </>
+  // );
 }
+
+const EmailLink = styled.a`
+  color: #477aaa !important;
+  text-decoration: none !important;
+`;
+
+const MiniTitle = styled.h2`
+  font-family: franklin;
+
+  font-size: 1.125em;
+  font-weight: 700;
+  line-height: 1em;
+  margin: 24px 0 12px;
+  max-width: 100%;
+`;
+
+const DemoActionButton = styled.span<{ theme: AppTheme }>`
+  margin: 0;
+
+  font-size: 12px;
+  line-height: 18px;
+
+  width: fit-content;
+  padding: 0 8px;
+  text-transform: none;
+  white-space: nowrap;
+
+  font-weight: 600;
+  display: inline-flex;
+  width: fit-content;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  border-radius: 16px;
+  cursor: pointer;
+  border: 1px solid ${(p) => p.theme.colors.text};
+  background: ${(p) => p.theme.colors.primary};
+`;
 
 const MiniBoardDemo = () => {
   const theme = useTheme() as AppTheme;
@@ -316,6 +423,23 @@ const Title = styled.h1`
 const Paragraph = styled.p`
   margin: 0;
   margin-bottom: 12px;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: left;
+`;
+
+const List = styled.ul`
+  list-style: outside;
+  margin-inline: 18px;
+  margin-top: 16px;
+  margin-bottom: 24px;
+  padding: 0px;
+`;
+
+const ListItem = styled.li`
+  margin: 0;
+  margin-bottom: 8px;
   font-weight: 400;
   font-size: 16px;
   line-height: 20px;
