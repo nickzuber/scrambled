@@ -140,7 +140,7 @@ function RunningTimer() {
 
   return (
     <TimerContainer theme={theme}>
-      <PauseSvg />
+      <PauseSvg style={{ marginTop: 0 }} />
       {formatAsTimer(timer)}
     </TimerContainer>
   );
@@ -153,6 +153,9 @@ const TimerContainer = styled.div<{ theme: AppTheme }>`
   align-items: center;
   justify-content: center;
 
+  font-size: 1.125em;
+  margin-top: -1px;
+
   border: 0;
   background: none;
   width: fit-content;
@@ -162,14 +165,14 @@ const TimerContainer = styled.div<{ theme: AppTheme }>`
   align-items: center;
   justify-content: center;
   color: ${(p) => p.theme.colors.text};
-  cursor: pointer;
+  cursor: default;
   transition: all 50ms ease-in;
 
   padding-top: 10px;
   gap: 4px;
 `;
 
-const PauseSvg = () => {
+const PauseSvg = (props: { style?: React.CSSProperties }) => {
   const theme = useTheme() as AppTheme;
   return (
     <svg
@@ -181,6 +184,7 @@ const PauseSvg = () => {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      style={props.style}
     >
       <rect x="14" y="4" width="4" height="16" rx="1" />
       <rect x="6" y="4" width="4" height="16" rx="1" />

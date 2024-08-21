@@ -17,6 +17,7 @@ export type AppTheme = {
     buttonActive: string;
     highlightBorder: string;
     introText: string;
+    iconBorder: string;
   };
   accents: {
     dropShadow: string;
@@ -39,6 +40,7 @@ const LightTheme: AppTheme = {
     highlightBorder: "#2e2f2f",
     buttonActive: "#c0c4ca",
     introText: "#1a1a1b",
+    iconBorder: "#1a1a1b",
   },
   accents: {
     dropShadow: "rgb(99 99 99 / 46%) 0px 2px 8px 2px",
@@ -61,6 +63,7 @@ const DarkTheme: AppTheme = {
     highlightBorder: "#c4c5c5",
     buttonActive: "#656b6e",
     introText: "#1a1a1b",
+    iconBorder: "#1a1a1b",
   },
   accents: {
     dropShadow: "rgb(0 0 0 / 50%) 0px 2px 8px 2px",

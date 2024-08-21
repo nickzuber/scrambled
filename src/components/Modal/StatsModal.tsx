@@ -314,6 +314,10 @@ const StatItemByline = styled.div`
   align-items: center;
   justify-content: center;
   gap: 4px;
+
+  @media (max-width: 380px) {
+    font-size: 0.8em;
+  }
 `;
 
 const Divider = styled.div<{ theme: AppTheme }>`
@@ -611,14 +615,14 @@ const SparkleSvg = () => {
       <path
         d="M8 15C12.8747 15 15 12.949 15 8C15 12.949 17.1104 15 22 15C17.1104 15 15 17.1104 15 22C15 17.1104 12.8747 15 8 15Z"
         fill={"#be4bdb"}
-        stroke={theme.colors.text}
+        stroke={theme.colors.iconBorder}
         strokeWidth="1.25"
         strokeLinejoin="round"
       ></path>
       <path
         d="M2 6.5C5.13376 6.5 6.5 5.18153 6.5 2C6.5 5.18153 7.85669 6.5 11 6.5C7.85669 6.5 6.5 7.85669 6.5 11C6.5 7.85669 5.13376 6.5 2 6.5Z"
         fill={"#be4bdb"}
-        stroke={theme.colors.text}
+        stroke={theme.colors.iconBorder}
         strokeWidth="1.25"
         strokeLinejoin="round"
       ></path>
@@ -635,7 +639,7 @@ const TimerSvg = () => {
       height="18"
       viewBox="0 0 22 25"
       fill={"#51cf66"}
-      stroke={theme.colors.text}
+      stroke={theme.colors.iconBorder}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -653,11 +657,11 @@ const PauseSvg = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
+      width="16"
+      height="16"
       viewBox="0 0 22 25"
       fill={"#51cf66"}
-      stroke={theme.colors.text}
+      stroke={theme.colors.iconBorder}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -684,7 +688,7 @@ const LightningSvg = () => {
         clipRule="evenodd"
         d="M13.2319 2.28681C13.5409 2.38727 13.75 2.6752 13.75 3.00005V9.25005H19C19.2821 9.25005 19.5403 9.40834 19.6683 9.65972C19.7963 9.9111 19.7725 10.213 19.6066 10.4412L11.6066 21.4412C11.4155 21.7039 11.077 21.8137 10.7681 21.7133C10.4591 21.6128 10.25 21.3249 10.25 21.0001V14.7501H5C4.71791 14.7501 4.45967 14.5918 4.33167 14.3404C4.20366 14.089 4.22753 13.7871 4.39345 13.5589L12.3935 2.55892C12.5845 2.2962 12.923 2.18635 13.2319 2.28681Z"
         fill={theme.colors.app}
-        stroke={theme.colors.text}
+        stroke={theme.colors.iconBorder}
       ></path>
     </svg>
   );
@@ -699,7 +703,7 @@ const FireSvg = () => {
       height="18px"
       viewBox="0 0 16 26"
       fill="#e41d1d"
-      stroke={theme.colors.text}
+      stroke={theme.colors.iconBorder}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -742,7 +746,7 @@ const QuoteSvg = () => {
       height="16"
       viewBox="0 0 24 24"
       fill="#fd7e14"
-      stroke={theme.colors.text}
+      stroke={theme.colors.iconBorder}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
