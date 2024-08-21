@@ -1,5 +1,6 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
+import { useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { Drawer } from "vaul";
 import { AppTheme } from "../constants/themes";
@@ -10,6 +11,7 @@ export interface BottomDrawerProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   renderContents: () => React.ReactNode;
+  pessimisticallyAssumeOverflow?: boolean;
 }
 
 export function BottomDrawer({
@@ -18,14 +20,32 @@ export function BottomDrawer({
   open,
   onOpenChange,
   renderContents,
+  pessimisticallyAssumeOverflow,
 }: BottomDrawerProps) {
   const theme = useTheme() as AppTheme;
   const bottomView = useInView({ threshold: 0 });
 
+  // If `pessimisticallyAssumeOverflow` is true, then we want to show the shadow
+  // immediately before letting the drawer finish animating.
+  const [shadowLock, setShadowLock] = useState(pessimisticallyAssumeOverflow ?? false);
+  const shadowTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+
   return (
     <Drawer.Root
       open={open}
-      onOpenChange={(open) => (onOpenChange ? onOpenChange(open) : undefined)}
+      onOpenChange={(open) => {
+        onOpenChange?.(open);
+        if (open) {
+          // I'm pretty sure the drawer animation is 0.5s
+          const timing = pessimisticallyAssumeOverflow ? 0 : 500;
+          shadowTimeoutRef.current = setTimeout(() => setShadowLock(true), timing);
+        } else {
+          if (shadowTimeoutRef.current) {
+            clearTimeout(shadowTimeoutRef.current);
+          }
+          setShadowLock(false);
+        }
+      }}
     >
       <Drawer.Trigger asChild>{children}</Drawer.Trigger>
       <Drawer.Portal>
@@ -44,7 +64,7 @@ export function BottomDrawer({
             <div className="max-w-md mx-auto">
               {title ? <Title className="max-w-md mx-auto">{title}</Title> : null}
               {renderContents()}
-              <BottomShadow theme={theme} show={!bottomView.inView} />
+              <BottomShadow theme={theme} show={shadowLock && !bottomView.inView} />
               <div ref={bottomView.ref} />
             </div>
           </div>
@@ -71,7 +91,7 @@ const BottomShadow = styled.div<{ theme: AppTheme; show: boolean }>`
     ${(p) => p.theme.colors.primary}cc 56.65%,
     ${(p) => p.theme.colors.primary} 100%
   );
-  height: 48px;
+  height: 100px;
 `;
 
 const Title = styled.h1`

@@ -18,6 +18,10 @@ export type AppTheme = {
     highlightBorder: string;
     introText: string;
     iconBorder: string;
+
+    linkText: string;
+    introButtonText: string;
+    introButtonBackground: string;
   };
   accents: {
     dropShadow: string;
@@ -41,6 +45,10 @@ const LightTheme: AppTheme = {
     buttonActive: "#c0c4ca",
     introText: "#1a1a1b",
     iconBorder: "#1a1a1b",
+
+    linkText: "#228be6",
+    introButtonText: "#ffffff",
+    introButtonBackground: "#1a1a1b",
   },
   accents: {
     dropShadow: "rgb(99 99 99 / 46%) 0px 2px 8px 2px",
@@ -64,6 +72,10 @@ const DarkTheme: AppTheme = {
     buttonActive: "#656b6e",
     introText: "#1a1a1b",
     iconBorder: "#1a1a1b",
+
+    linkText: "#4dabf7",
+    introButtonText: "#ffffff",
+    introButtonBackground: "#1a1a1b",
   },
   accents: {
     dropShadow: "rgb(0 0 0 / 50%) 0px 2px 8px 2px",

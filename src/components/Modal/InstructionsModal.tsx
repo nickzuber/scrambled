@@ -78,11 +78,17 @@ export function InstructionsModalImpl() {
       <Paragraph>New puzzles are released daily at 12 a.m. {timezoneAbrev}</Paragraph>
       <Paragraph>
         Think a word is wrong or missing? Email me at{" "}
-        <EmailLink href="mailto:zuber.nicholas@gmail.com">zuber.nicholas@gmail.com</EmailLink>.
+        <EmailLink theme={theme} href="mailto:zuber.nicholas@gmail.com">
+          zuber.nicholas@gmail.com
+        </EmailLink>
+        .
       </Paragraph>
       <Paragraph>
         Have feedback? Email me at{" "}
-        <EmailLink href="mailto:zuber.nicholas@gmail.com">zuber.nicholas@gmail.com</EmailLink>.
+        <EmailLink theme={theme} href="mailto:zuber.nicholas@gmail.com">
+          zuber.nicholas@gmail.com
+        </EmailLink>
+        .
       </Paragraph>
       <Paragraph>
         It will <b>always</b> be possible to use all 20 letters.
@@ -91,38 +97,11 @@ export function InstructionsModalImpl() {
       <br />
     </>
   );
-
-  // return (
-  //   <>
-  //     <Paragraph>Build a crossword by connecting all the letters on the board.</Paragraph>
-  //     <Paragraph>
-  //       Each word must be a real English word. Words must be connected to each other.
-  //     </Paragraph>
-  //     <Paragraph>When you've placed all the letters, hit enter to submit.</Paragraph>
-
-  //     <Divider theme={theme} />
-
-  //     <Paragraph>
-  //       You can place letters anywhere on the entire board by tapping a square.
-  //     </Paragraph>
-
-  //     <Paragraph>
-  //       You can change the direction your letters flow by tapping the highlighted square.
-  //     </Paragraph>
-
-  //     <MiniBoardDemo />
-
-  //     <Paragraph>
-  //       It will <b>always</b> be possible to use all 20 letters.
-  //     </Paragraph>
-  //     <Paragraph>Have fun!</Paragraph>
-  //   </>
-  // );
 }
 
-const EmailLink = styled.a`
-  color: #477aaa !important;
-  text-decoration: none !important;
+const EmailLink = styled.a<{ theme: AppTheme }>`
+  color: ${(p) => p.theme.colors.linkText};
+  text-decoration: none;
 `;
 
 const MiniTitle = styled.h2`

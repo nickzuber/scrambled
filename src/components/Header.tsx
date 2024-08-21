@@ -92,6 +92,7 @@ export const Header: FC<HeaderProps> = ({
         {showTimer ? <RunningTimer /> : null}
         {/* Help */}
         <BottomDrawer
+          pessimisticallyAssumeOverflow
           open={isFirstTime === true ? true : undefined}
           title={"How to play"}
           renderContents={() => <InstructionsModalImpl />}

@@ -79,7 +79,11 @@ export function Intro() {
         </Title>
         <Divider className="slideUpAndWidenOut" theme={theme} />
         {isGameOver ? (
-          <Byline className="slideUp">Miss us already?</Byline>
+          <Byline className="slideUp">
+            Miss us already?
+            <br />
+            There'll be a puzzle tomorrow
+          </Byline>
         ) : hasStartedGame ? (
           <Byline className="slideUp">Continue playing?</Byline>
         ) : (
@@ -202,9 +206,9 @@ const Button = styled.button<{ theme: AppTheme }>`
   border-radius: 32px;
   cursor: pointer;
 
-  color: ${(p) => p.theme.colors.invertedText};
-  border: 1px solid ${(p) => p.theme.colors.text};
-  background: ${(p) => p.theme.colors.text};
+  color: ${(p) => p.theme.colors.introButtonText};
+  border: 1px solid ${(p) => p.theme.colors.introButtonBackground};
+  background: ${(p) => p.theme.colors.introButtonBackground};
 
   @media (max-width: 320px) {
     width: 75%;
