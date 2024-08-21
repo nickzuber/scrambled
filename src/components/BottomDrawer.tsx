@@ -75,6 +75,7 @@ export function BottomDrawer({
 }
 
 const BottomShadow = styled.div<{ theme: AppTheme; show: boolean }>`
+  z-index: 2;
   position: absolute;
   pointer-events: none;
 
