@@ -75,7 +75,7 @@ export function Intro() {
           <span>{"🍳"}</span>
         </Logo>
         <Title id="intro-title" className="slideUp">
-          Scrambled
+          Scrambled<BetaTag className="popIn">Beta</BetaTag>
         </Title>
         <Divider className="slideUpAndWidenOut" theme={theme} />
         {isGameOver ? (
@@ -137,6 +137,7 @@ const Container = styled.div<{ theme: AppTheme; fadeOut?: boolean; fadeOutLoadin
 
 const Logo = styled.div`
   animation-delay: 0ms;
+  margin-right: -22px;
 
   & > span {
     display: block;
@@ -240,6 +241,28 @@ const AuthorMessage = styled.span`
 
   text-align: center;
   padding-inline: 24px;
+`;
+
+const BetaTag = styled.span`
+  // animation-delay: 250ms; /* must be done within CSS class */
+
+  display: block;
+  position: absolute;
+  background: #fe0606;
+
+  top: -24px;
+  right: -12px;
+
+  font-size: 0.3em;
+  line-height: 1em;
+  color: #ffffff;
+  font-family: franklin, Inter, sans-serif;
+  letter-spacing: 0.85px;
+  font-weight: 700;
+  padding: 7px 12px;
+  border-radius: 18px;
+  text-transform: uppercase;
+  box-shadow: rgba(50, 50, 93, 0.15) 0px 6px 12px -2px, rgba(0, 0, 0, 0.2) 0px 3px 7px -3px;
 `;
 
 const DisclaimerMessage = styled.span`
