@@ -26,7 +26,16 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.amplitude.com/libs/analytics-browser-2.10.0-min.js.gz"></script>
+    <script src="https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.6.21-min.js.gz"></script>
+    <script>
+      window.amplitude.add(window.sessionReplay.plugin({ sampleRate: 1 })).promise.then(function () {
+        window.amplitude.init("5e3b6ac78897e896fa0b078224f57b2e", {
+          autocapture: { elementInteractions: true },
+        });
+      });
+    </script>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5RN4EPZPW0"></script>
     <script src="%PUBLIC_URL%/hash.js"></script>
