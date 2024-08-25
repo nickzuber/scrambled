@@ -13,6 +13,7 @@ import {
   createUnscoredBoard,
 } from "../../utils/board-validator";
 import { formatAsTimer, isBoardScored } from "../../utils/game";
+import { getTextShareMessage } from "../../utils/words-helper";
 import { Modal } from "./Modal";
 
 function zeroPad(num: number, places: number) {
@@ -96,27 +97,31 @@ export const StatsModalImpl: FC = () => {
 
     const results = await getShareClipboardItemForBoard();
     if (!results) {
+      console.error("Failed to generate clipboard items.");
       sendToast("Unable to share\nTry taking a screenshot instead");
       return;
     }
 
     const [clipboardItem, imageFile] = results;
+
     if (navigator.share) {
       navigator
         .share({
           text: "https://play-scrambled.com/",
           files: [imageFile],
         })
-        .catch(() =>
-          navigator.clipboard
-            .write([clipboardItem])
-            .then(() => sendToast("Copied to clipboard!"))
-            .catch((e) => {
-              console.error(e);
-              sendToast("Unable to share\nTry taking a screenshot instead");
-            }),
-        );
-    } else if (navigator.clipboard) {
+        .catch(() => {
+          if (clipboardItem) {
+            navigator.clipboard
+              .write([clipboardItem])
+              .then(() => sendToast("Copied to clipboard!"))
+              .catch((e) => {
+                console.error(e);
+                sendToast("Unable to share\nTry taking a screenshot instead");
+              });
+          }
+        });
+    } else if (navigator.clipboard && clipboardItem) {
       navigator.clipboard
         .write([clipboardItem])
         .then(() => sendToast("Copied to clipboard!"))
@@ -124,7 +129,42 @@ export const StatsModalImpl: FC = () => {
           console.error(e);
           sendToast("Unable to copy\nTry taking a screenshot instead");
         });
+    } else if (navigator.clipboard && !clipboardItem) {
+      // Likely FF web or other platform that doesn't yet support `ClipboardItem`
+      onShareTextResults();
     } else {
+      console.error("[Image] Failed to access meaningful navigator properties.");
+      onShareTextResults();
+    }
+  }
+
+  async function onShareTextResults() {
+    const shareText = getTextShareMessage(board);
+
+    if (navigator.share) {
+      navigator
+        .share({
+          text: shareText,
+        })
+        .catch(() => {
+          navigator.clipboard
+            .writeText(shareText)
+            .then(() => sendToast("Copied to clipboard!"))
+            .catch((e) => {
+              console.error(e);
+              sendToast("Unable to share\nTry taking a screenshot instead");
+            });
+        });
+    } else if (navigator.clipboard) {
+      navigator.clipboard
+        .writeText(shareText)
+        .then(() => sendToast("Copied to clipboard!"))
+        .catch((e) => {
+          console.error(e);
+          sendToast("Unable to share\nTry taking a screenshot instead");
+        });
+    } else {
+      console.error("[Text] Failed to access meaningful navigator properties.");
       sendToast("Unable to share\nTry taking a screenshot instead");
     }
   }
@@ -225,7 +265,11 @@ export const StatsModalImpl: FC = () => {
       )}
 
       <Button presentAsDisabled={!isGameOver} theme={theme} onClick={onShareResults}>
-        Share your puzzle
+        Share your solution
+      </Button>
+
+      <Button presentAsDisabled={!isGameOver} theme={theme} onClick={onShareTextResults}>
+        Share your puzzle (no spoilers)
       </Button>
     </>
   );

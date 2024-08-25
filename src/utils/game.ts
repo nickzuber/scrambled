@@ -590,13 +590,18 @@ export function moveBoard(board: Board, direction: Directions): Board {
   }
 }
 
-export function getPuzzleNumber() {
+export function getPuzzleNumber(): number {
   const now = new Date();
   const start = new Date(now.getFullYear(), 0, 0);
   const diff = now.getTime() - start.getTime();
   const oneDay = 1000 * 60 * 60 * 24;
   const day = Math.floor(diff / oneDay);
-  return day;
+
+  // Starting this in 2023
+  const year = now.getFullYear() - 2023;
+  const offset = year * 365;
+
+  return offset + day;
 }
 
 export function formatAsTimer(time: number): string {

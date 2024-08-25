@@ -176,7 +176,11 @@ export const useGame = () => {
       });
       return [clipboardItem, blobFile] as [ClipboardItem, File];
     } catch (error) {
-      return null;
+      console.error(error);
+      const blobFile = new File([imgBlob], `Scrambled #${getPuzzleNumber()}.png`, {
+        type: "image/png",
+      });
+      return [null, blobFile] as [null, File];
     }
   }, []);
 

@@ -6,7 +6,7 @@ import { words as FourCharWords } from "../constants/words/good-words/four";
 import { words as SixCharWords } from "../constants/words/good-words/six";
 import { words as ThreeCharWords } from "../constants/words/good-words/three";
 import { words as TwoCharWords } from "../constants/words/good-words/two";
-import { Config } from "./game";
+import { Board, Config, getPuzzleNumber } from "./game";
 
 const debug = false;
 const log = debug ? console.info : (args: any[]): void => {};
@@ -812,4 +812,34 @@ export function printBoard(board: SolutionBoard, highlights: Position[] = []) {
   lines.push("\x1b[37m  ┗━━━━━━━━━━━━━┛");
   console.info(lines.join("\n"));
   console.info("");
+}
+export function getTextBoardSolution(board: Board) {
+  let result = "";
+
+  for (let r = 0; r < LetterBounds; r++) {
+    let parts = [];
+    for (let c = 0; c < LetterBounds; c++) {
+      const letter = board.tiles[r][c].letter;
+      if (letter) {
+        parts.push(`🟩`);
+      } else {
+        parts.push(`⬜`);
+      }
+    }
+    result += `${parts.join("")}\n`;
+  }
+
+  return result;
+}
+
+export function getTextShareMessage(board: Board, isHardMode?: boolean): string {
+  const textPuzzleSolution = getTextBoardSolution(board);
+
+  const parts = [
+    "https://play-scrambled.com/",
+    `${isHardMode ? "*" : ""}Scrambled #${getPuzzleNumber()}`,
+    textPuzzleSolution,
+  ];
+
+  return parts.join("\n");
 }
