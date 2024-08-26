@@ -268,9 +268,9 @@ export const StatsModalImpl: FC = () => {
         Share your solution
       </Button>
 
-      <Button presentAsDisabled={!isGameOver} theme={theme} onClick={onShareTextResults}>
+      {/* <Button presentAsDisabled={!isGameOver} theme={theme} onClick={onShareTextResults}>
         Share your puzzle (no spoilers)
-      </Button>
+      </Button> */}
     </>
   );
 };
