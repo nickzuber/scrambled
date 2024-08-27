@@ -245,7 +245,7 @@ export const Controls: FC = () => {
 
         <LettersRow>
           <ActionButton
-            className={submitWillSucceed ? "submit-will-succeed" : undefined}
+            id={submitWillSucceed ? "submit-will-succeed" : undefined}
             disabled={isGameOver}
             onClick={() => onEnterPress()}
             theme={theme}
