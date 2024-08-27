@@ -1,6 +1,6 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FC, useCallback, useContext, useEffect, useState } from "react";
+import { FC, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { FadeIn, PopIn } from "../constants/animations";
 import { AppTheme } from "../constants/themes";
 import { GameContext } from "../contexts/game";
@@ -35,9 +35,15 @@ export const Controls: FC = () => {
   const [isInShiftBoardMode, setIsInShiftBoardMode] = useState(false);
 
   const disableEnterButton = !canFinish || isGameOver;
+  const [checkedBoard, allWordsAreValid] = useMemo(
+    () => validateBoard({ board, mode: "validate" }),
+    [board],
+  );
+
+  // If submit is pressed, it will successfully complete the puzzle.
+  const submitWillSucceed = unusedLetters.length === 0 && allWordsAreValid;
 
   const onEnterPress = useCallback(() => {
-    const [checkedBoard, allWordsAreValid] = validateBoard({ board, mode: "validate" });
     setSubmitCount((curCount) => curCount + 1);
 
     if (disableEnterButton) {
@@ -80,9 +86,10 @@ export const Controls: FC = () => {
     disableEnterButton,
     unusedLetters,
     requestFinish,
-    board,
     setBoard,
     setSubmitCount,
+    checkedBoard,
+    allWordsAreValid,
   ]);
 
   const onLetterButtonPress = useCallback(
@@ -237,7 +244,12 @@ export const Controls: FC = () => {
         </LettersRow>
 
         <LettersRow>
-          <ActionButton disabled={isGameOver} onClick={() => onEnterPress()} theme={theme}>
+          <ActionButton
+            className={submitWillSucceed ? "submit-will-succeed" : undefined}
+            disabled={isGameOver}
+            onClick={() => onEnterPress()}
+            theme={theme}
+          >
             {"Submit"}
           </ActionButton>
           {bottomLetters.map((letter) =>
