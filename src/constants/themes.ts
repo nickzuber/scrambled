@@ -67,7 +67,7 @@ const DarkTheme: AppTheme = {
     invertedText: "#1a1a1b",
     tileSecondary: "#4d5a62",
     letterBackground: "#4d5a62",
-    highlight: "#133652",
+    highlight: "#102439",
     highlightBorder: "#c4c5c5",
     buttonActive: "#656b6e",
     introText: "#1a1a1b",

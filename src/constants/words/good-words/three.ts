@@ -311,7 +311,6 @@ export const words = [
   "rug",
   "dem",
   "ham",
-  "eva",
   "bon",
   "dom",
   "jar",

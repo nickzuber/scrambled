@@ -567,7 +567,6 @@ export const words = [
   "fabric",
   "visits",
   "flying",
-  "berlin",
   "pounds",
   "desire",
   "caught",
