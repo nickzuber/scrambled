@@ -832,7 +832,7 @@ export function getTextBoardSolution(board: Board) {
   return result;
 }
 
-export function getTextShareMessage(board: Board, isHardMode?: boolean): string {
+export function getTextShareMessage(board: Board, isHardMode?: boolean): string[] {
   const textPuzzleSolution = getTextBoardSolution(board);
 
   const parts = [
@@ -841,5 +841,6 @@ export function getTextShareMessage(board: Board, isHardMode?: boolean): string 
     textPuzzleSolution,
   ];
 
-  return parts.join("\n");
+  return parts;
+  // return parts.join("\n");
 }

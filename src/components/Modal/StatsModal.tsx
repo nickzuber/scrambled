@@ -144,11 +144,13 @@ export const StatsModalImpl: FC = () => {
     if (navigator.share) {
       navigator
         .share({
-          text: shareText,
+          url: shareText[0],
+          title: shareText[1],
+          text: shareText[2],
         })
         .catch(() => {
           navigator.clipboard
-            .writeText(shareText)
+            .writeText(shareText.join("\n"))
             .then(() => sendToast("Copied to clipboard!"))
             .catch((e) => {
               console.error(e);
@@ -157,7 +159,7 @@ export const StatsModalImpl: FC = () => {
         });
     } else if (navigator.clipboard) {
       navigator.clipboard
-        .writeText(shareText)
+        .writeText(shareText.join("\n"))
         .then(() => sendToast("Copied to clipboard!"))
         .catch((e) => {
           console.error(e);
