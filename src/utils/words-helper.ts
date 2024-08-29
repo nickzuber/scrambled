@@ -836,7 +836,7 @@ export function getTextShareMessage(board: Board, isHardMode?: boolean): string[
   const textPuzzleSolution = getTextBoardSolution(board);
 
   const parts = [
-    "https://play-scrambled.com/",
+    "https://play-scrambled.com",
     `${isHardMode ? "*" : ""}Scrambled #${getPuzzleNumber()}`,
     textPuzzleSolution,
   ];
