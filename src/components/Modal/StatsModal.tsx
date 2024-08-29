@@ -266,7 +266,7 @@ export const StatsModalImpl: FC = () => {
         </>
       )}
 
-      <Button presentAsDisabled={!isGameOver} theme={theme} onClick={onShareResults}>
+      <Button presentAsDisabled={!isGameOver} theme={theme} onClick={onShareTextResults}>
         Share your solution
       </Button>
 
