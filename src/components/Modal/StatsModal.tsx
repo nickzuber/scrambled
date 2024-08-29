@@ -13,29 +13,12 @@ import {
   createUnscoredBoard,
 } from "../../utils/board-validator";
 import { formatAsTimer, isBoardScored } from "../../utils/game";
-import { getTextShareMessage } from "../../utils/words-helper";
+import { getTextShareMessage, printBoard } from "../../utils/words-helper";
+import { Toggle } from "../core/Toggle";
 import { Modal } from "./Modal";
 
-function zeroPad(num: number, places: number) {
-  return String(num).padStart(places, "0");
-}
-
-function getTimeLeftInDay() {
-  const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(0, 0, 0, 0);
-
-  const ms = tomorrow.getTime() - today.getTime();
-  const seconds = ms / 1000;
-  const minutes = seconds / 60;
-  const hours = minutes / 60;
-
-  return `${zeroPad(Math.floor(hours), 2)}:${zeroPad(Math.floor(minutes % 60), 2)}:${zeroPad(
-    Math.floor(seconds % 60),
-    2,
-  )}`;
-}
+// Make this `true` to a a valid solution for today's board.
+const DEBUGGING = false;
 
 export const StatsModal: FC = () => {
   return (
@@ -64,6 +47,8 @@ export const StatsModalImpl: FC = () => {
     totalWordCount,
     mostWordsInAPuzzle,
     fastedCompletion,
+    shareHideSolution,
+    setShareHideSolution,
   } = useContext(GlobalStatesContext);
 
   const getShareClipboardItemForBoard = scoreMode
@@ -144,12 +129,11 @@ export const StatsModalImpl: FC = () => {
     if (navigator.share) {
       navigator
         .share({
-          // url: shareText[0],
-          text: `${shareText[0]}\n${shareText[1]}\n${shareText[2]}`,
+          text: shareText,
         })
         .catch(() => {
           navigator.clipboard
-            .writeText(shareText.join("\n"))
+            .writeText(shareText)
             .then(() => sendToast("Copied to clipboard!"))
             .catch((e) => {
               console.error(e);
@@ -158,7 +142,7 @@ export const StatsModalImpl: FC = () => {
         });
     } else if (navigator.clipboard) {
       navigator.clipboard
-        .writeText(shareText.join("\n"))
+        .writeText(shareText)
         .then(() => sendToast("Copied to clipboard!"))
         .catch((e) => {
           console.error(e);
@@ -168,6 +152,10 @@ export const StatsModalImpl: FC = () => {
       console.error("[Text] Failed to access meaningful navigator properties.");
       sendToast("Unable to share\nTry taking a screenshot instead");
     }
+  }
+
+  if (DEBUGGING) {
+    console.info(printBoard(solutionBoard));
   }
 
   return (
@@ -265,9 +253,24 @@ export const StatsModalImpl: FC = () => {
         </>
       )}
 
-      <Button presentAsDisabled={!isGameOver} theme={theme} onClick={onShareTextResults}>
-        Share your solution
-      </Button>
+      <ShareContainer>
+        {isGameOver ? (
+          <ToggleContainer>
+            <ToggleLabel>Hide your solution</ToggleLabel>
+            <Toggle
+              onClick={() => setShareHideSolution((s) => !s)}
+              enabled={shareHideSolution}
+            />
+          </ToggleContainer>
+        ) : null}
+        <Button
+          presentAsDisabled={!isGameOver}
+          theme={theme}
+          onClick={shareHideSolution ? onShareTextResults : onShareResults}
+        >
+          Share your puzzle
+        </Button>
+      </ShareContainer>
 
       {/* <Button presentAsDisabled={!isGameOver} theme={theme} onClick={onShareTextResults}>
         Share your puzzle (no spoilers)
@@ -284,11 +287,41 @@ function RunningTimerStatItem() {
   );
 }
 
+const ToggleLabel = styled.div`
+  outline: 0px dashed green;
+
+  font-weight: 600;
+  font-size: 1.1rem;
+  line-height: 0.9rem;
+`;
+
+const ToggleContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  gap: 18px;
+`;
+
+const ShareContainer = styled.div`
+  outline: 0px dashed red;
+
+  width: 100%;
+  gap: 12px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  margin: 28px auto 24px;
+`;
+
 const Button = styled.button<{ theme: AppTheme; presentAsDisabled?: boolean }>`
   animation-delay: 150ms;
   user-select: none;
 
-  margin: 28px auto 24px;
   padding: 14px 32px;
   text-transform: none;
   white-space: nowrap;
@@ -502,81 +535,6 @@ const Result = styled.span`
   text-shadow: 0px 1px 2px #5d5d5d4f;
   margin: 8px auto;
   display: block;
-`;
-
-const SpacingContainer = styled.div`
-  width: 100%;
-  min-height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  margin: 12px auto 0;
-`;
-
-const ShareContainer = styled.div`
-  width: 100%;
-  min-height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  margin: 36px auto 24px;
-`;
-
-const Clock = styled.div`
-  display: block;
-
-  font-size: 1.25em;
-  line-height: 1.286;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-
-  text-align: center;
-  padding-inline: 24px;
-`;
-
-const ShareSection = styled.div`
-  width: 50%;
-  min-height: 50px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ShareButton = styled.button`
-  height: 40px;
-  width: 120px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.1rem;
-  text-transform: uppercase;
-  font-weight: 700;
-  letter-spacing: 0.25px;
-  border: none;
-  background: #6aaa64;
-  color: #ffffff;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 100ms ease-in;
-
-  &:hover {
-    background: #649d5e;
-  }
-
-  &:active {
-    background: #5e9153;
-  }
-
-  svg {
-    transform: scale(1);
-  }
-
-  &:before {
-    font-size: 16px;
-    content: "Share";
-    margin-right: 8px;
-  }
 `;
 
 const Score = styled.div<{ revealDelay: number }>(({ revealDelay }) => {

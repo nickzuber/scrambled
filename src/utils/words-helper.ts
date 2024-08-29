@@ -832,15 +832,17 @@ export function getTextBoardSolution(board: Board) {
   return result;
 }
 
-export function getTextShareMessage(board: Board, isHardMode?: boolean): string[] {
+export function getTextShareMessage(board: Board, isHardMode?: boolean): string {
   const textPuzzleSolution = getTextBoardSolution(board);
 
   const parts = [
+    // NOTE:
+    // Important to leave off the trailing `/` from the URL.
+    // For some reason, this breaks the string.
     "https://play-scrambled.com",
     `${isHardMode ? "*" : ""}Scrambled #${getPuzzleNumber()}`,
     textPuzzleSolution,
   ];
 
-  return parts;
-  // return parts.join("\n");
+  return parts.join("\n");
 }

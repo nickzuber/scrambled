@@ -20,6 +20,7 @@ const useFastedCompletion = createPersistedState<number | undefined>(
   PersistedStates.FastedCompletion,
 );
 const useShowTimer = createPersistedState<boolean>(PersistedStates.ShowTimer);
+const useShareHideSolution = createPersistedState<boolean>(PersistedStates.ShareHideSolution);
 
 export type GlobalStatesOptions = ReturnType<typeof useGlobalStates>;
 
@@ -30,6 +31,7 @@ export function useGlobalStates() {
   const [hardMode, setHardMode] = useHardMode(false);
   const [scoreMode, setScoreMode] = useScoreMode(false);
   const [showTimer, setShowTimer] = useShowTimer(false);
+  const [shareHideSolution, setShareHideSolution] = useShareHideSolution(false);
 
   const [streakCount, setStreakCount] = useStreak(0);
   const [totalWordCount, setTotalWordCount] = useTotalWordCount(0);
@@ -75,5 +77,8 @@ export function useGlobalStates() {
 
     fastedCompletion,
     setFastedCompletion,
+
+    shareHideSolution,
+    setShareHideSolution,
   };
 }
