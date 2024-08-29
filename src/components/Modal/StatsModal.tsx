@@ -258,6 +258,13 @@ export const StatsModalImpl: FC = () => {
       )}
 
       <ShareContainer>
+        <Button
+          presentAsDisabled={!isGameOver}
+          theme={theme}
+          onClick={shareHideSolution ? onShareTextResults : onShareResults}
+        >
+          Share your puzzle
+        </Button>
         {isGameOver ? (
           <ToggleContainer>
             <ToggleLabel>Hide your solution</ToggleLabel>
@@ -267,13 +274,6 @@ export const StatsModalImpl: FC = () => {
             />
           </ToggleContainer>
         ) : null}
-        <Button
-          presentAsDisabled={!isGameOver}
-          theme={theme}
-          onClick={shareHideSolution ? onShareTextResults : onShareResults}
-        >
-          Share your puzzle
-        </Button>
       </ShareContainer>
     </>
   );
