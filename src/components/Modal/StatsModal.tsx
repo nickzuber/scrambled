@@ -13,7 +13,11 @@ import {
   createUnscoredBoard,
 } from "../../utils/board-validator";
 import { formatAsTimer, isBoardScored } from "../../utils/game";
-import { getTextShareMessage, printBoard } from "../../utils/words-helper";
+import {
+  getTextShareMessage,
+  getTextShareMessagePuzzleOfTheDay,
+  printBoard,
+} from "../../utils/words-helper";
 import { Toggle } from "../core/Toggle";
 import { Modal } from "./Modal";
 
@@ -92,7 +96,7 @@ export const StatsModalImpl: FC = () => {
     if (navigator.share) {
       navigator
         .share({
-          text: "https://play-scrambled.com/",
+          text: `https://play-scrambled.com\n${getTextShareMessagePuzzleOfTheDay()}`,
           files: [imageFile],
         })
         .catch(() => {
@@ -271,10 +275,6 @@ export const StatsModalImpl: FC = () => {
           Share your puzzle
         </Button>
       </ShareContainer>
-
-      {/* <Button presentAsDisabled={!isGameOver} theme={theme} onClick={onShareTextResults}>
-        Share your puzzle (no spoilers)
-      </Button> */}
     </>
   );
 };
