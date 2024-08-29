@@ -145,8 +145,7 @@ export const StatsModalImpl: FC = () => {
       navigator
         .share({
           url: shareText[0],
-          title: shareText[1],
-          text: shareText[2],
+          text: `${shareText[1]}\n${shareText[2]}`,
         })
         .catch(() => {
           navigator.clipboard
