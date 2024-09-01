@@ -20,6 +20,8 @@ import {
 } from "../../utils/words-helper";
 import { Toggle } from "../core/Toggle";
 import { Modal } from "./Modal";
+import { Label, Name, Setting } from "./SettingsModal";
+import { Description } from "@radix-ui/react-dialog";
 
 // Make this `true` to a a valid solution for today's board.
 const DEBUGGING = false;
@@ -62,12 +64,12 @@ export const StatsModalImpl: FC = () => {
   // Solution board but with a score for each tile.
   const scoredSolutionBoard = useMemo(
     () => createScoredSolutionBoard(solutionBoard),
-    [solutionBoard],
+    [solutionBoard]
   );
 
   const yourBoard = useMemo(
     () => (scoreMode ? createScoredBoard(board) : createUnscoredBoard(board)),
-    [board, scoreMode],
+    [board, scoreMode]
   );
 
   const showScoredBoard = scoreMode && isBoardScored(yourBoard);
@@ -122,12 +124,19 @@ export const StatsModalImpl: FC = () => {
       // Likely FF web or other platform that doesn't yet support `ClipboardItem`
       onShareTextResults();
     } else {
-      console.error("[Image] Failed to access meaningful navigator properties.");
+      console.error(
+        "[Image] Failed to access meaningful navigator properties."
+      );
       onShareTextResults();
     }
   }
 
   async function onShareTextResults() {
+    if (!isGameOver) {
+      sendToast("Submit your puzzle before sharing");
+      return;
+    }
+
     const shareText = getTextShareMessage(board);
 
     if (navigator.share) {
@@ -158,6 +167,7 @@ export const StatsModalImpl: FC = () => {
     }
   }
 
+  // Makes it easier if I need to solve the puzzle for testing.
   if (DEBUGGING) {
     console.info(printBoard(solutionBoard));
   }
@@ -166,7 +176,10 @@ export const StatsModalImpl: FC = () => {
     <>
       <Divider theme={theme} />
       <FlexContainer>
-        <StatItem title={totalCompletionCount.toLocaleString()} byline={"Puzzles"} />
+        <StatItem
+          title={totalCompletionCount.toLocaleString()}
+          byline={"Puzzles"}
+        />
         <StatItem title={totalWordCount.toLocaleString()} byline={"Words"} />
         <StatItem
           title={streakCount.toLocaleString()}
@@ -189,11 +202,12 @@ export const StatsModalImpl: FC = () => {
         />
       </FlexContainer>
       <Divider theme={theme} />
+
       {!isGameOver ? (
-        <Paragraph>
-          Submit your puzzle to see
+        <Paragraph italic>
+          Submit your puzzle to see the author's
           <br />
-          the author's solution for today
+          solution for today
         </Paragraph>
       ) : (
         <>
@@ -222,7 +236,9 @@ export const StatsModalImpl: FC = () => {
                                 <ShineContainer>
                                   <ShineWrapper score={tile.score} />
                                 </ShineContainer>
-                                <Score revealDelay={r * 100 + c * 100}>{tile.score}</Score>
+                                <Score revealDelay={r * 100 + c * 100}>
+                                  {tile.score}
+                                </Score>
                               </>
                             </MiniTileContentsSuccess>
                           ) : (
@@ -265,15 +281,20 @@ export const StatsModalImpl: FC = () => {
         >
           Share your puzzle
         </Button>
-        {isGameOver ? (
+        <Setting
+          style={{ width: "calc(100% - 44px)", marginBottom: 4, marginTop: 12 }}
+        >
+          <Label>
+            <Name>Hide your letters</Name>
+            <Description>Use emojis when sharing puzzle</Description>
+          </Label>
           <ToggleContainer>
-            <ToggleLabel>Hide your solution</ToggleLabel>
             <Toggle
               onClick={() => setShareHideSolution((s) => !s)}
               enabled={shareHideSolution}
             />
           </ToggleContainer>
-        ) : null}
+        </Setting>
       </ShareContainer>
     </>
   );
@@ -283,7 +304,11 @@ function RunningTimerStatItem() {
   const { timer } = useContext(TimerStateContext);
 
   return (
-    <StatItem title={formatAsTimer(timer)} byline={"Today's time"} bylineIcon={<PauseSvg />} />
+    <StatItem
+      title={formatAsTimer(timer)}
+      byline={"Today's time"}
+      bylineIcon={<PauseSvg />}
+    />
   );
 }
 
@@ -305,8 +330,6 @@ const ToggleContainer = styled.div`
 `;
 
 const ShareContainer = styled.div`
-  outline: 0px dashed red;
-
   width: 100%;
   gap: 12px;
 
@@ -326,6 +349,7 @@ const Button = styled.button<{ theme: AppTheme; presentAsDisabled?: boolean }>`
   text-transform: none;
   white-space: nowrap;
 
+  width: 90%;
   font-size: 1em;
   font-weight: 600;
   display: flex;
@@ -502,7 +526,7 @@ const MiniTileContentsSuccess = styled(MiniTileContents)<{
         p.theme.colors.text,
         p.theme.colors.tileSecondary,
         p.theme.colors.primary,
-        p.score,
+        p.score
       )}
     500ms ease-in;
   animation-delay: ${(p) => p.animationDelay}ms;
@@ -520,12 +544,15 @@ const Title = styled.h1`
   text-align: center;
 `;
 
-const Paragraph = styled.p`
+const Paragraph = styled.p<{ italic?: boolean }>`
   font-weight: 500;
   font-size: 1em;
+  line-height: 1.4em;
   text-align: center;
   width: 100%;
   margin: 18px auto 8px;
+
+  font-style: ${(p) => (p.italic ? "italic" : "normal")};
 `;
 
 const Result = styled.span`

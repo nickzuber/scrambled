@@ -1,6 +1,13 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FC, useCallback, useContext, useEffect, useRef, useState } from "react";
+import {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { AppTheme } from "../constants/themes";
 import { GlobalStatesContext } from "../contexts/global";
 import { PageContext } from "../contexts/page";
@@ -32,9 +39,16 @@ export const Header: FC<HeaderProps> = ({
   const { setPage } = useContext(PageContext);
   const { showTimer } = useContext(GlobalStatesContext);
 
+  const [isAnyDrawerOpen, setIsAnyDrawerOpen] = useState(false);
+
   const [secret, setSecret] = useState(false);
   const tapsRef = useRef(0);
-  const tapsTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const tapsTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
+  const openStatsRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
   const updaterRef = useRef(false);
 
   const handleSecretTaps = useCallback(() => {
@@ -57,12 +71,18 @@ export const Header: FC<HeaderProps> = ({
       // + 1000ms for all animations to kick off.
       // + 500ms for the last animation to finish.
       // + 250 for some buffer room to soak in the tile flipping animation.
-      setTimeout(() => setShowStats(true), 1750);
+      openStatsRef.current = setTimeout(() => setShowStats(true), 1750);
 
       // Only do this once per lifecycle.
       updaterRef.current = true;
     }
   }, [isGameOver]);
+
+  useEffect(() => {
+    if (isAnyDrawerOpen && openStatsRef.current) {
+      clearTimeout(openStatsRef.current);
+    }
+  }, [isAnyDrawerOpen]);
 
   return (
     <Container theme={theme}>
@@ -97,6 +117,7 @@ export const Header: FC<HeaderProps> = ({
           title={"How to play"}
           renderContents={() => <InstructionsModalImpl />}
           onOpenChange={(isOpen) => {
+            setIsAnyDrawerOpen(isOpen);
             if (!isOpen) {
               setIsFirstTime(false);
             }
@@ -106,10 +127,12 @@ export const Header: FC<HeaderProps> = ({
         </BottomDrawer>
         {/* Stats */}
         <BottomDrawer
+          pessimisticallyAssumeOverflow
           open={showStats === true ? true : undefined}
           title={"Statistics"}
           renderContents={() => <StatsModalImpl />}
           onOpenChange={(isOpen) => {
+            setIsAnyDrawerOpen(isOpen);
             if (!isOpen) {
               setShowStats(false);
             }
@@ -127,6 +150,9 @@ export const Header: FC<HeaderProps> = ({
               secret={secret}
             />
           )}
+          onOpenChange={(isOpen) => {
+            setIsAnyDrawerOpen(isOpen);
+          }}
         >
           <Button theme={theme}>Settings</Button>
         </BottomDrawer>
@@ -137,11 +163,16 @@ export const Header: FC<HeaderProps> = ({
 
 function RunningTimer() {
   const theme = useTheme() as AppTheme;
+  const { isGameOver } = useContext(GlobalStatesContext);
   const { timer } = useContext(TimerStateContext);
 
   return (
     <TimerContainer theme={theme}>
-      <PauseSvg style={{ marginTop: 0 }} />
+      {isGameOver ? (
+        <PauseSvg style={{ marginTop: 0 }} />
+      ) : (
+        <PlaySvg style={{ marginTop: 0 }} />
+      )}
       {formatAsTimer(timer)}
     </TimerContainer>
   );
@@ -189,6 +220,29 @@ const PauseSvg = (props: { style?: React.CSSProperties }) => {
     >
       <rect x="14" y="4" width="4" height="16" rx="1" />
       <rect x="6" y="4" width="4" height="16" rx="1" />
+    </svg>
+  );
+};
+
+const PlaySvg = (props: { style?: React.CSSProperties }) => {
+  const theme = useTheme() as AppTheme;
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill={theme.colors.text}
+      stroke={theme.colors.iconBorder}
+      xmlns="http://www.w3.org/2000/svg"
+      strokeWidth={2}
+      style={props.style}
+    >
+      <path
+        d="M6.90588 4.53682C6.50592 4.2998 6 4.58808 6 5.05299V18.947C6 19.4119 6.50592 19.7002 6.90588 19.4632L18.629 12.5162C19.0211 12.2838 19.0211 11.7162 18.629 11.4838L6.90588 4.53682Z"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></path>
     </svg>
   );
 };
