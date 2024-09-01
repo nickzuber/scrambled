@@ -60,8 +60,8 @@ export function BottomDrawer({
       onOpenChange={(open) => {
         onOpenChange?.(open);
         if (open) {
-          // I'm pretty sure the drawer animation is 0.5s
-          const timing = pessimisticallyAssumeOverflow ? 0 : 500;
+          // I'm pretty sure the drawer animation is 0.7s
+          const timing = pessimisticallyAssumeOverflow ? 0 : 700;
           shadowTimeoutRef.current = setTimeout(
             () => setShadowLock(true),
             timing
