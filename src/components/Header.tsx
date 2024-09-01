@@ -129,8 +129,8 @@ export const Header: FC<HeaderProps> = ({
         </BottomDrawer>
         {/* Stats */}
         <BottomDrawer
-          // As of 09/01/24, the content is about 750px high.
-          pessimisticallyAssumeOverflow={window.outerHeight * 0.9 < 750}
+          // As of 09/01/24, the content is about 700px high.
+          pessimisticallyAssumeOverflow={window.outerHeight * 0.9 < 700}
           scrollForMoreContentMessage={"Share"}
           open={showStats === true ? true : undefined}
           title={"Statistics"}
