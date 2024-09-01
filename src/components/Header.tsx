@@ -84,6 +84,11 @@ export const Header: FC<HeaderProps> = ({
     }
   }, [isAnyDrawerOpen]);
 
+  const viewportHeight = Math.max(
+    document.documentElement.clientHeight || 0,
+    window.innerHeight || 0
+  );
+
   return (
     <Container theme={theme}>
       <ButtonContainer style={{ marginLeft: 8 }}>
@@ -129,8 +134,8 @@ export const Header: FC<HeaderProps> = ({
         </BottomDrawer>
         {/* Stats */}
         <BottomDrawer
-          // As of 09/01/24, the content is about 700px high.
-          pessimisticallyAssumeOverflow={window.outerHeight * 0.9 < 700}
+          // As of 09/01/24, the content is about 764px high.
+          pessimisticallyAssumeOverflow={viewportHeight * 0.9 < 764}
           scrollForMoreContentMessage={"Share"}
           open={showStats === true ? true : undefined}
           title={"Statistics"}
