@@ -159,7 +159,7 @@ const ScrollDownCallout = styled.div<{ theme: AppTheme; show?: boolean }>`
   position: absolute;
   user-select: none;
 
-  bottom: 24px;
+  bottom: 32px;
 
   font-size: 1em;
   font-weight: 600;
