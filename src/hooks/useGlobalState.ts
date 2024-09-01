@@ -9,6 +9,8 @@ const useScoreMode = createPersistedState<boolean>(PersistedStates.ScoreMode);
 
 const useStreak = createPersistedState<number>(PersistedStates.Streak);
 const useTotalWordCount = createPersistedState<number>(PersistedStates.TotalWordCount);
+const useHighestScore = createPersistedState<number>(PersistedStates.HighestScore);
+const useHighestStreak = createPersistedState<number>(PersistedStates.HighestStreak);
 const useTotalCompletionCount = createPersistedState<number>(
   PersistedStates.TotalCompletionCount,
 );
@@ -35,6 +37,8 @@ export function useGlobalStates() {
 
   const [streakCount, setStreakCount] = useStreak(0);
   const [totalWordCount, setTotalWordCount] = useTotalWordCount(0);
+  const [highestScore, setHighestScore] = useHighestScore(0);
+  const [highestStreak, setHighestStreak] = useHighestStreak(0);
   const [totalCompletionCount, setTotalCompletionCount] = useTotalCompletionCount(0);
   const [lastCompletedPuzzleNumber, setLastCompletedPuzzleNumber] =
     useLastCompletedPuzzleNumber(undefined);
@@ -65,6 +69,12 @@ export function useGlobalStates() {
 
     totalWordCount,
     setTotalWordCount,
+
+    highestScore, 
+    setHighestScore,
+
+    highestStreak, 
+    setHighestStreak,
 
     totalCompletionCount,
     setTotalCompletionCount,

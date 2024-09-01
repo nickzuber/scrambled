@@ -34,6 +34,8 @@ export const useGame = () => {
     setTotalWordCount,
     setTotalCompletionCount,
     setLastCompletedPuzzleNumber,
+    setHighestScore,
+    setHighestStreak,
     lastCompletedPuzzleNumber,
   } = useContext(GlobalStatesContext);
   const { letters, solutionBoard, shuffleLetters, positionOfShuffle } = useLetters();
@@ -99,11 +101,14 @@ export const useGame = () => {
     // Validate the board.
     const [newBoard] = validateBoard({ board, mode: "submit" });
 
-    // Score the board.
+    // Score the board's tiles if needed.
     const finalBoard = scoreMode ? createScoredBoard(newBoard) : newBoard;
 
+    // Count the score on the board.
+    const finalScore = countBoardScore(createScoredBoard(newBoard))
+
     publishEvent("submit", {
-      final_score: scoreMode ? countBoardScore(createScoredBoard(newBoard)) : -1,
+      final_score: scoreMode ? finalScore : -1,
       valid_words: getValidWords(finalBoard),
       invalid_words: getInvalidWords(finalBoard),
     });
@@ -122,6 +127,8 @@ export const useGame = () => {
     setStreakCount((prevStreak) => {
       if (!lastCompletedPuzzleNumber) {
         // First completion.
+        // Initial highest streak setting as well.
+        setHighestStreak(prevHighestStreak => Math.max(prevHighestStreak, 1))
         return 1;
       } else if (getPuzzleNumber() - lastCompletedPuzzleNumber <= 1) {
         // If the current puzzle is 1 away from the last completed puzzle, then
@@ -131,12 +138,16 @@ export const useGame = () => {
         //
         // Note that this supports the same puzzle being completed twice as a streak;
         // this is for testing since its not normally possible.
-        return prevStreak + 1;
+        const nextStreakCount = prevStreak + 1
+        setHighestStreak(prevHighestStreak => Math.max(prevHighestStreak, nextStreakCount))
+        return nextStreakCount;
       } else {
         // If this wasn't the next puzzle, reset the streak.
+        // Highest streak should never need to be set here.
         return 1;
       }
     });
+    setHighestScore(prevHighestScore => Math.max(prevHighestScore, finalScore))
     setLastCompletedPuzzleNumber(getPuzzleNumber());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [

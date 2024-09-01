@@ -52,6 +52,8 @@ export const StatsModalImpl: FC = () => {
     totalCompletionCount,
     totalWordCount,
     mostWordsInAPuzzle,
+    highestScore,
+    highestStreak,
     fastedCompletion,
     shareHideSolution,
     setShareHideSolution,
@@ -184,17 +186,31 @@ export const StatsModalImpl: FC = () => {
         <StatItem
           title={streakCount.toLocaleString()}
           byline={"Streak"}
-          bylineIcon={streakCount >= 2 ? <FireSvg /> : undefined}
+          bylineIcon={streakCount >= highestStreak ? <FireSvg /> : undefined}
         />
       </FlexContainer>
       <Divider theme={theme} />
       <FlexContainer>
+        {scoreMode ? (
+          <StatItem
+            title={highestScore.toLocaleString()}
+            byline={"Highest score"}
+            bylineIcon={<LeaderboardSvg />}
+          />
+        ) : (
+          <StatItem
+            title={mostWordsInAPuzzle.toLocaleString()}
+            byline={"Most words"}
+            bylineIcon={<QuoteSvg />}
+          />
+        )}
+
         <StatItem
-          title={mostWordsInAPuzzle.toLocaleString()}
-          byline={"Most words"}
-          bylineIcon={<QuoteSvg />}
+          title={Math.max(highestStreak, streakCount).toLocaleString()}
+          byline={"Longest streak"}
+          bylineIcon={<FireSvg />}
         />
-        {showTimer ? <RunningTimerStatItem /> : null}
+
         <StatItem
           title={fastedCompletion ? formatAsTimer(fastedCompletion) : "—"}
           byline={"Quickest finish"}
@@ -714,6 +730,7 @@ const LightningSvg = () => {
       width="16px"
       height="16px"
       viewBox="0 0 24 24"
+      style={{ transform: "translate(2px, -1px)" }}
       strokeWidth="2"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -729,13 +746,51 @@ const LightningSvg = () => {
   );
 };
 
+const LeaderboardSvg = () => {
+  const theme = useTheme() as AppTheme;
+  return (
+    <svg
+      width="18px"
+      height="18px"
+      viewBox="0 0 24 24"
+      style={{ transform: "translate(2px, -1px)" }}
+      xmlns="http://www.w3.org/2000/svg"
+      strokeWidth="2"
+      fill="#fd7e14"
+      stroke={theme.colors.iconBorder}
+    >
+      <path
+        d="M15 19H9V12.5V8.6C9 8.26863 9.26863 8 9.6 8H14.4C14.7314 8 15 8.26863 15 8.6V14.5V19Z"
+        stroke={theme.colors.iconBorder}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></path>
+      <path
+        d="M20.4 19H15V15.1C15 14.7686 15.2686 14.5 15.6 14.5H20.4C20.7314 14.5 21 14.7686 21 15.1V18.4C21 18.7314 20.7314 19 20.4 19Z"
+        stroke={theme.colors.iconBorder}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></path>
+      <path
+        d="M9 19V13.1C9 12.7686 8.73137 12.5 8.4 12.5H3.6C3.26863 12.5 3 12.7686 3 13.1V18.4C3 18.7314 3.26863 19 3.6 19H9Z"
+        stroke={theme.colors.iconBorder}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></path>
+    </svg>
+  );
+};
+
 const FireSvg = () => {
   const theme = useTheme() as AppTheme;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="18px"
-      height="18px"
+      width="16px"
+      height="16px"
       viewBox="0 0 16 26"
       fill="#e41d1d"
       stroke={theme.colors.iconBorder}
