@@ -13,29 +13,18 @@ import {
   createUnscoredBoard,
 } from "../../utils/board-validator";
 import { formatAsTimer, isBoardScored } from "../../utils/game";
-import { getTextShareMessage } from "../../utils/words-helper";
+import {
+  getTextShareMessage,
+  getTextShareMessagePuzzleOfTheDay,
+  printBoard,
+} from "../../utils/words-helper";
+import { Toggle } from "../core/Toggle";
 import { Modal } from "./Modal";
+import { Label, Name, Setting } from "./SettingsModal";
+import { Description } from "@radix-ui/react-dialog";
 
-function zeroPad(num: number, places: number) {
-  return String(num).padStart(places, "0");
-}
-
-function getTimeLeftInDay() {
-  const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(0, 0, 0, 0);
-
-  const ms = tomorrow.getTime() - today.getTime();
-  const seconds = ms / 1000;
-  const minutes = seconds / 60;
-  const hours = minutes / 60;
-
-  return `${zeroPad(Math.floor(hours), 2)}:${zeroPad(Math.floor(minutes % 60), 2)}:${zeroPad(
-    Math.floor(seconds % 60),
-    2,
-  )}`;
-}
+// Make this `true` to a a valid solution for today's board.
+const DEBUGGING = false;
 
 export const StatsModal: FC = () => {
   return (
@@ -64,6 +53,8 @@ export const StatsModalImpl: FC = () => {
     totalWordCount,
     mostWordsInAPuzzle,
     fastedCompletion,
+    shareHideSolution,
+    setShareHideSolution,
   } = useContext(GlobalStatesContext);
 
   const getShareClipboardItemForBoard = scoreMode
@@ -73,12 +64,12 @@ export const StatsModalImpl: FC = () => {
   // Solution board but with a score for each tile.
   const scoredSolutionBoard = useMemo(
     () => createScoredSolutionBoard(solutionBoard),
-    [solutionBoard],
+    [solutionBoard]
   );
 
   const yourBoard = useMemo(
     () => (scoreMode ? createScoredBoard(board) : createUnscoredBoard(board)),
-    [board, scoreMode],
+    [board, scoreMode]
   );
 
   const showScoredBoard = scoreMode && isBoardScored(yourBoard);
@@ -107,14 +98,14 @@ export const StatsModalImpl: FC = () => {
     if (navigator.share) {
       navigator
         .share({
-          text: "https://play-scrambled.com/",
+          text: `https://play-scrambled.com\n${getTextShareMessagePuzzleOfTheDay()}`,
           files: [imageFile],
         })
         .catch(() => {
           if (clipboardItem) {
             navigator.clipboard
               .write([clipboardItem])
-              .then(() => sendToast("Copied to clipboard!"))
+              .then(() => sendToast("Copied link & image to clipboard!"))
               .catch((e) => {
                 console.error(e);
                 sendToast("Unable to share\nTry taking a screenshot instead");
@@ -124,7 +115,7 @@ export const StatsModalImpl: FC = () => {
     } else if (navigator.clipboard && clipboardItem) {
       navigator.clipboard
         .write([clipboardItem])
-        .then(() => sendToast("Copied to clipboard!"))
+        .then(() => sendToast("Copied image to clipboard!"))
         .catch((e) => {
           console.error(e);
           sendToast("Unable to copy\nTry taking a screenshot instead");
@@ -133,12 +124,19 @@ export const StatsModalImpl: FC = () => {
       // Likely FF web or other platform that doesn't yet support `ClipboardItem`
       onShareTextResults();
     } else {
-      console.error("[Image] Failed to access meaningful navigator properties.");
+      console.error(
+        "[Image] Failed to access meaningful navigator properties."
+      );
       onShareTextResults();
     }
   }
 
   async function onShareTextResults() {
+    if (!isGameOver) {
+      sendToast("Submit your puzzle before sharing");
+      return;
+    }
+
     const shareText = getTextShareMessage(board);
 
     if (navigator.share) {
@@ -149,7 +147,7 @@ export const StatsModalImpl: FC = () => {
         .catch(() => {
           navigator.clipboard
             .writeText(shareText)
-            .then(() => sendToast("Copied to clipboard!"))
+            .then(() => sendToast("Copied link & emojis to clipboard!"))
             .catch((e) => {
               console.error(e);
               sendToast("Unable to share\nTry taking a screenshot instead");
@@ -158,7 +156,7 @@ export const StatsModalImpl: FC = () => {
     } else if (navigator.clipboard) {
       navigator.clipboard
         .writeText(shareText)
-        .then(() => sendToast("Copied to clipboard!"))
+        .then(() => sendToast("Copied link & emojis to clipboard!"))
         .catch((e) => {
           console.error(e);
           sendToast("Unable to share\nTry taking a screenshot instead");
@@ -169,11 +167,19 @@ export const StatsModalImpl: FC = () => {
     }
   }
 
+  // Makes it easier if I need to solve the puzzle for testing.
+  if (DEBUGGING) {
+    console.info(printBoard(solutionBoard));
+  }
+
   return (
     <>
       <Divider theme={theme} />
       <FlexContainer>
-        <StatItem title={totalCompletionCount.toLocaleString()} byline={"Puzzles"} />
+        <StatItem
+          title={totalCompletionCount.toLocaleString()}
+          byline={"Puzzles"}
+        />
         <StatItem title={totalWordCount.toLocaleString()} byline={"Words"} />
         <StatItem
           title={streakCount.toLocaleString()}
@@ -196,15 +202,16 @@ export const StatsModalImpl: FC = () => {
         />
       </FlexContainer>
       <Divider theme={theme} />
+
       {!isGameOver ? (
-        <Paragraph>
-          Submit your puzzle to see
+        <Paragraph italic>
+          Submit your puzzle to see the author's
           <br />
-          the author's solution for today
+          solution for today
         </Paragraph>
       ) : (
         <>
-          <Paragraph>The author's solution for today's puzzle</Paragraph>
+          <Paragraph italic>The author's solution for today's puzzle</Paragraph>
           <MiniBoard
             theme={theme}
             hidePreview={!showPreview}
@@ -229,7 +236,9 @@ export const StatsModalImpl: FC = () => {
                                 <ShineContainer>
                                   <ShineWrapper score={tile.score} />
                                 </ShineContainer>
-                                <Score revealDelay={r * 100 + c * 100}>{tile.score}</Score>
+                                <Score revealDelay={r * 100 + c * 100}>
+                                  {tile.score}
+                                </Score>
                               </>
                             </MiniTileContentsSuccess>
                           ) : (
@@ -264,13 +273,37 @@ export const StatsModalImpl: FC = () => {
         </>
       )}
 
-      <Button presentAsDisabled={!isGameOver} theme={theme} onClick={onShareResults}>
-        Share your solution
-      </Button>
+      <Paragraph left style={{ width: "90%" }}>
+        Think a word is wrong or missing? Email me at{" "}
+        <EmailLink theme={theme} href="mailto:zuber.nicholas@gmail.com">
+          zuber.nicholas@gmail.com
+        </EmailLink>
+        .
+      </Paragraph>
 
-      {/* <Button presentAsDisabled={!isGameOver} theme={theme} onClick={onShareTextResults}>
-        Share your puzzle (no spoilers)
-      </Button> */}
+      <ShareContainer>
+        <Button
+          presentAsDisabled={!isGameOver}
+          theme={theme}
+          onClick={shareHideSolution ? onShareTextResults : onShareResults}
+        >
+          Share your puzzle
+        </Button>
+        <Setting
+          style={{ width: "calc(100% - 44px)", marginBottom: 4, marginTop: 12 }}
+        >
+          <Label>
+            <Name>Hide your letters</Name>
+            <Description>Use emojis when sharing puzzle</Description>
+          </Label>
+          <ToggleContainer>
+            <Toggle
+              onClick={() => setShareHideSolution((s) => !s)}
+              enabled={shareHideSolution}
+            />
+          </ToggleContainer>
+        </Setting>
+      </ShareContainer>
     </>
   );
 };
@@ -279,19 +312,49 @@ function RunningTimerStatItem() {
   const { timer } = useContext(TimerStateContext);
 
   return (
-    <StatItem title={formatAsTimer(timer)} byline={"Today's time"} bylineIcon={<PauseSvg />} />
+    <StatItem
+      title={formatAsTimer(timer)}
+      byline={"Today's time"}
+      bylineIcon={<PauseSvg />}
+    />
   );
 }
+
+const EmailLink = styled.a<{ theme: AppTheme }>`
+  color: ${(p) => p.theme.colors.linkText};
+  text-decoration: none;
+`;
+
+const ToggleContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  gap: 18px;
+`;
+
+const ShareContainer = styled.div`
+  width: 100%;
+  gap: 12px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  margin: 18px auto 24px;
+`;
 
 const Button = styled.button<{ theme: AppTheme; presentAsDisabled?: boolean }>`
   animation-delay: 150ms;
   user-select: none;
 
-  margin: 28px auto 24px;
   padding: 14px 32px;
   text-transform: none;
   white-space: nowrap;
 
+  width: 90%;
   font-size: 1em;
   font-weight: 600;
   display: flex;
@@ -342,7 +405,7 @@ const StatItemTitle = styled.div`
   font-size: 1.75em;
   line-height: 1.25em;
   font-family: franklin;
-  font-weight: 300;
+  font-weight: 400;
 
   display: flex;
   align-items: center;
@@ -468,7 +531,7 @@ const MiniTileContentsSuccess = styled(MiniTileContents)<{
         p.theme.colors.text,
         p.theme.colors.tileSecondary,
         p.theme.colors.primary,
-        p.score,
+        p.score
       )}
     500ms ease-in;
   animation-delay: ${(p) => p.animationDelay}ms;
@@ -486,12 +549,15 @@ const Title = styled.h1`
   text-align: center;
 `;
 
-const Paragraph = styled.p`
+const Paragraph = styled.p<{ italic?: boolean; left?: boolean }>`
   font-weight: 500;
   font-size: 1em;
-  text-align: center;
+  line-height: 1.4em;
+  text-align: ${(p) => (p.left ? "left" : "center")};
   width: 100%;
   margin: 18px auto 8px;
+
+  font-style: ${(p) => (p.italic ? "italic" : "normal")};
 `;
 
 const Result = styled.span`
@@ -501,81 +567,6 @@ const Result = styled.span`
   text-shadow: 0px 1px 2px #5d5d5d4f;
   margin: 8px auto;
   display: block;
-`;
-
-const SpacingContainer = styled.div`
-  width: 100%;
-  min-height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  margin: 12px auto 0;
-`;
-
-const ShareContainer = styled.div`
-  width: 100%;
-  min-height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  margin: 36px auto 24px;
-`;
-
-const Clock = styled.div`
-  display: block;
-
-  font-size: 1.25em;
-  line-height: 1.286;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-
-  text-align: center;
-  padding-inline: 24px;
-`;
-
-const ShareSection = styled.div`
-  width: 50%;
-  min-height: 50px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ShareButton = styled.button`
-  height: 40px;
-  width: 120px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.1rem;
-  text-transform: uppercase;
-  font-weight: 700;
-  letter-spacing: 0.25px;
-  border: none;
-  background: #6aaa64;
-  color: #ffffff;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 100ms ease-in;
-
-  &:hover {
-    background: #649d5e;
-  }
-
-  &:active {
-    background: #5e9153;
-  }
-
-  svg {
-    transform: scale(1);
-  }
-
-  &:before {
-    font-size: 16px;
-    content: "Share";
-    margin-right: 8px;
-  }
 `;
 
 const Score = styled.div<{ revealDelay: number }>(({ revealDelay }) => {

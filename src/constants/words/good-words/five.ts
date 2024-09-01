@@ -123,7 +123,6 @@ export const words = [
   "given",
   "files",
   "event",
-  "china",
   "needs",
   "might",
   "month",

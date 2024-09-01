@@ -145,7 +145,7 @@ const Title = styled.h1`
   text-align: center;
 `;
 
-const Setting = styled.div`
+export const Setting = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -160,7 +160,7 @@ const ToggleContainer = styled.div`
   flex: 1;
 `;
 
-const Label = styled.div`
+export const Label = styled.div`
   font-weight: 500;
   font-size: 1rem;
   text-align: left;
@@ -168,7 +168,7 @@ const Label = styled.div`
   flex: 3;
 `;
 
-const Name = styled.p`
+export const Name = styled.p`
   margin: 0 0 4px;
   font-weight: 600;
   font-size: 1.1rem;
@@ -178,7 +178,7 @@ const Name = styled.p`
   flex: 2;
 `;
 
-const Description = styled.p`
+export const Description = styled.p`
   margin: 0;
   font-weight: 400;
   font-size: 0.9rem;

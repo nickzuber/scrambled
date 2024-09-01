@@ -832,14 +832,21 @@ export function getTextBoardSolution(board: Board) {
   return result;
 }
 
+export function getTextShareMessagePuzzleOfTheDay(isHardMode?: boolean): string {
+  return `${isHardMode ? "*" : ""}Scrambled #${getPuzzleNumber()}`;
+}
+
 export function getTextShareMessage(board: Board, isHardMode?: boolean): string {
   const textPuzzleSolution = getTextBoardSolution(board);
 
   const parts = [
-    "https://play-scrambled.com/",
-    `${isHardMode ? "*" : ""}Scrambled #${getPuzzleNumber()}`,
+    // NOTE:
+    // Important to leave off the trailing `/` from the URL.
+    // For some reason, this breaks the string.
+    "https://play-scrambled.com",
+    `${getTextShareMessagePuzzleOfTheDay(isHardMode)}`,
     textPuzzleSolution,
   ];
 
-  return parts.join("\n");
+  return parts.join("\n").trim();
 }

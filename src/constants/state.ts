@@ -35,6 +35,7 @@ export const PersistedStates = {
   TotalCompletionCount: PersistedStorage.Stamp + "total-completion-count",
   LastCompledPuzzleNumber: PersistedStorage.Stamp + "last-completion-ts",
   MostWordsInAPuzzle: PersistedStorage.Stamp + "most-words-in-a-puzzle",
+  ShareHideSolution: PersistedStorage.Stamp + "share-hide-solution",
   FastedCompletion: PersistedStorage.Stamp + "fasted-completion",
   ShowTimer: PersistedStorage.Stamp + "show-timer",
 };

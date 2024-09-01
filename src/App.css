@@ -127,7 +127,7 @@ body {
 }
 
 .popIn {
-  animation: popin 400ms ease-in, float 5s ease-in-out;
+  animation: popin 400ms ease-in, float-bent 5s ease-in-out;
   animation-fill-mode: forwards, forwards;
   animation-timing-function: cubic-bezier(0.1, 0.2, 0.3, 1), ease-in-out;
   animation-iteration-count: 1, infinite;
@@ -155,7 +155,7 @@ body {
   }
 }
 
-@keyframes float {
+@keyframes float-bent {
   0% {
     transform: scale(1) translateY(0px) rotate(15deg);
   }
@@ -166,6 +166,32 @@ body {
 
   100% {
     transform: scale(1) translateY(0px) rotate(15deg);
+  }
+}
+
+.float-centered {
+  animation: float-centered 5s ease-in-out;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+
+  animation-delay: 0ms;
+
+  opacity: 0;
+  transform: translateY(0px) translateX(-50%);
+}
+
+@keyframes float-centered {
+  0% {
+    transform: translateY(0px) translateX(-50%);
+  }
+
+  50% {
+    transform: translateY(3px) translateX(-50%);
+  }
+
+  100% {
+    transform: translateY(0px) translateX(-50%);
   }
 }
 
