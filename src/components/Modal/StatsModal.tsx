@@ -405,7 +405,7 @@ const StatItemTitle = styled.div`
   font-size: 1.75em;
   line-height: 1.25em;
   font-family: franklin;
-  font-weight: 300;
+  font-weight: 400;
 
   display: flex;
   align-items: center;

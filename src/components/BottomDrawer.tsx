@@ -28,12 +28,17 @@ export function BottomDrawer({
   const bottomView = useInView({ threshold: 0 });
   const bottomNodeRef = useRef<HTMLDivElement | null>(null);
 
+  const [isDragging, setIsDragging] = useState(false);
+
   // If `pessimisticallyAssumeOverflow` is true, then we want to show the shadow
   // immediately before letting the drawer finish animating.
   const [shadowLock, setShadowLock] = useState(
     pessimisticallyAssumeOverflow ?? false
   );
   const shadowTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+
+  const shouldShowMoreContentIndicator =
+    !isDragging && shadowLock && !bottomView.inView;
 
   function scrollToBottom() {
     if (bottomNodeRef.current) {
@@ -46,6 +51,12 @@ export function BottomDrawer({
   return (
     <Drawer.Root
       open={open}
+      onDrag={() => {
+        setIsDragging(true);
+      }}
+      onRelease={() => {
+        setIsDragging(false);
+      }}
       onOpenChange={(open) => {
         onOpenChange?.(open);
         if (open) {
@@ -66,7 +77,15 @@ export function BottomDrawer({
       <Drawer.Trigger asChild>{children}</Drawer.Trigger>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/40" />
-        <Drawer.Content className="bg-zinc-100 flex flex-col rounded-t-[10px] mt-24 fixed bottom-0 left-0 right-0">
+        <Drawer.Content
+          className="bg-zinc-100 flex flex-col rounded-t-[10px] mt-24 fixed bottom-0 left-0 right-0"
+          onTouchEnd={() => {
+            setIsDragging(false);
+          }}
+          onMouseUp={() => {
+            setIsDragging(false);
+          }}
+        >
           <div
             className="p-4 bg-white rounded-t-[10px] flex-1"
             style={{
@@ -93,7 +112,7 @@ export function BottomDrawer({
                     e.preventDefault();
                   }}
                   theme={theme}
-                  show={shadowLock && !bottomView.inView}
+                  show={shouldShowMoreContentIndicator}
                   className="float-centered"
                 >
                   {scrollForMoreContentMessage}
@@ -119,7 +138,7 @@ export function BottomDrawer({
 
               <BottomShadow
                 theme={theme}
-                show={shadowLock && !bottomView.inView}
+                show={shouldShowMoreContentIndicator}
               />
               <div
                 ref={(node) => {
