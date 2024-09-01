@@ -105,7 +105,7 @@ export const StatsModalImpl: FC = () => {
           if (clipboardItem) {
             navigator.clipboard
               .write([clipboardItem])
-              .then(() => sendToast("Copied to clipboard!"))
+              .then(() => sendToast("Copied link & image to clipboard!"))
               .catch((e) => {
                 console.error(e);
                 sendToast("Unable to share\nTry taking a screenshot instead");
@@ -115,7 +115,7 @@ export const StatsModalImpl: FC = () => {
     } else if (navigator.clipboard && clipboardItem) {
       navigator.clipboard
         .write([clipboardItem])
-        .then(() => sendToast("Copied to clipboard!"))
+        .then(() => sendToast("Copied image to clipboard!"))
         .catch((e) => {
           console.error(e);
           sendToast("Unable to copy\nTry taking a screenshot instead");
@@ -147,7 +147,7 @@ export const StatsModalImpl: FC = () => {
         .catch(() => {
           navigator.clipboard
             .writeText(shareText)
-            .then(() => sendToast("Copied to clipboard!"))
+            .then(() => sendToast("Copied link & emojis to clipboard!"))
             .catch((e) => {
               console.error(e);
               sendToast("Unable to share\nTry taking a screenshot instead");
@@ -156,7 +156,7 @@ export const StatsModalImpl: FC = () => {
     } else if (navigator.clipboard) {
       navigator.clipboard
         .writeText(shareText)
-        .then(() => sendToast("Copied to clipboard!"))
+        .then(() => sendToast("Copied link & emojis to clipboard!"))
         .catch((e) => {
           console.error(e);
           sendToast("Unable to share\nTry taking a screenshot instead");

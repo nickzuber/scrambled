@@ -848,5 +848,5 @@ export function getTextShareMessage(board: Board, isHardMode?: boolean): string 
     textPuzzleSolution,
   ];
 
-  return parts.join("\n");
+  return parts.join("\n").trim();
 }
