@@ -17,6 +17,8 @@ import {
   getTextShareMessage,
   getTextShareMessagePuzzleOfTheDay,
   printBoard,
+  ScoredSolutionBoard,
+  SolutionBoard,
 } from "../../utils/words-helper";
 import { Toggle } from "../core/Toggle";
 import { Modal } from "./Modal";
@@ -75,12 +77,6 @@ export const StatsModalImpl: FC = () => {
   );
 
   const showScoredBoard = scoreMode && isBoardScored(yourBoard);
-
-  // const [timeLeft, setTimeLeft] = useState(getTimeLeftInDay());
-  // useEffect(() => {
-  //   const ts = setInterval(() => setTimeLeft(getTimeLeftInDay()), 1000);
-  //   return () => clearInterval(ts);
-  // }, []);
 
   async function onShareResults() {
     if (!isGameOver) {
@@ -220,72 +216,32 @@ export const StatsModalImpl: FC = () => {
       <Divider theme={theme} />
 
       {!isGameOver ? (
-        <Paragraph italic>
-          Submit your puzzle to see the author's
-          <br />
-          solution for today
-        </Paragraph>
+        <>
+          <Paragraph italic>
+            Submit your puzzle to see the author's
+            <br />
+            solution for today
+          </Paragraph>
+          <AuthorSolution
+            theme={theme}
+            showPreview={showPreview}
+            isGameOver={isGameOver}
+            showScoredBoard={showScoredBoard}
+            scoredSolutionBoard={scoredSolutionBoard}
+            solutionBoard={solutionBoard}
+          />
+        </>
       ) : (
         <>
           <Paragraph italic>The author's solution for today's puzzle</Paragraph>
-          <MiniBoard
+          <AuthorSolution
             theme={theme}
-            hidePreview={!showPreview}
-            message="Tap to see today's original solution"
+            showPreview={showPreview}
             isGameOver={isGameOver}
-            onClick={() => setShowPreview(true)}
-          >
-            {showScoredBoard
-              ? scoredSolutionBoard.map((row, r) => {
-                  return (
-                    <MiniRow key={r}>
-                      {row.map((tile, c) => (
-                        <MiniTileWrapper key={`${r}${c}`}>
-                          {tile.letter && showPreview ? (
-                            <MiniTileContentsSuccess
-                              theme={theme}
-                              animationDelay={r * 100 + c * 100}
-                              score={tile.score}
-                            >
-                              {tile.letter}
-                              <>
-                                <ShineContainer>
-                                  <ShineWrapper score={tile.score} />
-                                </ShineContainer>
-                                <Score revealDelay={r * 100 + c * 100}>
-                                  {tile.score}
-                                </Score>
-                              </>
-                            </MiniTileContentsSuccess>
-                          ) : (
-                            <MiniTileContents theme={theme} />
-                          )}
-                        </MiniTileWrapper>
-                      ))}
-                    </MiniRow>
-                  );
-                })
-              : solutionBoard.map((row, r) => {
-                  return (
-                    <MiniRow key={r}>
-                      {row.map((letter, c) => (
-                        <MiniTileWrapper key={`${r}${c}`}>
-                          {letter && showPreview ? (
-                            <MiniTileContentsSuccess
-                              theme={theme}
-                              animationDelay={r * 100 + c * 100}
-                            >
-                              {letter}
-                            </MiniTileContentsSuccess>
-                          ) : (
-                            <MiniTileContents theme={theme} />
-                          )}
-                        </MiniTileWrapper>
-                      ))}
-                    </MiniRow>
-                  );
-                })}
-          </MiniBoard>
+            showScoredBoard={showScoredBoard}
+            scoredSolutionBoard={scoredSolutionBoard}
+            solutionBoard={solutionBoard}
+          />
         </>
       )}
 
@@ -324,15 +280,81 @@ export const StatsModalImpl: FC = () => {
   );
 };
 
-function RunningTimerStatItem() {
-  const { timer } = useContext(TimerStateContext);
+function AuthorSolution(props: {
+  theme: AppTheme;
+  showPreview: boolean;
+  isGameOver: boolean;
+  showScoredBoard: boolean;
+  scoredSolutionBoard: ScoredSolutionBoard;
+  solutionBoard: SolutionBoard;
+}) {
+  const {
+    theme,
+    showPreview,
+    isGameOver,
+    showScoredBoard,
+    scoredSolutionBoard,
+    solutionBoard,
+  } = props;
 
   return (
-    <StatItem
-      title={formatAsTimer(timer)}
-      byline={"Today's time"}
-      bylineIcon={<PauseSvg />}
-    />
+    <MiniBoard
+      theme={theme}
+      hidePreview={!showPreview}
+      message="Tap to see today's original solution"
+      isGameOver={isGameOver}
+    >
+      {showScoredBoard
+        ? scoredSolutionBoard.map((row, r) => {
+            return (
+              <MiniRow key={r}>
+                {row.map((tile, c) => (
+                  <MiniTileWrapper key={`${r}${c}`}>
+                    {tile.letter && showPreview ? (
+                      <MiniTileContentsSuccess
+                        theme={theme}
+                        animationDelay={r * 100 + c * 100}
+                        score={tile.score}
+                      >
+                        {tile.letter}
+                        <>
+                          <ShineContainer>
+                            <ShineWrapper score={tile.score} />
+                          </ShineContainer>
+                          <Score revealDelay={r * 100 + c * 100}>
+                            {tile.score}
+                          </Score>
+                        </>
+                      </MiniTileContentsSuccess>
+                    ) : (
+                      <MiniTileContents theme={theme} />
+                    )}
+                  </MiniTileWrapper>
+                ))}
+              </MiniRow>
+            );
+          })
+        : solutionBoard.map((row, r) => {
+            return (
+              <MiniRow key={r}>
+                {row.map((letter, c) => (
+                  <MiniTileWrapper key={`${r}${c}`}>
+                    {letter && showPreview ? (
+                      <MiniTileContentsSuccess
+                        theme={theme}
+                        animationDelay={r * 100 + c * 100}
+                      >
+                        {letter}
+                      </MiniTileContentsSuccess>
+                    ) : (
+                      <MiniTileContents theme={theme} />
+                    )}
+                  </MiniTileWrapper>
+                ))}
+              </MiniRow>
+            );
+          })}
+    </MiniBoard>
   );
 }
 
@@ -389,6 +411,7 @@ const Button = styled.button<{ theme: AppTheme; presentAsDisabled?: boolean }>`
 
 function StatItem(props: {
   title: React.ReactNode;
+  subTitle?: React.ReactNode;
   byline: React.ReactNode;
   titleIcon?: React.ReactNode;
   bylineIcon?: React.ReactNode;
@@ -399,6 +422,9 @@ function StatItem(props: {
         {props.titleIcon}
         {props.title}
       </StatItemTitle>
+      {props.subTitle ? (
+        <StatItemByline>{props.subTitle}</StatItemByline>
+      ) : null}
       <StatItemByline>
         {props.bylineIcon}
         {props.byline}
