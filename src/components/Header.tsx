@@ -112,7 +112,9 @@ export const Header: FC<HeaderProps> = ({
         {showTimer ? <RunningTimer /> : null}
         {/* Help */}
         <BottomDrawer
-          pessimisticallyAssumeOverflow
+          // This content is always too tall for any reasonable device.
+          pessimisticallyAssumeOverflow={true}
+          scrollForMoreContentMessage={"Read more"}
           open={isFirstTime === true ? true : undefined}
           title={"How to play"}
           renderContents={() => <InstructionsModalImpl />}
@@ -127,7 +129,9 @@ export const Header: FC<HeaderProps> = ({
         </BottomDrawer>
         {/* Stats */}
         <BottomDrawer
-          pessimisticallyAssumeOverflow
+          // As of 09/01/24, the content is about 750px high.
+          pessimisticallyAssumeOverflow={window.outerHeight * 0.9 < 750}
+          scrollForMoreContentMessage={"Share"}
           open={showStats === true ? true : undefined}
           title={"Statistics"}
           renderContents={() => <StatsModalImpl />}

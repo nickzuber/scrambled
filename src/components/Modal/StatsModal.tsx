@@ -211,7 +211,7 @@ export const StatsModalImpl: FC = () => {
         </Paragraph>
       ) : (
         <>
-          <Paragraph>The author's solution for today's puzzle</Paragraph>
+          <Paragraph italic>The author's solution for today's puzzle</Paragraph>
           <MiniBoard
             theme={theme}
             hidePreview={!showPreview}
@@ -273,6 +273,14 @@ export const StatsModalImpl: FC = () => {
         </>
       )}
 
+      <Paragraph left style={{ width: "90%" }}>
+        Think a word is wrong or missing? Email me at{" "}
+        <EmailLink theme={theme} href="mailto:zuber.nicholas@gmail.com">
+          zuber.nicholas@gmail.com
+        </EmailLink>
+        .
+      </Paragraph>
+
       <ShareContainer>
         <Button
           presentAsDisabled={!isGameOver}
@@ -312,12 +320,9 @@ function RunningTimerStatItem() {
   );
 }
 
-const ToggleLabel = styled.div`
-  outline: 0px dashed green;
-
-  font-weight: 600;
-  font-size: 1.1rem;
-  line-height: 0.9rem;
+const EmailLink = styled.a<{ theme: AppTheme }>`
+  color: ${(p) => p.theme.colors.linkText};
+  text-decoration: none;
 `;
 
 const ToggleContainer = styled.div`
@@ -338,7 +343,7 @@ const ShareContainer = styled.div`
   justify-content: center;
   align-items: center;
 
-  margin: 28px auto 24px;
+  margin: 18px auto 24px;
 `;
 
 const Button = styled.button<{ theme: AppTheme; presentAsDisabled?: boolean }>`
@@ -544,11 +549,11 @@ const Title = styled.h1`
   text-align: center;
 `;
 
-const Paragraph = styled.p<{ italic?: boolean }>`
+const Paragraph = styled.p<{ italic?: boolean; left?: boolean }>`
   font-weight: 500;
   font-size: 1em;
   line-height: 1.4em;
-  text-align: center;
+  text-align: ${(p) => (p.left ? "left" : "center")};
   width: 100%;
   margin: 18px auto 8px;
 
