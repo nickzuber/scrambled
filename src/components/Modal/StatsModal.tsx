@@ -61,6 +61,8 @@ export const StatsModalImpl: FC = () => {
     setShareHideSolution,
   } = useContext(GlobalStatesContext);
 
+  const { timer } = useContext(TimerStateContext);
+
   const getShareClipboardItemForBoard = scoreMode
     ? getScoredShareClipboardItem
     : getShareClipboardItem;
@@ -190,12 +192,14 @@ export const StatsModalImpl: FC = () => {
         {scoreMode ? (
           <StatItem
             title={highestScore.toLocaleString()}
+            subTitle={`Today: ${23}`}
             byline={"Highest score"}
             bylineIcon={<LeaderboardSvg />}
           />
         ) : (
           <StatItem
             title={mostWordsInAPuzzle.toLocaleString()}
+            subTitle={`Today: ${7}`}
             byline={"Most words"}
             bylineIcon={<QuoteSvg />}
           />
@@ -203,12 +207,14 @@ export const StatsModalImpl: FC = () => {
 
         <StatItem
           title={Math.max(highestStreak, streakCount).toLocaleString()}
+          subTitle={`Today: ${streakCount.toLocaleString()}`}
           byline={"Longest streak"}
           bylineIcon={<FireSvg />}
         />
 
         <StatItem
           title={fastedCompletion ? formatAsTimer(fastedCompletion) : "—"}
+          subTitle={`Today: ${formatAsTimer(timer)}`}
           byline={"Quickest finish"}
           bylineIcon={<LightningSvg />}
         />
@@ -222,14 +228,6 @@ export const StatsModalImpl: FC = () => {
             <br />
             solution for today
           </Paragraph>
-          <AuthorSolution
-            theme={theme}
-            showPreview={showPreview}
-            isGameOver={isGameOver}
-            showScoredBoard={showScoredBoard}
-            scoredSolutionBoard={scoredSolutionBoard}
-            solutionBoard={solutionBoard}
-          />
         </>
       ) : (
         <>
@@ -422,18 +420,19 @@ function StatItem(props: {
         {props.titleIcon}
         {props.title}
       </StatItemTitle>
-      {props.subTitle ? (
-        <StatItemByline>{props.subTitle}</StatItemByline>
-      ) : null}
       <StatItemByline>
         {props.bylineIcon}
         {props.byline}
       </StatItemByline>
+      {/* {props.subTitle ? (
+        <StatItemSubTitle>{props.subTitle}</StatItemSubTitle>
+      ) : null} */}
     </StatItemContainer>
   );
 }
 
 const StatItemContainer = styled.div`
+  position: relative;
   flex: 1;
   padding-block: 14px 12px;
 
@@ -467,6 +466,20 @@ const StatItemByline = styled.div`
   @media (max-width: 380px) {
     font-size: 0.8em;
   }
+`;
+
+const StatItemSubTitle = styled(StatItemByline)`
+  // background: #cc5de8;
+  // color: #fff;
+
+  // position: absolute;
+  bottom: 0;
+  border-radius: 24px;
+
+  font-size: 0.8em;
+  line-height: 1em;
+
+  padding: 5px 8px 3px;
 `;
 
 const Divider = styled.div<{ theme: AppTheme }>`
