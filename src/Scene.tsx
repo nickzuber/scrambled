@@ -13,14 +13,22 @@ import { TimerStateContext } from "./contexts/timer";
 import { useLocalStorageGC } from "./hooks/useLocalStorageGC";
 import { Page } from "./hooks/usePage";
 import { useSyncTimerToSession } from "./hooks/useSyncTimerToSession";
+import { Origin } from "./constants/app";
+import { ToastContext } from "./contexts/toast";
 
 export interface SceneProps {
   darkTheme: boolean;
   setDarkTheme: (state: boolean) => void;
+  userOrigin: Origin;
 }
 
-export const Scene: FC<SceneProps> = ({ darkTheme, setDarkTheme }) => {
+export const Scene: FC<SceneProps> = ({
+  darkTheme,
+  setDarkTheme,
+  userOrigin,
+}) => {
   const theme = useTheme() as AppTheme;
+  const { sendToast } = useContext(ToastContext);
   const { page } = useContext(PageContext);
   const { isGameOver } = useContext(GameContext);
   const { isFirstTime, setIsFirstTime } = useContext(GlobalStatesContext);
@@ -39,6 +47,14 @@ export const Scene: FC<SceneProps> = ({ darkTheme, setDarkTheme }) => {
       elem.setAttribute("content", theme.colors.primary);
     }
   }, [page, theme]);
+
+  // Greeting toast for Crosswordle users.
+  useEffect(() => {
+    if (userOrigin === Origin.Crosswordle) {
+      const greeting = `Welcome from Crosswordle 👋`;
+      setTimeout(() => sendToast(greeting), 800);
+    }
+  }, [userOrigin]);
 
   function renderScene() {
     switch (page) {

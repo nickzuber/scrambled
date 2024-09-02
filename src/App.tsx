@@ -13,13 +13,28 @@ import { ToastProvider } from "./contexts/toast";
 import "./layout.css";
 import createPersistedState from "./libs/use-persisted-state";
 import { Scene } from "./Scene";
+import { Origin } from "./constants/app";
 
 const useDarkTheme = createPersistedState<boolean>(PersistedStates.DarkTheme);
 
 function App() {
   const [darkTheme, setDarkTheme] = useDarkTheme(false);
 
-  const theme = useMemo(() => (darkTheme ? Themes.Dark : Themes.Light), [darkTheme]);
+  const theme = useMemo(
+    () => (darkTheme ? Themes.Dark : Themes.Light),
+    [darkTheme]
+  );
+
+  const userOrigin = useMemo(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const origin = urlParams.get("from") ?? "";
+    switch (origin) {
+      case "crosswordle":
+        return Origin.Crosswordle;
+      default:
+        return Origin.None;
+    }
+  }, []);
 
   useEffect(() => {
     document.body.style.background = theme.colors.primary;
@@ -35,7 +50,11 @@ function App() {
             <ToastProvider>
               <PageProvider>
                 <GameProvider>
-                  <Scene darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
+                  <Scene
+                    darkTheme={darkTheme}
+                    setDarkTheme={setDarkTheme}
+                    userOrigin={userOrigin}
+                  />
                 </GameProvider>
               </PageProvider>
             </ToastProvider>
