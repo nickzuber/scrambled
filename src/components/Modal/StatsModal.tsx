@@ -184,7 +184,11 @@ export const StatsModalImpl: FC = () => {
         <StatItem
           title={streakCount.toLocaleString()}
           byline={"Streak"}
-          bylineIcon={streakCount >= highestStreak ? <FireSvg /> : undefined}
+          bylineIcon={
+            streakCount > 0 && streakCount >= highestStreak ? (
+              <FireSvg />
+            ) : undefined
+          }
         />
       </FlexContainer>
       <Divider theme={theme} />
