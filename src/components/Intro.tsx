@@ -11,7 +11,8 @@ const FADE_OUT_TIMING_MS = 150;
 
 export function Intro() {
   const theme = useTheme() as AppTheme;
-  const [startLoadingTransitionOut, setStartLoadingTransitionOut] = useState(false);
+  const [startLoadingTransitionOut, setStartLoadingTransitionOut] =
+    useState(false);
   const [startTransitionOut, setStartTransitionOut] = useState(false);
   const { hasStartedGame, isGameOver } = useContext(GameContext);
   const { setPage } = useContext(PageContext);
@@ -58,7 +59,12 @@ export function Intro() {
     return (
       <Container theme={theme} fadeOutLoading={startLoadingTransitionOut}>
         <div className="fadeIn" style={{ paddingTop: "25vh" }}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="44" height="12" viewBox="0 0 44 12">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="44"
+            height="12"
+            viewBox="0 0 44 12"
+          >
             <circle className="dot dot-1" cx="6" cy="6" r="6" />
             <circle className="dot dot-2" cx="22" cy="6" r="6" />
             <circle className="dot dot-3" cx="38" cy="6" r="6" />
@@ -75,7 +81,7 @@ export function Intro() {
           <span>{"🍳"}</span>
         </Logo>
         <Title id="intro-title" className="slideUp">
-          Scrambled<BetaTag className="popIn">Beta</BetaTag>
+          Scrambled<NewTag className="popIn">New</NewTag>
         </Title>
         <Divider className="slideUpAndWidenOut" theme={theme} />
         {isGameOver ? (
@@ -103,7 +109,11 @@ export function Intro() {
   );
 }
 
-const Container = styled.div<{ theme: AppTheme; fadeOut?: boolean; fadeOutLoading?: boolean }>`
+const Container = styled.div<{
+  theme: AppTheme;
+  fadeOut?: boolean;
+  fadeOutLoading?: boolean;
+}>`
   position: absolute;
   top: 0;
   bottom: 0;
@@ -262,7 +272,12 @@ const BetaTag = styled.span`
   padding: 7px 12px;
   border-radius: 18px;
   text-transform: uppercase;
-  box-shadow: rgba(50, 50, 93, 0.15) 0px 6px 12px -2px, rgba(0, 0, 0, 0.2) 0px 3px 7px -3px;
+  box-shadow: rgba(50, 50, 93, 0.15) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.2) 0px 3px 7px -3px;
+`;
+
+const NewTag = styled(BetaTag)`
+  background: #4263eb;
 `;
 
 const DisclaimerMessage = styled.span`
