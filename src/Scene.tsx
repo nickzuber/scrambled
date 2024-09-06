@@ -29,7 +29,7 @@ export const Scene: FC<SceneProps> = ({
 }) => {
   const theme = useTheme() as AppTheme;
   const { sendToast } = useContext(ToastContext);
-  const { page } = useContext(PageContext);
+  const { page, setPage } = useContext(PageContext);
   const { isGameOver } = useContext(GameContext);
   const { isFirstTime, setIsFirstTime } = useContext(GlobalStatesContext);
 
@@ -51,8 +51,11 @@ export const Scene: FC<SceneProps> = ({
   // Greeting toast for Crosswordle users.
   useEffect(() => {
     if (userOrigin === Origin.Crosswordle) {
-      const greeting = `Welcome from Crosswordle 👋`;
-      setTimeout(() => sendToast(greeting), 800);
+      setPage(Page.Game);
+      if (isFirstTime) {
+        const greeting = `Welcome from Crosswordle 👋`;
+        setTimeout(() => sendToast(greeting), 500);
+      }
     }
   }, [userOrigin]);
 
