@@ -121,6 +121,10 @@ const Container = styled.div`
   flex-direction: column;
   overflow-x: hidden;
 
+  @media (min-height: 615px) {
+    overflow-y: hidden;
+  }
+
   canvas {
     z-index: 9999 !important;
   }
