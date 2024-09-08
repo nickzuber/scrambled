@@ -461,6 +461,7 @@ const StatItemTitle = styled.div`
 const StatItemByline = styled.div`
   font-size: 0.9em;
   line-height: 1.5em;
+  // text-align: center;
 
   display: flex;
   align-items: center;
@@ -469,6 +470,20 @@ const StatItemByline = styled.div`
 
   @media (max-width: 380px) {
     font-size: 0.8em;
+
+    svg {
+      height: 14px;
+      width: 14px;
+    }
+  }
+
+  @media (max-width: 350px) {
+    font-size: 0.7em;
+
+    svg {
+      height: 12px;
+      width: 12px;
+    }
   }
 `;
 
