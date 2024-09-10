@@ -228,10 +228,7 @@ export const StatsModalImpl: FC = () => {
           }
         />
 
-        <StatItem
-          title={fastedCompletion ? formatAsTimer(timer) : "—"}
-          byline={"Today's time"}
-        />
+        <StatItem title={formatAsTimer(timer)} byline={"Today's time"} />
       </FlexContainer>
       <Divider theme={theme} />
 
