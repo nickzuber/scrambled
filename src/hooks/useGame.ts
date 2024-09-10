@@ -32,6 +32,7 @@ export const useGame = () => {
     setStreakCount,
     setMostWordsInAPuzzle,
     setTotalWordCount,
+    setTotalPointCount,
     setTotalCompletionCount,
     setLastCompletedPuzzleNumber,
     setHighestScore,
@@ -123,6 +124,7 @@ export const useGame = () => {
     const wordCount = countValidWordsOnBoard(board);
     setMostWordsInAPuzzle((prev) => Math.max(wordCount, prev));
     setTotalWordCount((prevCount) => prevCount + wordCount);
+    setTotalPointCount((prevCount) => prevCount + finalScore);
     setTotalCompletionCount((prevCount) => prevCount + 1);
     setStreakCount((prevStreak) => {
       if (!lastCompletedPuzzleNumber) {
@@ -157,6 +159,7 @@ export const useGame = () => {
     scoreMode,
     setStreakCount,
     setTotalWordCount,
+    setTotalPointCount,
     setTotalCompletionCount,
     setLastCompletedPuzzleNumber,
     lastCompletedPuzzleNumber,

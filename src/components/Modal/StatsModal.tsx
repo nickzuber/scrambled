@@ -55,6 +55,7 @@ export const StatsModalImpl: FC = () => {
     streakCount,
     totalCompletionCount,
     totalWordCount,
+    totalPointCount,
     mostWordsInAPuzzle,
     highestScore,
     highestStreak,
@@ -190,37 +191,16 @@ export const StatsModalImpl: FC = () => {
       <FlexContainer>
         <StatItem
           title={totalCompletionCount.toLocaleString()}
-          byline={"Puzzles"}
-        />
-        <StatItem title={totalWordCount.toLocaleString()} byline={"Words"} />
-      </FlexContainer>
-      <Divider theme={theme} />
-
-      <FlexContainer>
-        {scoreMode ? (
-          <StatItem
-            title={highestScore.toLocaleString()}
-            byline={"Highest score"}
-            bylineIcon={<LeaderboardSvg />}
-          />
-        ) : (
-          <StatItem
-            title={mostWordsInAPuzzle.toLocaleString()}
-            byline={"Most words"}
-            bylineIcon={<QuoteSvg />}
-          />
-        )}
-
-        <StatItem
-          title={Math.max(highestStreak, streakCount).toLocaleString()}
-          byline={"Max streak"}
-          bylineIcon={<FireSvg />}
+          byline={"Total puzzles"}
         />
 
         <StatItem
-          title={fastedCompletion ? formatAsTimer(fastedCompletion) : "—"}
-          byline={"Fastest finish"}
-          bylineIcon={<LightningSvg />}
+          title={totalWordCount.toLocaleString()}
+          byline={"Total words"}
+        />
+        <StatItem
+          title={totalPointCount.toLocaleString()}
+          byline={"Total points"}
         />
       </FlexContainer>
       <Divider theme={theme} />
@@ -251,6 +231,35 @@ export const StatsModalImpl: FC = () => {
         <StatItem
           title={fastedCompletion ? formatAsTimer(timer) : "—"}
           byline={"Today's time"}
+        />
+      </FlexContainer>
+      <Divider theme={theme} />
+
+      <FlexContainer>
+        {scoreMode ? (
+          <StatItem
+            title={highestScore.toLocaleString()}
+            byline={"Highest score"}
+            bylineIcon={<LeaderboardSvg />}
+          />
+        ) : (
+          <StatItem
+            title={mostWordsInAPuzzle.toLocaleString()}
+            byline={"Most words"}
+            bylineIcon={<QuoteSvg />}
+          />
+        )}
+
+        <StatItem
+          title={Math.max(highestStreak, streakCount).toLocaleString()}
+          byline={"Max streak"}
+          bylineIcon={<FireSvg />}
+        />
+
+        <StatItem
+          title={fastedCompletion ? formatAsTimer(fastedCompletion) : "—"}
+          byline={"Fastest finish"}
+          bylineIcon={<LightningSvg />}
         />
       </FlexContainer>
       <Divider theme={theme} />
