@@ -8,6 +8,8 @@ import { GlobalStatesContext } from "../../contexts/global";
 import { TimerStateContext } from "../../contexts/timer";
 import { ToastContext } from "../../contexts/toast";
 import {
+  countBoardScore,
+  countValidWordsOnBoard,
   createScoredBoard,
   createScoredSolutionBoard,
   createUnscoredBoard,
@@ -62,6 +64,16 @@ export const StatsModalImpl: FC = () => {
   } = useContext(GlobalStatesContext);
 
   const { timer } = useContext(TimerStateContext);
+
+  // Used for "today's" stats.
+  const currentScore = useMemo(
+    () => countBoardScore(createScoredBoard(board)),
+    [board]
+  );
+  const currentWordCount = useMemo(
+    () => countValidWordsOnBoard(board),
+    [board]
+  );
 
   const getShareClipboardItemForBoard = scoreMode
     ? getScoredShareClipboardItem
@@ -181,29 +193,19 @@ export const StatsModalImpl: FC = () => {
           byline={"Puzzles"}
         />
         <StatItem title={totalWordCount.toLocaleString()} byline={"Words"} />
-        <StatItem
-          title={streakCount.toLocaleString()}
-          byline={"Streak"}
-          bylineIcon={
-            streakCount > 0 && streakCount >= highestStreak ? (
-              <FireSvg />
-            ) : undefined
-          }
-        />
       </FlexContainer>
       <Divider theme={theme} />
+
       <FlexContainer>
         {scoreMode ? (
           <StatItem
             title={highestScore.toLocaleString()}
-            subTitle={`Today: ${23}`}
             byline={"Highest score"}
             bylineIcon={<LeaderboardSvg />}
           />
         ) : (
           <StatItem
             title={mostWordsInAPuzzle.toLocaleString()}
-            subTitle={`Today: ${7}`}
             byline={"Most words"}
             bylineIcon={<QuoteSvg />}
           />
@@ -211,16 +213,44 @@ export const StatsModalImpl: FC = () => {
 
         <StatItem
           title={Math.max(highestStreak, streakCount).toLocaleString()}
-          subTitle={`Today: ${streakCount.toLocaleString()}`}
-          byline={"Longest streak"}
+          byline={"Max streak"}
           bylineIcon={<FireSvg />}
         />
 
         <StatItem
           title={fastedCompletion ? formatAsTimer(fastedCompletion) : "—"}
-          subTitle={`Today: ${formatAsTimer(timer)}`}
-          byline={"Quickest finish"}
+          byline={"Fastest finish"}
           bylineIcon={<LightningSvg />}
+        />
+      </FlexContainer>
+      <Divider theme={theme} />
+
+      <FlexContainer>
+        {scoreMode ? (
+          <StatItem
+            title={currentScore.toLocaleString()}
+            byline={"Today's score"}
+          />
+        ) : (
+          <StatItem
+            title={currentWordCount.toLocaleString()}
+            byline={"Words found"}
+          />
+        )}
+
+        <StatItem
+          title={streakCount.toLocaleString()}
+          byline={"Current streak"}
+          bylineIcon={
+            streakCount > 0 && streakCount >= highestStreak ? (
+              <FireSvg />
+            ) : undefined
+          }
+        />
+
+        <StatItem
+          title={fastedCompletion ? formatAsTimer(timer) : "—"}
+          byline={"Today's time"}
         />
       </FlexContainer>
       <Divider theme={theme} />
@@ -413,7 +443,6 @@ const Button = styled.button<{ theme: AppTheme; presentAsDisabled?: boolean }>`
 
 function StatItem(props: {
   title: React.ReactNode;
-  subTitle?: React.ReactNode;
   byline: React.ReactNode;
   titleIcon?: React.ReactNode;
   bylineIcon?: React.ReactNode;
@@ -428,9 +457,6 @@ function StatItem(props: {
         {props.bylineIcon}
         {props.byline}
       </StatItemByline>
-      {/* {props.subTitle ? (
-        <StatItemSubTitle>{props.subTitle}</StatItemSubTitle>
-      ) : null} */}
     </StatItemContainer>
   );
 }
@@ -438,7 +464,7 @@ function StatItem(props: {
 const StatItemContainer = styled.div`
   position: relative;
   flex: 1;
-  padding-block: 14px 12px;
+  padding-block: 10px 8px;
 
   display: flex;
   flex-direction: column;
