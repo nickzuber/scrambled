@@ -1,6 +1,13 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FC, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { FadeIn, PopIn } from "../constants/animations";
 import { AppTheme } from "../constants/themes";
 import { GameContext } from "../contexts/game";
@@ -17,7 +24,6 @@ export const Controls: FC = () => {
     letters,
     boardLetterIds,
     setLetterOnBoard,
-    shiftBoard,
     shuffleLetters,
     positionOfShuffle,
     moveCursorInDirection,
@@ -30,14 +36,15 @@ export const Controls: FC = () => {
     setBoard,
   } = useContext(GameContext);
   const { sendToast } = useContext(ToastContext);
-  const { hardMode, setSubmitCount } = useContext(GlobalStatesContext);
+  const { hardMode, setSubmitCount, scoreMode } =
+    useContext(GlobalStatesContext);
 
   const [isInShiftBoardMode, setIsInShiftBoardMode] = useState(false);
 
   const disableEnterButton = !canFinish || isGameOver;
   const [checkedBoard, allWordsAreValid] = useMemo(
     () => validateBoard({ board, mode: "validate" }),
-    [board],
+    [board]
   );
 
   // If submit is pressed, it will successfully complete the puzzle.
@@ -71,7 +78,7 @@ export const Controls: FC = () => {
     } else {
       if (hardMode) {
         const shouldContinue = window.confirm(
-          "You're playing on hard mode, so you only get one chance to submit! Are you sure you're done?",
+          "You're playing on hard mode, so you only get one chance to submit! Are you sure you're done?"
         );
         if (shouldContinue) {
           requestFinish();
@@ -96,7 +103,7 @@ export const Controls: FC = () => {
     (letter: Letter) => {
       setLetterOnBoard(letter);
     },
-    [setLetterOnBoard],
+    [setLetterOnBoard]
   );
 
   useEffect(() => {
@@ -135,7 +142,9 @@ export const Controls: FC = () => {
           break;
         default:
           const letterForKeypress = letters.find(
-            (letter) => letter.letter.toLowerCase() === key && !boardLetterIds.has(letter.id),
+            (letter) =>
+              letter.letter.toLowerCase() === key &&
+              !boardLetterIds.has(letter.id)
           );
           if (letterForKeypress) {
             setLetterOnBoard(letterForKeypress);
@@ -164,10 +173,18 @@ export const Controls: FC = () => {
   return (
     <Container id="keyboard">
       <ButtonsContainer theme={theme}>
-        <BoardButton theme={theme} disabled={isGameOver} onClick={shuffleLetters}>
+        <BoardButton
+          theme={theme}
+          disabled={isGameOver}
+          onClick={shuffleLetters}
+        >
           Shuffle
         </BoardButton>
-        <BoardButton theme={theme} disabled={isGameOver} onClick={flipCursorDirection}>
+        <BoardButton
+          theme={theme}
+          disabled={isGameOver}
+          onClick={flipCursorDirection}
+        >
           Pivot cursor
         </BoardButton>
         <BottomDrawer
@@ -175,7 +192,11 @@ export const Controls: FC = () => {
           title={"Move letters around"}
           renderContents={() => <BoardShiftDrawerImpl />}
         >
-          <BoardButton theme={theme} disabled={isGameOver} style={{ width: 132 }}>
+          <BoardButton
+            theme={theme}
+            disabled={isGameOver}
+            style={{ width: 132 }}
+          >
             Move letters
             <svg
               width="24"
@@ -184,8 +205,11 @@ export const Controls: FC = () => {
               viewBox="0 0 24 24"
               style={{
                 marginRight: -10,
-                transform: isInShiftBoardMode ? "rotate(180deg)" : "rotate(0deg)",
-                transition: "transform 500ms cubic-bezier(0.08, 0.535, 0.1, 1.025)",
+                transform: isInShiftBoardMode
+                  ? "rotate(180deg)"
+                  : "rotate(0deg)",
+                transition:
+                  "transform 500ms cubic-bezier(0.08, 0.535, 0.1, 1.025)",
               }}
             >
               <path
@@ -218,7 +242,7 @@ export const Controls: FC = () => {
               >
                 {letter.letter}
               </LetterButton>
-            ),
+            )
           )}
         </LettersRow>
 
@@ -239,13 +263,17 @@ export const Controls: FC = () => {
               >
                 {letter.letter}
               </LetterButton>
-            ),
+            )
           )}
         </LettersRow>
 
         <LettersRow>
           <ActionButton
-            id={submitWillSucceed ? "submit-will-succeed" : undefined}
+            id={
+              submitWillSucceed
+                ? `submit-will-succeed${scoreMode ? "--scored" : ""}`
+                : undefined
+            }
             disabled={isGameOver}
             onClick={() => onEnterPress()}
             theme={theme}
@@ -268,10 +296,19 @@ export const Controls: FC = () => {
               >
                 {letter.letter}
               </LetterButton>
-            ),
+            )
           )}
-          <ActionButton disabled={isGameOver} onClick={backspaceBoard} theme={theme}>
-            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+          <ActionButton
+            disabled={isGameOver}
+            onClick={backspaceBoard}
+            theme={theme}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+            >
               <path
                 fill={theme.colors.text}
                 d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H7.07L2.4 12l4.66-7H22v14zm-11.59-2L14 13.41 17.59 17 19 15.59 15.41 12 19 8.41 17.59 7 14 10.59 10.41 7 9 8.41 12.59 12 9 15.59z"
@@ -291,13 +328,16 @@ function BoardShiftDrawerImpl() {
   return (
     <>
       <Paragraph>
-        Make way for more words by shifting every letter on the board at once in the same
-        direction.
+        Make way for more words by shifting every letter on the board at once in
+        the same direction.
       </Paragraph>
 
       <ShiftContainer>
         <div style={{ flex: 1 }}>
-          <ShiftButton theme={theme} onClick={() => shiftBoard(Directions.Left)}>
+          <ShiftButton
+            theme={theme}
+            onClick={() => shiftBoard(Directions.Left)}
+          >
             <svg
               width="15"
               height="15"
@@ -315,7 +355,9 @@ function BoardShiftDrawerImpl() {
             Left
           </ShiftButton>
         </div>
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 18 }}>
+        <div
+          style={{ flex: 1, display: "flex", flexDirection: "column", gap: 18 }}
+        >
           <ShiftButton theme={theme} onClick={() => shiftBoard(Directions.Up)}>
             Up
             <svg
@@ -333,7 +375,10 @@ function BoardShiftDrawerImpl() {
               ></path>
             </svg>
           </ShiftButton>
-          <ShiftButton theme={theme} onClick={() => shiftBoard(Directions.Down)}>
+          <ShiftButton
+            theme={theme}
+            onClick={() => shiftBoard(Directions.Down)}
+          >
             Down
             <svg
               width="15"
@@ -352,7 +397,10 @@ function BoardShiftDrawerImpl() {
           </ShiftButton>
         </div>
         <div style={{ flex: 1 }}>
-          <ShiftButton theme={theme} onClick={() => shiftBoard(Directions.Right)}>
+          <ShiftButton
+            theme={theme}
+            onClick={() => shiftBoard(Directions.Right)}
+          >
             Right
             <svg
               width="15"
