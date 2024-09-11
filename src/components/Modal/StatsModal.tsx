@@ -216,7 +216,7 @@ export const StatsModalImpl: FC = () => {
         ) : (
           <StatItem
             new={isGameOver ? currentWordCount >= mostWordsInAPuzzle : false}
-            newOffsetX={-32}
+            newOffsetX={-42}
             title={currentWordCount.toLocaleString()}
             byline={"Words found"}
           />
