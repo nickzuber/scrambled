@@ -126,13 +126,25 @@ body {
   }
 }
 
+.popInSmall {
+  animation: popin-small 300ms ease-in, float-small 5s ease-in-out;
+  animation-fill-mode: forwards, forwards;
+  animation-timing-function: cubic-bezier(0.1, 0.2, 0.3, 1), ease-in-out;
+  animation-iteration-count: 1, infinite;
+
+  animation-delay: 350ms, 650ms;
+
+  opacity: 0;
+  transform: scale(0);
+}
+
 .popIn {
   animation: popin 400ms ease-in, float-bent 5s ease-in-out;
   animation-fill-mode: forwards, forwards;
   animation-timing-function: cubic-bezier(0.1, 0.2, 0.3, 1), ease-in-out;
   animation-iteration-count: 1, infinite;
 
-  animation-delay: 250ms, 600ms;
+  animation-delay: 250ms, 650ms;
 
   opacity: 0;
   transform: scale(0) rotate(15deg);
@@ -152,6 +164,37 @@ body {
   100% {
     opacity: 1;
     transform: scale(1) rotate(15deg);
+  }
+}
+
+@keyframes popin-small {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(10deg);
+  }
+
+  75% {
+    opacity: 1;
+    transform: scale(0.62) rotate(10deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(0.6) rotate(10deg);
+  }
+}
+
+@keyframes float-small {
+  0% {
+    transform: translateY(0px) scale(0.6) rotate(10deg);
+  }
+
+  50% {
+    transform: translateY(2px) scale(0.6) rotate(10deg);
+  }
+
+  100% {
+    transform: translateY(0px) scale(0.6) rotate(10deg);
   }
 }
 

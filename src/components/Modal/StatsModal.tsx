@@ -8,6 +8,8 @@ import { GlobalStatesContext } from "../../contexts/global";
 import { TimerStateContext } from "../../contexts/timer";
 import { ToastContext } from "../../contexts/toast";
 import {
+  countBoardScore,
+  countValidWordsOnBoard,
   createScoredBoard,
   createScoredSolutionBoard,
   createUnscoredBoard,
@@ -53,6 +55,7 @@ export const StatsModalImpl: FC = () => {
     streakCount,
     totalCompletionCount,
     totalWordCount,
+    totalPointCount,
     mostWordsInAPuzzle,
     highestScore,
     highestStreak,
@@ -62,6 +65,16 @@ export const StatsModalImpl: FC = () => {
   } = useContext(GlobalStatesContext);
 
   const { timer } = useContext(TimerStateContext);
+
+  // Used for "today's" stats.
+  const currentScore = useMemo(
+    () => countBoardScore(createScoredBoard(board)),
+    [board]
+  );
+  const currentWordCount = useMemo(
+    () => countValidWordsOnBoard(board),
+    [board]
+  );
 
   const getShareClipboardItemForBoard = scoreMode
     ? getScoredShareClipboardItem
@@ -178,32 +191,67 @@ export const StatsModalImpl: FC = () => {
       <FlexContainer>
         <StatItem
           title={totalCompletionCount.toLocaleString()}
-          byline={"Puzzles"}
+          byline={"Total puzzles"}
         />
-        <StatItem title={totalWordCount.toLocaleString()} byline={"Words"} />
+
+        <StatItem
+          title={totalWordCount.toLocaleString()}
+          byline={"Total words"}
+        />
+        <StatItem
+          title={totalPointCount.toLocaleString()}
+          byline={"Total points"}
+        />
+      </FlexContainer>
+      <Divider theme={theme} />
+
+      <FlexContainer>
+        {scoreMode ? (
+          <StatItem
+            new={isGameOver ? currentScore >= highestScore : false}
+            newOffsetX={-32}
+            title={currentScore.toLocaleString()}
+            byline={"Today's score"}
+          />
+        ) : (
+          <StatItem
+            new={isGameOver ? currentWordCount >= mostWordsInAPuzzle : false}
+            newOffsetX={-42}
+            title={currentWordCount.toLocaleString()}
+            byline={"Words found"}
+          />
+        )}
+
         <StatItem
           title={streakCount.toLocaleString()}
-          byline={"Streak"}
+          byline={"Current streak"}
           bylineIcon={
             streakCount > 0 && streakCount >= highestStreak ? (
               <FireSvg />
             ) : undefined
           }
         />
+
+        <StatItem
+          new={
+            isGameOver && fastedCompletion ? timer <= fastedCompletion : false
+          }
+          title={formatAsTimer(timer)}
+          byline={"Today's time"}
+        />
       </FlexContainer>
       <Divider theme={theme} />
+
       <FlexContainer>
         {scoreMode ? (
           <StatItem
             title={highestScore.toLocaleString()}
-            subTitle={`Today: ${23}`}
             byline={"Highest score"}
-            bylineIcon={<LeaderboardSvg />}
+            bylineIcon={<TrophySvg />}
           />
         ) : (
           <StatItem
             title={mostWordsInAPuzzle.toLocaleString()}
-            subTitle={`Today: ${7}`}
             byline={"Most words"}
             bylineIcon={<QuoteSvg />}
           />
@@ -211,15 +259,13 @@ export const StatsModalImpl: FC = () => {
 
         <StatItem
           title={Math.max(highestStreak, streakCount).toLocaleString()}
-          subTitle={`Today: ${streakCount.toLocaleString()}`}
-          byline={"Longest streak"}
+          byline={"Max streak"}
           bylineIcon={<FireSvg />}
         />
 
         <StatItem
           title={fastedCompletion ? formatAsTimer(fastedCompletion) : "—"}
-          subTitle={`Today: ${formatAsTimer(timer)}`}
-          byline={"Quickest finish"}
+          byline={"Fastest finish"}
           bylineIcon={<LightningSvg />}
         />
       </FlexContainer>
@@ -261,6 +307,8 @@ export const StatsModalImpl: FC = () => {
           theme={theme}
           onClick={shareHideSolution ? onShareTextResults : onShareResults}
         >
+          {/* <ShareAltSvg /> */}
+          <ShareSvg />
           Share your puzzle
         </Button>
         <Setting
@@ -401,6 +449,7 @@ const Button = styled.button<{ theme: AppTheme; presentAsDisabled?: boolean }>`
   text-align: center;
   justify-content: center;
   align-items: center;
+  gap: 8px;
   border-radius: 32px;
   cursor: pointer;
 
@@ -413,32 +462,69 @@ const Button = styled.button<{ theme: AppTheme; presentAsDisabled?: boolean }>`
 
 function StatItem(props: {
   title: React.ReactNode;
-  subTitle?: React.ReactNode;
   byline: React.ReactNode;
   titleIcon?: React.ReactNode;
   bylineIcon?: React.ReactNode;
+  new?: boolean;
+  newOffsetX?: number;
 }) {
   return (
     <StatItemContainer>
       <StatItemTitle>
         {props.titleIcon}
         {props.title}
+        {props.new ? (
+          <Tag
+            className="popInSmall"
+            style={
+              props.newOffsetX
+                ? {
+                    left: `${props.newOffsetX}px`,
+                  }
+                : undefined
+            }
+          >
+            new Record
+          </Tag>
+        ) : null}
       </StatItemTitle>
       <StatItemByline>
         {props.bylineIcon}
         {props.byline}
       </StatItemByline>
-      {/* {props.subTitle ? (
-        <StatItemSubTitle>{props.subTitle}</StatItemSubTitle>
-      ) : null} */}
     </StatItemContainer>
   );
 }
 
+const Tag = styled.span`
+  display: block;
+  position: absolute;
+  // background: #fe0606;
+  background: #e41e1d;
+
+  top: -16px;
+  left: -24px;
+
+  width: fit-content;
+  white-space: nowrap;
+
+  font-size: 0.5em;
+  line-height: 1em;
+  color: #ffffff;
+  font-family: franklin, Inter, sans-serif;
+  letter-spacing: 0.85px;
+  font-weight: 700;
+  padding: 7px 12px;
+  border-radius: 18px;
+  text-transform: uppercase;
+  box-shadow: rgba(50, 50, 93, 0.15) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.2) 0px 3px 7px -3px;
+`;
+
 const StatItemContainer = styled.div`
   position: relative;
   flex: 1;
-  padding-block: 14px 12px;
+  padding-block: 10px 8px;
 
   display: flex;
   flex-direction: column;
@@ -447,6 +533,8 @@ const StatItemContainer = styled.div`
 `;
 
 const StatItemTitle = styled.div`
+  position: relative;
+
   font-size: 1.75em;
   line-height: 1.25em;
   font-family: franklin;
@@ -842,6 +930,51 @@ const LeaderboardSvg = () => {
   );
 };
 
+const TrophySvg = () => {
+  const theme = useTheme() as AppTheme;
+  return (
+    <svg
+      width="16px"
+      height="16px"
+      style={{ transform: "translate(1px, 0px)" }}
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="#fd7e14"
+      stroke={theme.colors.iconBorder}
+    >
+      <path
+        d="M6.74534 4H17.3132C17.3132 4 16.4326 17.2571 12.0293 17.2571C9.87826 17.2571 8.56786 14.0935 7.79011 10.8571C6.97574 7.46844 6.74534 4 6.74534 4Z"
+        stroke={theme.colors.iconBorder}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></path>
+      <path
+        d="M17.3132 4C17.3132 4 18.2344 3.01733 19 2.99999C20.5 2.96603 20.7773 4 20.7773 4C21.0709 4.60953 21.3057 6.19429 19.8967 7.65715C18.4876 9.12 16.9103 10.4 16.2684 10.8571"
+        stroke={theme.colors.iconBorder}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></path>
+      <path
+        d="M6.74527 4.00001C6.74527 4.00001 5.78547 3.00614 4.99995 3.00001C3.49995 2.9883 3.22264 4.00001 3.22264 4.00001C2.92908 4.60953 2.69424 6.19429 4.1033 7.65715C5.51235 9.12001 7.14823 10.4 7.79004 10.8572"
+        stroke={theme.colors.iconBorder}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></path>
+      <path
+        d="M8.50662 20C8.50662 18.1714 12.0292 17.2571 12.0292 17.2571C12.0292 17.2571 15.5519 18.1714 15.5519 20H8.50662Z"
+        stroke={theme.colors.iconBorder}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></path>
+    </svg>
+  );
+};
+
 const FireSvg = () => {
   const theme = useTheme() as AppTheme;
   return (
@@ -901,6 +1034,105 @@ const QuoteSvg = () => {
     >
       <path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z" />
       <path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z" />
+    </svg>
+  );
+};
+
+const ShareSvg = () => {
+  const theme = useTheme() as AppTheme;
+
+  return (
+    <svg
+      width="20px"
+      height="20px"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      color={theme.colors.invertedText}
+      strokeWidth="1.5"
+    >
+      <path
+        d="M18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C16.3431 16 15 17.3431 15 19C15 20.6569 16.3431 22 18 22Z"
+        fill={theme.colors.invertedText}
+        stroke={theme.colors.invertedText}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></path>
+      <path
+        d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z"
+        fill={theme.colors.invertedText}
+        stroke={theme.colors.invertedText}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></path>
+      <path
+        d="M6 15C7.65685 15 9 13.6569 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15Z"
+        fill={theme.colors.invertedText}
+        stroke={theme.colors.invertedText}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></path>
+      <path
+        d="M15.5 6.5L8.5 10.5"
+        stroke={theme.colors.invertedText}
+        strokeWidth="1.5"
+      ></path>
+      <path
+        d="M8.5 13.5L15.5 17.5"
+        stroke={theme.colors.invertedText}
+        strokeWidth="1.5"
+      ></path>
+    </svg>
+  );
+};
+
+const ShareAltSvg = () => {
+  const theme = useTheme() as AppTheme;
+
+  return (
+    <svg
+      width="20px"
+      height="20px"
+      stroke-width="1.5"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      color={theme.colors.invertedText}
+    >
+      <path
+        d="M18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C16.3431 16 15 17.3431 15 19C15 20.6569 16.3431 22 18 22Z"
+        stroke={theme.colors.invertedText}
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      ></path>
+      <path
+        d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z"
+        stroke={theme.colors.invertedText}
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      ></path>
+      <path
+        d="M6 15C7.65685 15 9 13.6569 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15Z"
+        stroke={theme.colors.invertedText}
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      ></path>
+      <path
+        d="M15.5 6.5L8.5 10.5"
+        stroke={theme.colors.invertedText}
+        stroke-width="1.5"
+      ></path>
+      <path
+        d="M8.5 13.5L15.5 17.5"
+        stroke={theme.colors.invertedText}
+        stroke-width="1.5"
+      ></path>
     </svg>
   );
 };

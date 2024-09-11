@@ -35,6 +35,7 @@ export const PersistedStates = {
   HighestScore: PersistedStorage.Stamp + "highest-score",
   HighestStreak: PersistedStorage.Stamp + "highest-streak",
   TotalCompletionCount: PersistedStorage.Stamp + "total-completion-count",
+  TotalPointCount: PersistedStorage.Stamp + "total-point-count",
   LastCompledPuzzleNumber: PersistedStorage.Stamp + "last-completion-ts",
   MostWordsInAPuzzle: PersistedStorage.Stamp + "most-words-in-a-puzzle",
   ShareHideSolution: PersistedStorage.Stamp + "share-hide-solution",
