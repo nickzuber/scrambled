@@ -208,11 +208,13 @@ export const StatsModalImpl: FC = () => {
       <FlexContainer>
         {scoreMode ? (
           <StatItem
+            new={isGameOver ? currentScore >= highestScore : false}
             title={currentScore.toLocaleString()}
             byline={"Today's score"}
           />
         ) : (
           <StatItem
+            new={isGameOver ? currentWordCount >= mostWordsInAPuzzle : false}
             title={currentWordCount.toLocaleString()}
             byline={"Words found"}
           />
@@ -228,7 +230,13 @@ export const StatsModalImpl: FC = () => {
           }
         />
 
-        <StatItem title={formatAsTimer(timer)} byline={"Today's time"} />
+        <StatItem
+          new={
+            isGameOver && fastedCompletion ? timer <= fastedCompletion : false
+          }
+          title={formatAsTimer(timer)}
+          byline={"Today's time"}
+        />
       </FlexContainer>
       <Divider theme={theme} />
 
@@ -297,6 +305,8 @@ export const StatsModalImpl: FC = () => {
           theme={theme}
           onClick={shareHideSolution ? onShareTextResults : onShareResults}
         >
+          {/* <ShareAltSvg /> */}
+          <ShareSvg />
           Share your puzzle
         </Button>
         <Setting
@@ -437,6 +447,7 @@ const Button = styled.button<{ theme: AppTheme; presentAsDisabled?: boolean }>`
   text-align: center;
   justify-content: center;
   align-items: center;
+  gap: 8px;
   border-radius: 32px;
   cursor: pointer;
 
@@ -452,12 +463,14 @@ function StatItem(props: {
   byline: React.ReactNode;
   titleIcon?: React.ReactNode;
   bylineIcon?: React.ReactNode;
+  new?: boolean;
 }) {
   return (
     <StatItemContainer>
       <StatItemTitle>
         {props.titleIcon}
         {props.title}
+        {props.new ? <Tag className="popInSmall">new Record</Tag> : null}
       </StatItemTitle>
       <StatItemByline>
         {props.bylineIcon}
@@ -466,6 +479,31 @@ function StatItem(props: {
     </StatItemContainer>
   );
 }
+
+const Tag = styled.span`
+  display: block;
+  position: absolute;
+  // background: #fe0606;
+  background: #e41e1d;
+
+  top: -16px;
+  left: -24px;
+
+  width: fit-content;
+  white-space: nowrap;
+
+  font-size: 0.5em;
+  line-height: 1em;
+  color: #ffffff;
+  font-family: franklin, Inter, sans-serif;
+  letter-spacing: 0.85px;
+  font-weight: 700;
+  padding: 7px 12px;
+  border-radius: 18px;
+  text-transform: uppercase;
+  box-shadow: rgba(50, 50, 93, 0.15) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.2) 0px 3px 7px -3px;
+`;
 
 const StatItemContainer = styled.div`
   position: relative;
@@ -479,6 +517,8 @@ const StatItemContainer = styled.div`
 `;
 
 const StatItemTitle = styled.div`
+  position: relative;
+
   font-size: 1.75em;
   line-height: 1.25em;
   font-family: franklin;
@@ -933,6 +973,105 @@ const QuoteSvg = () => {
     >
       <path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z" />
       <path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z" />
+    </svg>
+  );
+};
+
+const ShareSvg = () => {
+  const theme = useTheme() as AppTheme;
+
+  return (
+    <svg
+      width="20px"
+      height="20px"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      color={theme.colors.invertedText}
+      strokeWidth="1.5"
+    >
+      <path
+        d="M18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C16.3431 16 15 17.3431 15 19C15 20.6569 16.3431 22 18 22Z"
+        fill={theme.colors.invertedText}
+        stroke={theme.colors.invertedText}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></path>
+      <path
+        d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z"
+        fill={theme.colors.invertedText}
+        stroke={theme.colors.invertedText}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></path>
+      <path
+        d="M6 15C7.65685 15 9 13.6569 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15Z"
+        fill={theme.colors.invertedText}
+        stroke={theme.colors.invertedText}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></path>
+      <path
+        d="M15.5 6.5L8.5 10.5"
+        stroke={theme.colors.invertedText}
+        strokeWidth="1.5"
+      ></path>
+      <path
+        d="M8.5 13.5L15.5 17.5"
+        stroke={theme.colors.invertedText}
+        strokeWidth="1.5"
+      ></path>
+    </svg>
+  );
+};
+
+const ShareAltSvg = () => {
+  const theme = useTheme() as AppTheme;
+
+  return (
+    <svg
+      width="20px"
+      height="20px"
+      stroke-width="1.5"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      color={theme.colors.invertedText}
+    >
+      <path
+        d="M18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C16.3431 16 15 17.3431 15 19C15 20.6569 16.3431 22 18 22Z"
+        stroke={theme.colors.invertedText}
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      ></path>
+      <path
+        d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z"
+        stroke={theme.colors.invertedText}
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      ></path>
+      <path
+        d="M6 15C7.65685 15 9 13.6569 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15Z"
+        stroke={theme.colors.invertedText}
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      ></path>
+      <path
+        d="M15.5 6.5L8.5 10.5"
+        stroke={theme.colors.invertedText}
+        stroke-width="1.5"
+      ></path>
+      <path
+        d="M8.5 13.5L15.5 17.5"
+        stroke={theme.colors.invertedText}
+        stroke-width="1.5"
+      ></path>
     </svg>
   );
 };
