@@ -209,12 +209,14 @@ export const StatsModalImpl: FC = () => {
         {scoreMode ? (
           <StatItem
             new={isGameOver ? currentScore >= highestScore : false}
+            newOffsetX={-32}
             title={currentScore.toLocaleString()}
             byline={"Today's score"}
           />
         ) : (
           <StatItem
             new={isGameOver ? currentWordCount >= mostWordsInAPuzzle : false}
+            newOffsetX={-32}
             title={currentWordCount.toLocaleString()}
             byline={"Words found"}
           />
@@ -464,13 +466,27 @@ function StatItem(props: {
   titleIcon?: React.ReactNode;
   bylineIcon?: React.ReactNode;
   new?: boolean;
+  newOffsetX?: number;
 }) {
   return (
     <StatItemContainer>
       <StatItemTitle>
         {props.titleIcon}
         {props.title}
-        {props.new ? <Tag className="popInSmall">new Record</Tag> : null}
+        {props.new ? (
+          <Tag
+            className="popInSmall"
+            style={
+              props.newOffsetX
+                ? {
+                    left: `${props.newOffsetX}px`,
+                  }
+                : undefined
+            }
+          >
+            new Record
+          </Tag>
+        ) : null}
       </StatItemTitle>
       <StatItemByline>
         {props.bylineIcon}
