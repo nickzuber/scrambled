@@ -1,6 +1,9 @@
 import { keyframes } from "@emotion/react";
 
-export const createAnimatedCursorTile = (background: string, borderColor: string) => keyframes`
+export const createAnimatedCursorTile = (
+  background: string,
+  borderColor: string
+) => keyframes`
   0% {
     border-color: #f9c929;
     background: #f9c92922;
@@ -20,7 +23,7 @@ export const createAnimatedTile = (
   background: string,
   highlight: string,
   textColor: string,
-  borderColor: string,
+  borderColor: string
 ) => keyframes`
   0% {
     transform: scale(0.8);
@@ -115,7 +118,7 @@ export const createSuccessReveal = (
   color: string,
   borderColor: string,
   background: string,
-  score?: number | undefined,
+  score?: number | undefined
 ) => {
   let finalBackground = "#6aaa64";
   let finalBorder = "#6aaa64";
@@ -136,6 +139,7 @@ export const createSuccessReveal = (
     color: ${color};
     border-color: ${borderColor};
     background: ${background};
+    filter: hue-rotate(${score && score >= 4 ? "130deg" : "0deg"});
   }
   50% {
     color: #ffffff;
@@ -148,6 +152,7 @@ export const createSuccessReveal = (
     border-color: ${finalBorder};
     background: ${finalBackground};
     transform: rotateX(0);
+    filter: hue-rotate(${score && score >= 4 ? "150deg" : "0deg"});
   }
 `;
 };
@@ -155,7 +160,7 @@ export const createSuccessReveal = (
 export const createMixedReveal = (
   color: string,
   background: string,
-  borderColor: string,
+  borderColor: string
 ) => keyframes`
   0% {
     transform: rotateX(0);
@@ -182,7 +187,7 @@ export const createMixedReveal = (
 export const createInvalidReveal = (
   color: string,
   background: string,
-  borderColor: string,
+  borderColor: string
 ) => keyframes`
   0% {
     transform: rotateX(0);
@@ -209,7 +214,7 @@ export const createInvalidReveal = (
 export const createIncorrectReveal = (
   color: string,
   background: string,
-  borderColor: string,
+  borderColor: string
 ) => keyframes`
   10%,
   90% {

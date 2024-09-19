@@ -58,7 +58,14 @@ export function createBoard(): SolutionBoard {
 // The last usage of this was for that evil "isbn" bug... *shivers*
 export function createTestingBoard(): SolutionBoard {
   return [
-    [undefined, undefined, undefined, undefined, "h", undefined] as unknown as string[],
+    [
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      "h",
+      undefined,
+    ] as unknown as string[],
     [undefined, undefined, undefined, "m", "o", "m"] as unknown as string[],
     ["c", "r", "u", "i", "s", "e"] as unknown as string[],
     ["r", undefined, undefined, "s", "e", "t"] as unknown as string[],
@@ -67,7 +74,9 @@ export function createTestingBoard(): SolutionBoard {
   ];
 }
 
-export function validateSolutionBoardWithGoodWords(board: SolutionBoard): boolean {
+export function validateSolutionBoardWithGoodWords(
+  board: SolutionBoard
+): boolean {
   // Get all words going left to right.
   const leftToRight = getWordsFromBoardLTR(board);
 
@@ -194,7 +203,7 @@ export function writeWordToBoard(
   word: string,
   position: Position,
   direction: Direction,
-  board: SolutionBoard,
+  board: SolutionBoard
 ): SolutionBoard {
   const newBoard = createBoard();
 
@@ -207,7 +216,8 @@ export function writeWordToBoard(
     direction === Direction.Right ? position.col < 0 : position.row < 0;
 
   // Make sure writing to this board is valid.
-  if (willBoardOverflow || willBoardUnderflow) throw new Error("Invalid board.");
+  if (willBoardOverflow || willBoardUnderflow)
+    throw new Error("Invalid board.");
 
   for (let r = 0; r < LetterBounds; r++) {
     for (let c = 0; c < LetterBounds; c++) {
@@ -229,13 +239,16 @@ export function writeWordToBoard(
 
 export function getAllLettersInRow(
   position: Position,
-  board: SolutionBoard,
+  board: SolutionBoard
 ): [string, Position][] {
   const letters = [];
   for (let c = 0; c < LetterBounds; c++) {
     const letter = board[position.row][c];
     if (letter) {
-      letters.push([letter, { row: position.row, col: c }] as [string, Position]);
+      letters.push([letter, { row: position.row, col: c }] as [
+        string,
+        Position
+      ]);
     }
   }
 
@@ -244,13 +257,16 @@ export function getAllLettersInRow(
 
 export function getAllLettersInColumn(
   position: Position,
-  board: SolutionBoard,
+  board: SolutionBoard
 ): [string, Position][] {
   const letters = [];
   for (let r = 0; r < LetterBounds; r++) {
     const letter = board[r][position.col];
     if (letter) {
-      letters.push([letter, { row: r, col: position.col }] as [string, Position]);
+      letters.push([letter, { row: r, col: position.col }] as [
+        string,
+        Position
+      ]);
     }
   }
 
@@ -329,7 +345,9 @@ export function findEmptyPositions(board: SolutionBoard): Position[] {
 // of issues when trying to add another word to the board.
 // The direction paired with the position is the direction which a word
 // that wants to use this position should go in.
-export function findEasyPositions(board: SolutionBoard): [Position, Direction][] {
+export function findEasyPositions(
+  board: SolutionBoard
+): [Position, Direction][] {
   const positions: [Position, Direction][] = [];
   const at = boardAt(board);
 
@@ -354,7 +372,10 @@ export function findEasyPositions(board: SolutionBoard): [Position, Direction][]
       // - O -
       // - X -
       if (all([n, s]) && none([ne, se, nw, sw, e, w])) {
-        const item: [Position, Direction] = [{ row: r, col: c }, Direction.Right];
+        const item: [Position, Direction] = [
+          { row: r, col: c },
+          Direction.Right,
+        ];
         positions.push(item);
       }
 
@@ -362,7 +383,10 @@ export function findEasyPositions(board: SolutionBoard): [Position, Direction][]
       // X O X
       // - - -
       if (all([e, w]) && none([ne, se, nw, sw, n, s])) {
-        const item: [Position, Direction] = [{ row: r, col: c }, Direction.Down];
+        const item: [Position, Direction] = [
+          { row: r, col: c },
+          Direction.Down,
+        ];
         positions.push(item);
       }
 
@@ -370,7 +394,10 @@ export function findEasyPositions(board: SolutionBoard): [Position, Direction][]
       // - O X
       // - - /
       if (all([e]) && none([w, ne, nw, sw, n, s])) {
-        const item: [Position, Direction] = [{ row: r, col: c }, Direction.Down];
+        const item: [Position, Direction] = [
+          { row: r, col: c },
+          Direction.Down,
+        ];
         positions.push(item);
       }
 
@@ -378,7 +405,10 @@ export function findEasyPositions(board: SolutionBoard): [Position, Direction][]
       // - O X
       // - - -
       if (all([e]) && none([w, se, nw, sw, n, s])) {
-        const item: [Position, Direction] = [{ row: r, col: c }, Direction.Down];
+        const item: [Position, Direction] = [
+          { row: r, col: c },
+          Direction.Down,
+        ];
         positions.push(item);
       }
 
@@ -386,7 +416,10 @@ export function findEasyPositions(board: SolutionBoard): [Position, Direction][]
       // X O -
       // - - -
       if (all([w]) && none([e, ne, se, sw, n, s])) {
-        const item: [Position, Direction] = [{ row: r, col: c }, Direction.Down];
+        const item: [Position, Direction] = [
+          { row: r, col: c },
+          Direction.Down,
+        ];
         positions.push(item);
       }
 
@@ -394,7 +427,10 @@ export function findEasyPositions(board: SolutionBoard): [Position, Direction][]
       // X O -
       // / - -
       if (all([w]) && none([e, ne, se, nw, n, s])) {
-        const item: [Position, Direction] = [{ row: r, col: c }, Direction.Down];
+        const item: [Position, Direction] = [
+          { row: r, col: c },
+          Direction.Down,
+        ];
         positions.push(item);
       }
 
@@ -402,7 +438,10 @@ export function findEasyPositions(board: SolutionBoard): [Position, Direction][]
       // - O -
       // / X -
       if (all([n]) && none([e, ne, se, nw, w, s])) {
-        const item: [Position, Direction] = [{ row: r, col: c }, Direction.Right];
+        const item: [Position, Direction] = [
+          { row: r, col: c },
+          Direction.Right,
+        ];
         positions.push(item);
       }
 
@@ -410,7 +449,10 @@ export function findEasyPositions(board: SolutionBoard): [Position, Direction][]
       // - O -
       // - - -
       if (all([s]) && none([e, ne, se, sw, w, n])) {
-        const item: [Position, Direction] = [{ row: r, col: c }, Direction.Right];
+        const item: [Position, Direction] = [
+          { row: r, col: c },
+          Direction.Right,
+        ];
         positions.push(item);
       }
     }
@@ -419,7 +461,9 @@ export function findEasyPositions(board: SolutionBoard): [Position, Direction][]
   return positions;
 }
 
-export function fillRandomEmptyPositions(board: SolutionBoard): SolutionBoard | null {
+export function fillRandomEmptyPositions(
+  board: SolutionBoard
+): SolutionBoard | null {
   let emptyPositions = findEmptyPositions(board);
 
   const letters = [
@@ -465,7 +509,12 @@ export function fillRandomEmptyPositions(board: SolutionBoard): SolutionBoard | 
       const letter = letters[index];
 
       try {
-        const newBoard = writeWordToBoard(letter, position, Direction.Right, board);
+        const newBoard = writeWordToBoard(
+          letter,
+          position,
+          Direction.Right,
+          board
+        );
         if (validateSolutionBoardWithGoodWords(newBoard)) {
           log("new letter added:", letter, position);
           return newBoard;
@@ -482,7 +531,7 @@ export function fillRandomEmptyPositions(board: SolutionBoard): SolutionBoard | 
 
 export function fillRandomEasyPosition(
   board: SolutionBoard,
-  preferLongWord = false,
+  preferLongWord = false
 ): SolutionBoard | null {
   let easyPositions = findEasyPositions(board);
   let updatedBoard: SolutionBoard | null = null;
@@ -497,10 +546,18 @@ export function fillRandomEasyPosition(
 
     switch (direction) {
       case Direction.Down:
-        updatedBoard = placeWordDownwardsAt(intersection, board, preferLongWord);
+        updatedBoard = placeWordDownwardsAt(
+          intersection,
+          board,
+          preferLongWord
+        );
         break;
       case Direction.Right:
-        updatedBoard = placeWordRightwardsAt(intersection, board, preferLongWord);
+        updatedBoard = placeWordRightwardsAt(
+          intersection,
+          board,
+          preferLongWord
+        );
         break;
     }
 
@@ -533,7 +590,7 @@ function createRange(min: number, max: number): number[] {
 export function placeWordDownwardsAt(
   intersection: Position,
   board: SolutionBoard,
-  preferLongWord = false,
+  preferLongWord = false
 ): SolutionBoard | null {
   const currentLetters = countLettersOnBoard(board);
   const lettersRemaining = MaxLetters - currentLetters;
@@ -555,7 +612,10 @@ export function placeWordDownwardsAt(
     // Guarenteed to exist because of this loop's condition
     const letters = lettersBFS.pop() as [string, Position][];
     const normalizedLetters = originalLetters.map(([letter, position]) => {
-      return [letter, moveDown(position, -originalLetters[0][1].row)] as [string, Position];
+      return [letter, moveDown(position, -originalLetters[0][1].row)] as [
+        string,
+        Position
+      ];
     });
 
     // Active intersection refers to the "pivot" letter currently on the board
@@ -573,7 +633,9 @@ export function placeWordDownwardsAt(
 
     // How long would the word be if we fit all the letters on the column.
     const lengthOfFittingAllLetters =
-      letters.length > 1 ? letters[letters.length - 1][1].row - letters[0][1].row + 1 : 1;
+      letters.length > 1
+        ? letters[letters.length - 1][1].row - letters[0][1].row + 1
+        : 1;
 
     // Always try to find solutions for omitting edge letters.
     // If we find a solution before then we'll have exited early.
@@ -591,7 +653,9 @@ export function placeWordDownwardsAt(
     // Min length of a word is either 3 (2 is too boring) or the length required
     // to fit all letters in the column.
     const minLength =
-      letters.length > 1 ? letters[letters.length - 1][1].row - letters[0][1].row + 1 : 3;
+      letters.length > 1
+        ? letters[letters.length - 1][1].row - letters[0][1].row + 1
+        : 3;
 
     // Max length of a word is either 6 or the amount of letters we have left
     // to fill the board, assuming its more than 1.
@@ -607,39 +671,58 @@ export function placeWordDownwardsAt(
       const wordLengthAttempt = range[(startingIndex + offset) % range.length];
 
       // Find all possible words that fit the letters criteria & the word length.
-      const candidateWords = getWordsOfLength(wordLengthAttempt).filter((word) => {
-        const positionOfFirstLetter = word.indexOf(normalizedLetters[0][0]);
-        if (positionOfFirstLetter < 0) return false;
-        const allLettersFitInWord = normalizedLetters.every(([letter, position]) => {
-          return word.indexOf(letter) - positionOfFirstLetter === position.row;
-        });
-        if (!allLettersFitInWord) return false;
+      const candidateWords = getWordsOfLength(wordLengthAttempt).filter(
+        (word) => {
+          const positionOfFirstLetter = word.indexOf(normalizedLetters[0][0]);
+          if (positionOfFirstLetter < 0) return false;
+          const allLettersFitInWord = normalizedLetters.every(
+            ([letter, position]) => {
+              return (
+                word.indexOf(letter) - positionOfFirstLetter === position.row
+              );
+            }
+          );
+          if (!allLettersFitInWord) return false;
 
-        const positions = letters.map(([letter]) => word.indexOf(letter));
-        const lettersBeforeIntersetion = Math.min(...positions);
-        const lettersAfterIntersetion = word.length - 1 - Math.max(...positions);
+          const positions = letters.map(([letter]) => word.indexOf(letter));
+          const lettersBeforeIntersetion = Math.min(...positions);
+          const lettersAfterIntersetion =
+            word.length - 1 - Math.max(...positions);
 
-        return (
-          lettersBeforeIntersetion <= maxLettersBeforeIntersection &&
-          lettersAfterIntersetion <= maxLettersAfterIntersection
-        );
-      });
+          return (
+            lettersBeforeIntersetion <= maxLettersBeforeIntersection &&
+            lettersAfterIntersetion <= maxLettersAfterIntersection
+          );
+        }
+      );
 
       if (candidateWords.length === 0) {
-        log("[down] No words fit this criteria", activeIntersection, wordLengthAttempt);
+        log(
+          "[down] No words fit this criteria",
+          activeIntersection,
+          wordLengthAttempt
+        );
         continue;
       }
 
       const candidateWordOffset = randomGenerator.range(candidateWords.length);
       for (let offset = 0; offset < candidateWords.length; offset++) {
-        const word = candidateWords[(candidateWordOffset + offset) % candidateWords.length];
+        const word =
+          candidateWords[
+            (candidateWordOffset + offset) % candidateWords.length
+          ];
         const startingPosition = moveDown(
           activeIntersection,
-          -word.indexOf(board[activeIntersection.row][activeIntersection.col]),
+          -word.indexOf(board[activeIntersection.row][activeIntersection.col])
         );
 
         try {
-          const newBoard = writeWordToBoard(word, startingPosition, Direction.Down, board);
+          const newBoard = writeWordToBoard(
+            word,
+            startingPosition,
+            Direction.Down,
+            board
+          );
 
           if (validateSolutionBoard(newBoard)) {
             log("new word added:", word);
@@ -662,7 +745,7 @@ export function placeWordDownwardsAt(
 export function placeWordRightwardsAt(
   intersection: Position,
   board: SolutionBoard,
-  preferLongWord = false,
+  preferLongWord = false
 ): SolutionBoard | null {
   const currentLetters = countLettersOnBoard(board);
   const lettersRemaining = MaxLetters - currentLetters;
@@ -684,7 +767,10 @@ export function placeWordRightwardsAt(
     // Guarenteed to exist because of this loop's condition
     const letters = lettersBFS.pop() as [string, Position][];
     const normalizedLetters = letters.map(([letter, position]) => {
-      return [letter, moveRight(position, -letters[0][1].col)] as [string, Position];
+      return [letter, moveRight(position, -letters[0][1].col)] as [
+        string,
+        Position
+      ];
     });
 
     // Active intersection refers to the "pivot" letter currently on the board
@@ -696,13 +782,16 @@ export function placeWordRightwardsAt(
     const activeIntersection = letters[0][1];
 
     const maxLettersBeforeIntersection = activeIntersection.col;
-    const maxLettersAfterIntersection = LetterBounds - activeIntersection.col - 1;
+    const maxLettersAfterIntersection =
+      LetterBounds - activeIntersection.col - 1;
 
     log(`\t${++__i} Attempting to fit letters`, letters, normalizedLetters);
 
     // How long would the word be if we fit all the letters on the column.
     const lengthOfFittingAllLetters =
-      letters.length > 1 ? letters[letters.length - 1][1].col - letters[0][1].col + 1 : 1;
+      letters.length > 1
+        ? letters[letters.length - 1][1].col - letters[0][1].col + 1
+        : 1;
 
     // Always try to find solutions for omitting edge letters.
     // If we find a solution before then we'll have exited early.
@@ -720,7 +809,9 @@ export function placeWordRightwardsAt(
     // Min length of a word is either 3 (2 is too boring) or the length required
     // to fit all letters in the column.
     const minLength =
-      letters.length > 1 ? letters[letters.length - 1][1].col - letters[0][1].col + 1 : 3;
+      letters.length > 1
+        ? letters[letters.length - 1][1].col - letters[0][1].col + 1
+        : 3;
 
     // Max length of a word is either 6 or the amount of letters we have left
     // to fill the board, assuming its more than 1.
@@ -736,41 +827,59 @@ export function placeWordRightwardsAt(
       const wordLengthAttempt = range[(startingIndex + offset) % range.length];
 
       // Find all possible words that fit the letters criteria & the word length.
-      const candidateWords = getWordsOfLength(wordLengthAttempt).filter((word) => {
-        const positionOfFirstLetter = word.indexOf(normalizedLetters[0][0]);
-        if (positionOfFirstLetter < 0) return false;
-        const allLettersFitInWord =
-          normalizedLetters.length > 1
-            ? normalizedLetters.every(([letter, position]) => {
-                return word.indexOf(letter) - positionOfFirstLetter === position.col;
-              })
-            : true;
-        if (!allLettersFitInWord) return false;
-        const positions = letters.map(([letter]) => word.indexOf(letter));
-        const lettersBeforeIntersetion = Math.min(...positions);
-        const lettersAfterIntersetion = word.length - 1 - Math.max(...positions);
+      const candidateWords = getWordsOfLength(wordLengthAttempt).filter(
+        (word) => {
+          const positionOfFirstLetter = word.indexOf(normalizedLetters[0][0]);
+          if (positionOfFirstLetter < 0) return false;
+          const allLettersFitInWord =
+            normalizedLetters.length > 1
+              ? normalizedLetters.every(([letter, position]) => {
+                  return (
+                    word.indexOf(letter) - positionOfFirstLetter ===
+                    position.col
+                  );
+                })
+              : true;
+          if (!allLettersFitInWord) return false;
+          const positions = letters.map(([letter]) => word.indexOf(letter));
+          const lettersBeforeIntersetion = Math.min(...positions);
+          const lettersAfterIntersetion =
+            word.length - 1 - Math.max(...positions);
 
-        return (
-          lettersBeforeIntersetion <= maxLettersBeforeIntersection &&
-          lettersAfterIntersetion <= maxLettersAfterIntersection
-        );
-      });
+          return (
+            lettersBeforeIntersetion <= maxLettersBeforeIntersection &&
+            lettersAfterIntersetion <= maxLettersAfterIntersection
+          );
+        }
+      );
 
       if (candidateWords.length === 0) {
-        log("[right] No words fit this criteria", activeIntersection, wordLengthAttempt);
+        log(
+          "[right] No words fit this criteria",
+          activeIntersection,
+          wordLengthAttempt
+        );
         continue;
       }
 
       const candidateWordOffset = randomGenerator.range(candidateWords.length);
       for (let offset = 0; offset < candidateWords.length; offset++) {
-        const word = candidateWords[(candidateWordOffset + offset) % candidateWords.length];
+        const word =
+          candidateWords[
+            (candidateWordOffset + offset) % candidateWords.length
+          ];
         const startingPosition = moveRight(
           activeIntersection,
-          -word.indexOf(board[activeIntersection.row][activeIntersection.col]),
+          -word.indexOf(board[activeIntersection.row][activeIntersection.col])
         );
 
         try {
-          const newBoard = writeWordToBoard(word, startingPosition, Direction.Right, board);
+          const newBoard = writeWordToBoard(
+            word,
+            startingPosition,
+            Direction.Right,
+            board
+          );
 
           if (validateSolutionBoard(newBoard)) {
             log("new word added:", word);
@@ -832,12 +941,30 @@ export function getTextBoardSolution(board: Board) {
   return result;
 }
 
-export function getTextShareMessagePuzzleOfTheDay(isHardMode?: boolean): string {
+export function getTextShareMessagePuzzleOfTheDay(
+  isHardMode?: boolean
+): string {
   return `${isHardMode ? "*" : ""}Scrambled #${getPuzzleNumber()}`;
 }
 
-export function getTextShareMessage(board: Board, isHardMode?: boolean): string {
+export function getTextShareMessage(args: {
+  board: Board;
+  isHardMode?: boolean;
+  completedTime?: string;
+  finalScore?: number;
+}): string {
+  const { board, isHardMode, completedTime, finalScore } = args;
   const textPuzzleSolution = getTextBoardSolution(board);
+
+  let maybeAdditionalParts = [];
+  if (finalScore) {
+    maybeAdditionalParts.push(`Score: ${finalScore}`);
+  }
+  if (completedTime) {
+    maybeAdditionalParts.push(`Time: ${completedTime}`);
+  }
+  const maybeAdditionalMessage =
+    maybeAdditionalParts.length > 0 ? maybeAdditionalParts.join(", ") : null;
 
   const parts = [
     // NOTE:
@@ -845,8 +972,9 @@ export function getTextShareMessage(board: Board, isHardMode?: boolean): string 
     // For some reason, this breaks the string.
     "https://play-scrambled.com",
     `${getTextShareMessagePuzzleOfTheDay(isHardMode)}`,
+    maybeAdditionalMessage,
     textPuzzleSolution,
-  ];
+  ].filter(Boolean);
 
   return parts.join("\n").trim();
 }

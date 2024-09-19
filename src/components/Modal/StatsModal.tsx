@@ -76,9 +76,10 @@ export const StatsModalImpl: FC = () => {
     [board]
   );
 
-  const getShareClipboardItemForBoard = scoreMode
-    ? getScoredShareClipboardItem
-    : getShareClipboardItem;
+  // const getShareClipboardItemForBoard = scoreMode
+  //   ? getScoredShareClipboardItem
+  //   : getShareClipboardItem;
+  const getShareClipboardItemForBoard = getShareClipboardItem;
 
   // Solution board but with a score for each tile.
   const scoredSolutionBoard = useMemo(
@@ -150,7 +151,11 @@ export const StatsModalImpl: FC = () => {
       return;
     }
 
-    const shareText = getTextShareMessage(board);
+    const shareText = getTextShareMessage({
+      board,
+      finalScore: scoreMode ? currentScore : undefined,
+      completedTime: showTimer ? formatAsTimer(timer) : undefined,
+    });
 
     if (navigator.share) {
       navigator

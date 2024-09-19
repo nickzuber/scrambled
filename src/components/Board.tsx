@@ -48,11 +48,12 @@ type GridTileProps = {
 export const Board: FC = () => {
   const theme = useTheme() as AppTheme;
   const { scoreMode, submitCount } = useContext(GlobalStatesContext);
-  const { board, updateCursor, shiftBoard, isGameOver } = useContext(GameContext);
+  const { board, updateCursor, shiftBoard, isGameOver } =
+    useContext(GameContext);
 
   const score = useMemo(
     () => (isGameOver ? countBoardScore(createScoredBoard(board)) : null),
-    [board, isGameOver],
+    [board, isGameOver]
   );
 
   const handleTileClick = useCallback(
@@ -64,7 +65,7 @@ export const Board: FC = () => {
 
       updateCursor(tile.row, tile.col);
     },
-    [updateCursor],
+    [updateCursor]
   );
 
   const [isShifting, setIsShifting] = useState(false);
@@ -133,7 +134,9 @@ export const Board: FC = () => {
                 tile={tile}
                 cursorDirection={board.cursor.direction}
                 handleTileClick={handleTileClick}
-                hasCursor={board.cursor.row === tile.row && board.cursor.col === tile.col}
+                hasCursor={
+                  board.cursor.row === tile.row && board.cursor.col === tile.col
+                }
                 hasCursorHighlight={
                   board.cursor.direction === CursorDirections.LeftToRight
                     ? board.cursor.row === tile.row
@@ -178,8 +181,12 @@ const GridTile: FC<GridTileProps> = ({
 }) => {
   const theme = useTheme() as AppTheme;
   const prevLetter = useRef<Letter | null>(tile.letter);
-  const prevChangeReason = useRef<TileChangeReason | undefined>(tile.changeReason);
-  const [gridTileState, setGridTileState] = useState<GridTileState>(GridTileState.Idle);
+  const prevChangeReason = useRef<TileChangeReason | undefined>(
+    tile.changeReason
+  );
+  const [gridTileState, setGridTileState] = useState<GridTileState>(
+    GridTileState.Idle
+  );
   const [enableShine, setEnableShine] = useState(false);
 
   useEffect(() => {
@@ -201,7 +208,10 @@ const GridTile: FC<GridTileProps> = ({
   useEffect(() => {
     if (isGameOver) return;
 
-    if (!prevChangeReason.current && tile.changeReason === TileChangeReason.LETTER) {
+    if (
+      !prevChangeReason.current &&
+      tile.changeReason === TileChangeReason.LETTER
+    ) {
       setGridTileState(GridTileState.PopIn);
     } else if (tile.changeReason === TileChangeReason.LETTER) {
       setGridTileState(GridTileState.PopIn);
@@ -248,7 +258,9 @@ const GridTile: FC<GridTileProps> = ({
   const shouldShowPivotLine =
     !isGameOver &&
     hasCursorHighlight &&
-    (cursorDirection === CursorDirections.LeftToRight ? tile.col !== 0 : true) &&
+    (cursorDirection === CursorDirections.LeftToRight
+      ? tile.col !== 0
+      : true) &&
     (cursorDirection === CursorDirections.TopToBottom ? tile.row !== 0 : true);
 
   const didMoveRef = useRef(false);
@@ -302,7 +314,11 @@ const GridTile: FC<GridTileProps> = ({
     >
       {isTileScored(tile) ? (
         <ScoredTileContents
-          key={gridTileState === GridTileState.RevealIncorrect ? innerKey : undefined}
+          key={
+            gridTileState === GridTileState.RevealIncorrect
+              ? innerKey
+              : undefined
+          }
           score={tile.score}
           hasLetter={!!tile.letter?.letter}
           hasCursor={hasCursor && !isGameOver}
@@ -317,13 +333,19 @@ const GridTile: FC<GridTileProps> = ({
               <ShineContainer>
                 <ShineWrapper score={tile.score} />
               </ShineContainer>
-              <Score revealDelay={tile.row * 100 + tile.col * 100}>{tile?.score}</Score>
+              <Score revealDelay={tile.row * 100 + tile.col * 100}>
+                {tile?.score}
+              </Score>
             </>
           ) : null}
         </ScoredTileContents>
       ) : (
         <TileContents
-          key={gridTileState === GridTileState.RevealIncorrect ? innerKey : undefined}
+          key={
+            gridTileState === GridTileState.RevealIncorrect
+              ? innerKey
+              : undefined
+          }
           hasLetter={!!tile.letter?.letter}
           hasCursor={hasCursor && !isGameOver}
           hasCursorHighlight={hasCursorHighlight && !isGameOver}
@@ -336,9 +358,15 @@ const GridTile: FC<GridTileProps> = ({
       )}
       {shouldShowPivotLine ? (
         cursorDirection === CursorDirections.LeftToRight ? (
-          <PivotIndicatorLeftToRight theme={theme} delayOffsetMs={tile.col * 100} />
+          <PivotIndicatorLeftToRight
+            theme={theme}
+            delayOffsetMs={tile.col * 100}
+          />
         ) : (
-          <PivotIndicatorTopToBottom theme={theme} delayOffsetMs={tile.row * 100} />
+          <PivotIndicatorTopToBottom
+            theme={theme}
+            delayOffsetMs={tile.row * 100}
+          />
         )
       ) : null}
     </TileWrapper>
@@ -536,7 +564,10 @@ const ShineWrapper = styled.div<{ score: number | undefined }>(({ score }) => {
   `;
 });
 
-const PivotIndicatorLeftToRight = styled.div<{ theme: AppTheme; delayOffsetMs: number }>`
+const PivotIndicatorLeftToRight = styled.div<{
+  theme: AppTheme;
+  delayOffsetMs: number;
+}>`
   position: absolute;
   height: 2px;
   width: 20px;
@@ -550,7 +581,10 @@ const PivotIndicatorLeftToRight = styled.div<{ theme: AppTheme; delayOffsetMs: n
   animation-fill-mode: forwards;
 `;
 
-const PivotIndicatorTopToBottom = styled.div<{ theme: AppTheme; delayOffsetMs: number }>`
+const PivotIndicatorTopToBottom = styled.div<{
+  theme: AppTheme;
+  delayOffsetMs: number;
+}>`
   position: absolute;
   height: 20px;
   width: 2px;
@@ -571,126 +605,128 @@ const TileContents = styled.div<{
   state: GridTileState;
   revealDelay: number;
   theme: AppTheme;
-}>(({ hasLetter, hasCursor, hasCursorHighlight, state, revealDelay, theme }) => {
-  let animation;
-  let animationDelay = "0ms";
+}>(
+  ({ hasLetter, hasCursor, hasCursorHighlight, state, revealDelay, theme }) => {
+    let animation;
+    let animationDelay = "0ms";
 
-  switch (state) {
-    case GridTileState.PopIn:
-      animation = css`
-        animation: ${PopIn} 100ms;
-      `;
-      break;
-    case GridTileState.RevealSuccess:
-      animationDelay = `${revealDelay}ms`;
-      animation = css`
-        animation: ${createSuccessReveal(
-            theme.colors.text,
-            theme.colors.tileSecondary,
-            theme.colors.primary,
-          )}
-          500ms ease-in;
-      `;
-      break;
-    case GridTileState.RevealMixed:
-      animationDelay = `${revealDelay}ms`;
-      animation = css`
-        animation: ${createMixedReveal(
-            theme.colors.text,
-            theme.colors.tileSecondary,
-            theme.colors.primary,
-          )}
-          500ms ease-in;
-      `;
-      break;
-    case GridTileState.RevealFail:
-      animationDelay = `${revealDelay}ms`;
-      animation = css`
-        animation: ${createInvalidReveal(
-            theme.colors.text,
-            theme.colors.tileSecondary,
-            theme.colors.primary,
-          )}
-          500ms ease-in;
-      `;
-      break;
-    case GridTileState.RevealIncorrect:
-      animationDelay = `100ms`;
-      animation = css`
-        animation: ${createIncorrectReveal(
-            theme.colors.text,
-            theme.colors.tileSecondary,
-            theme.colors.primary,
-          )}
-          500ms ease-in;
-      `;
-      break;
+    switch (state) {
+      case GridTileState.PopIn:
+        animation = css`
+          animation: ${PopIn} 100ms;
+        `;
+        break;
+      case GridTileState.RevealSuccess:
+        animationDelay = `${revealDelay}ms`;
+        animation = css`
+          animation: ${createSuccessReveal(
+              theme.colors.text,
+              theme.colors.tileSecondary,
+              theme.colors.primary
+            )}
+            500ms ease-in;
+        `;
+        break;
+      case GridTileState.RevealMixed:
+        animationDelay = `${revealDelay}ms`;
+        animation = css`
+          animation: ${createMixedReveal(
+              theme.colors.text,
+              theme.colors.tileSecondary,
+              theme.colors.primary
+            )}
+            500ms ease-in;
+        `;
+        break;
+      case GridTileState.RevealFail:
+        animationDelay = `${revealDelay}ms`;
+        animation = css`
+          animation: ${createInvalidReveal(
+              theme.colors.text,
+              theme.colors.tileSecondary,
+              theme.colors.primary
+            )}
+            500ms ease-in;
+        `;
+        break;
+      case GridTileState.RevealIncorrect:
+        animationDelay = `100ms`;
+        animation = css`
+          animation: ${createIncorrectReveal(
+              theme.colors.text,
+              theme.colors.tileSecondary,
+              theme.colors.primary
+            )}
+            500ms ease-in;
+        `;
+        break;
+    }
+
+    const cursorColor = theme.colors.app;
+    const cursorColorBgTemp = theme.colors.appAlt;
+
+    const backgroundColor = hasCursor
+      ? `${cursorColorBgTemp}`
+      : hasLetter && hasCursorHighlight
+      ? `${theme.colors.highlight}`
+      : hasCursorHighlight
+      ? theme.colors.highlight
+      : theme.colors.primary;
+    const borderColor = hasCursor
+      ? cursorColor
+      : hasLetter
+      ? theme.colors.highlightBorder
+      : theme.colors.tileSecondary;
+
+    // @NOTE
+    // We center the contents of this div using line-height instead of flexbox
+    // because when we generate png images in the share modal, the image doesn't
+    // respect flexbox for some reason.
+    return css`
+      z-index: 2;
+      background: ${backgroundColor};
+      border: 2px solid ${borderColor};
+      transition: border 50ms ease-in, background 50ms ease-in;
+      color: ${theme.colors.text};
+      min-height: 53px;
+      min-width: 53px;
+      max-height: 53px;
+      max-width: 53px;
+      height: calc(100% - 10px);
+      width: calc(100% - 10px);
+      opacity: 1;
+      font-weight: 700;
+      font-size: 24px;
+
+      text-align: center;
+      line-height: 48px;
+
+      user-select: none;
+      ${animation}
+      animation-delay: ${animationDelay};
+      animation-fill-mode: forwards;
+      text-transform: uppercase;
+
+      @media (max-height: 620px), (max-width: 370px) {
+        min-height: 47px;
+        min-width: 47px;
+        max-height: 47px;
+        max-width: 47px;
+
+        line-height: 43px;
+      }
+
+      @media (max-height: 600px) {
+        min-height: 42px;
+        min-width: 42px;
+        max-height: 42px;
+        max-width: 42px;
+
+        line-height: 38px;
+      }
+    `;
   }
-
-  const cursorColor = theme.colors.app;
-  const cursorColorBgTemp = theme.colors.appAlt;
-
-  const backgroundColor = hasCursor
-    ? `${cursorColorBgTemp}`
-    : hasLetter && hasCursorHighlight
-    ? `${theme.colors.highlight}`
-    : hasCursorHighlight
-    ? theme.colors.highlight
-    : theme.colors.primary;
-  const borderColor = hasCursor
-    ? cursorColor
-    : hasLetter
-    ? theme.colors.highlightBorder
-    : theme.colors.tileSecondary;
-
-  // @NOTE
-  // We center the contents of this div using line-height instead of flexbox
-  // because when we generate png images in the share modal, the image doesn't
-  // respect flexbox for some reason.
-  return css`
-    z-index: 2;
-    background: ${backgroundColor};
-    border: 2px solid ${borderColor};
-    transition: border 50ms ease-in, background 50ms ease-in;
-    color: ${theme.colors.text};
-    min-height: 53px;
-    min-width: 53px;
-    max-height: 53px;
-    max-width: 53px;
-    height: calc(100% - 10px);
-    width: calc(100% - 10px);
-    opacity: 1;
-    font-weight: 700;
-    font-size: 24px;
-
-    text-align: center;
-    line-height: 48px;
-
-    user-select: none;
-    ${animation}
-    animation-delay: ${animationDelay};
-    animation-fill-mode: forwards;
-    text-transform: uppercase;
-
-    @media (max-height: 620px), (max-width: 370px) {
-      min-height: 47px;
-      min-width: 47px;
-      max-height: 47px;
-      max-width: 47px;
-
-      line-height: 43px;
-    }
-
-    @media (max-height: 600px) {
-      min-height: 42px;
-      min-width: 42px;
-      max-height: 42px;
-      max-width: 42px;
-
-      line-height: 38px;
-    }
-  `;
-});
+);
 
 /**
  * Yes, this is pretty much a copy + paste of <TileContents />
@@ -704,115 +740,125 @@ const ScoredTileContents = styled.div<{
   state: GridTileState;
   revealDelay: number;
   theme: AppTheme;
-}>(({ score, hasLetter, hasCursor, hasCursorHighlight, state, revealDelay, theme }) => {
-  let animation;
-  let animationDelay = "0ms";
+}>(
+  ({
+    score,
+    hasLetter,
+    hasCursor,
+    hasCursorHighlight,
+    state,
+    revealDelay,
+    theme,
+  }) => {
+    let animation;
+    let animationDelay = "0ms";
 
-  switch (state) {
-    case GridTileState.PopIn:
-      animation = css`
-        animation: ${PopIn} 100ms;
-      `;
-      break;
-    case GridTileState.RevealSuccess:
-      animationDelay = `${revealDelay}ms`;
-      animation = css`
-        animation: ${createSuccessReveal(
-            theme.colors.text,
-            theme.colors.tileSecondary,
-            theme.colors.primary,
-            score,
-          )}
-          500ms ease-in;
-      `;
-      break;
-    case GridTileState.RevealMixed:
-      animationDelay = `${revealDelay}ms`;
-      animation = css`
-        animation: ${createMixedReveal(
-            theme.colors.text,
-            theme.colors.tileSecondary,
-            theme.colors.primary,
-          )}
-          500ms ease-in;
-      `;
-      break;
-    case GridTileState.RevealFail:
-      animationDelay = `${revealDelay}ms`;
-      animation = css`
-        animation: ${createInvalidReveal(
-            theme.colors.text,
-            theme.colors.tileSecondary,
-            theme.colors.primary,
-          )}
-          500ms ease-in;
-      `;
-      break;
+    switch (state) {
+      case GridTileState.PopIn:
+        animation = css`
+          animation: ${PopIn} 100ms;
+        `;
+        break;
+      case GridTileState.RevealSuccess:
+        animationDelay = `${revealDelay}ms`;
+        animation = css`
+          animation: ${createSuccessReveal(
+              theme.colors.text,
+              theme.colors.tileSecondary,
+              theme.colors.primary,
+              score
+            )}
+            500ms ease-in;
+        `;
+        break;
+      case GridTileState.RevealMixed:
+        animationDelay = `${revealDelay}ms`;
+        animation = css`
+          animation: ${createMixedReveal(
+              theme.colors.text,
+              theme.colors.tileSecondary,
+              theme.colors.primary
+            )}
+            500ms ease-in;
+        `;
+        break;
+      case GridTileState.RevealFail:
+        animationDelay = `${revealDelay}ms`;
+        animation = css`
+          animation: ${createInvalidReveal(
+              theme.colors.text,
+              theme.colors.tileSecondary,
+              theme.colors.primary
+            )}
+            500ms ease-in;
+        `;
+        break;
+    }
+
+    const cursorColor = theme.colors.app;
+    const cursorColorBgTemp = theme.colors.appAlt;
+
+    const backgroundColor = hasCursor
+      ? `${cursorColorBgTemp}`
+      : hasLetter && hasCursorHighlight
+      ? `${theme.colors.highlight}88`
+      : hasCursorHighlight
+      ? theme.colors.highlight
+      : theme.colors.primary;
+    const borderColor = hasCursor
+      ? cursorColor
+      : state === GridTileState.RevealIncorrect
+      ? "#f03e3e"
+      : hasLetter
+      ? theme.colors.highlightBorder
+      : theme.colors.tileSecondary;
+
+    // @NOTE
+    // We center the contents of this div using line-height instead of flexbox
+    // because when we generate png images in the share modal, the image doesn't
+    // respect flexbox for some reason.
+    return css`
+      z-index: 2;
+      background: ${backgroundColor};
+      border: 2px solid ${borderColor};
+      transition: border 50ms ease-in, background 50ms ease-in;
+      color: ${theme.colors.text};
+      min-height: 53px;
+      min-width: 53px;
+      max-height: 53px;
+      max-width: 53px;
+      height: calc(100% - 10px);
+      width: calc(100% - 10px);
+      opacity: 1;
+      font-weight: 700;
+      font-size: 24px;
+
+      text-align: center;
+      line-height: 48px;
+
+      user-select: none;
+      ${animation}
+      animation-delay: ${animationDelay};
+      animation-fill-mode: forwards;
+      text-transform: uppercase;
+
+      @media (max-height: 620px), (max-width: 370px) {
+        min-height: 48px;
+        min-width: 48px;
+        max-height: 48px;
+        max-width: 48px;
+
+        line-height: 43px;
+      }
+
+      @media (max-height: 600px) {
+        min-height: 43px;
+        min-width: 43px;
+        max-height: 43px;
+        max-width: 43px;
+
+        line-height: 38px;
+      }
+    `;
   }
-
-  const cursorColor = theme.colors.app;
-  const cursorColorBgTemp = theme.colors.appAlt;
-
-  const backgroundColor = hasCursor
-    ? `${cursorColorBgTemp}`
-    : hasLetter && hasCursorHighlight
-    ? `${theme.colors.highlight}88`
-    : hasCursorHighlight
-    ? theme.colors.highlight
-    : theme.colors.primary;
-  const borderColor = hasCursor
-    ? cursorColor
-    : state === GridTileState.RevealIncorrect
-    ? "#f03e3e"
-    : hasLetter
-    ? theme.colors.highlightBorder
-    : theme.colors.tileSecondary;
-
-  // @NOTE
-  // We center the contents of this div using line-height instead of flexbox
-  // because when we generate png images in the share modal, the image doesn't
-  // respect flexbox for some reason.
-  return css`
-    z-index: 2;
-    background: ${backgroundColor};
-    border: 2px solid ${borderColor};
-    transition: border 50ms ease-in, background 50ms ease-in;
-    color: ${theme.colors.text};
-    min-height: 53px;
-    min-width: 53px;
-    max-height: 53px;
-    max-width: 53px;
-    height: calc(100% - 10px);
-    width: calc(100% - 10px);
-    opacity: 1;
-    font-weight: 700;
-    font-size: 24px;
-
-    text-align: center;
-    line-height: 48px;
-
-    user-select: none;
-    ${animation}
-    animation-delay: ${animationDelay};
-    animation-fill-mode: forwards;
-    text-transform: uppercase;
-
-    @media (max-height: 620px), (max-width: 370px) {
-      min-height: 48px;
-      min-width: 48px;
-      max-height: 48px;
-      max-width: 48px;
-
-      line-height: 43px;
-    }
-
-    @media (max-height: 600px) {
-      min-height: 43px;
-      min-width: 43px;
-      max-height: 43px;
-      max-width: 43px;
-
-      line-height: 38px;
-    }
-  `;
-});
+);
