@@ -6,6 +6,7 @@ import { AppTheme } from "../constants/themes";
 import { GameContext } from "../contexts/game";
 import { PageContext } from "../contexts/page";
 import { Page } from "../hooks/usePage";
+import { getPuzzleNumber } from "../utils/game";
 
 const FADE_OUT_TIMING_MS = 150;
 
@@ -102,6 +103,9 @@ export function Intro() {
           {isGameOver ? "View your puzzle" : "Play"}
         </Button>
         <DateMessage className="slideUp">{dateMessage}</DateMessage>
+        <PuzzleMessage className="slideUp">
+          Puzzle #{getPuzzleNumber()}
+        </PuzzleMessage>
         <AuthorMessage className="slideUp">Created by Nick Zuber</AuthorMessage>
         {/* <DisclaimerMessage className="slideUp">New puzzle every day</DisclaimerMessage> */}
       </div>
@@ -239,8 +243,22 @@ const DateMessage = styled.span`
   padding-inline: 24px;
 `;
 
+const PuzzleMessage = styled.span`
+  animation-delay: 300ms;
+
+  display: block;
+
+  font-size: 0.875em;
+  line-height: 1.286;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+
+  text-align: center;
+  padding-inline: 24px;
+`;
+
 const AuthorMessage = styled.span`
-  animation-delay: 250ms;
+  animation-delay: 350ms;
 
   display: block;
 
