@@ -941,10 +941,37 @@ export function getTextBoardSolution(board: Board) {
   return result;
 }
 
-export function getTextShareMessagePuzzleOfTheDay(
-  isHardMode?: boolean
-): string {
-  return `${isHardMode ? "*" : ""}Scrambled #${getPuzzleNumber()}`;
+export function getTextShareMessagePuzzleOfTheDay(args: {
+  isHardMode?: boolean;
+  completedTime?: string;
+  finalScore?: number;
+}): string {
+  const { isHardMode, completedTime, finalScore } = args;
+
+  let maybeAdditionalParts = [];
+  if (finalScore) {
+    maybeAdditionalParts.push(`Score: ${finalScore}`);
+  }
+  if (completedTime) {
+    maybeAdditionalParts.push(`Time: ${completedTime}`);
+  }
+  const maybeAdditionalMessage =
+    maybeAdditionalParts.length > 0 ? maybeAdditionalParts.join(", ") : null;
+
+  const todaysMessage = `${
+    isHardMode ? "*" : ""
+  }Scrambled #${getPuzzleNumber()}`;
+
+  const parts = [
+    // NOTE:
+    // Important to leave off the trailing `/` from the URL.
+    // For some reason, this breaks the string.
+    "https://play-scrambled.com",
+    todaysMessage,
+    maybeAdditionalMessage,
+  ].filter(Boolean);
+
+  return parts.join("\n").trim();
 }
 
 export function getTextShareMessage(args: {
@@ -966,12 +993,16 @@ export function getTextShareMessage(args: {
   const maybeAdditionalMessage =
     maybeAdditionalParts.length > 0 ? maybeAdditionalParts.join(", ") : null;
 
+  const todaysMessage = `${
+    isHardMode ? "*" : ""
+  }Scrambled #${getPuzzleNumber()}`;
+
   const parts = [
     // NOTE:
     // Important to leave off the trailing `/` from the URL.
     // For some reason, this breaks the string.
     "https://play-scrambled.com",
-    `${getTextShareMessagePuzzleOfTheDay(isHardMode)}`,
+    todaysMessage,
     maybeAdditionalMessage,
     textPuzzleSolution,
   ].filter(Boolean);

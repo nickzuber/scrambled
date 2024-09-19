@@ -112,7 +112,10 @@ export const StatsModalImpl: FC = () => {
     if (navigator.share) {
       navigator
         .share({
-          text: `https://play-scrambled.com\n${getTextShareMessagePuzzleOfTheDay()}`,
+          text: getTextShareMessagePuzzleOfTheDay({
+            finalScore: scoreMode ? currentScore : undefined,
+            completedTime: showTimer ? formatAsTimer(timer) : undefined,
+          }),
           files: [imageFile],
         })
         .catch(() => {
