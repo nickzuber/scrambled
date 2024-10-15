@@ -1,4 +1,4 @@
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { PersistedStates } from "../constants/state";
 import createPersistedState from "../libs/use-persisted-state";
@@ -18,6 +18,7 @@ import {
   updateCursorInDirection,
 } from "../utils/game";
 import { ToastContext } from "../contexts/toast";
+import { GlobalStatesContext } from "../contexts/global";
 
 const LOCKED_TILE_MESSAGE = "You cannot edit a locked tile in hard mode";
 
@@ -26,13 +27,28 @@ const defaultBoard = initalizeBoard();
 
 export const useBoard = () => {
   const { sendToast } = useContext(ToastContext);
+  const { hardMode } = useContext(GlobalStatesContext);
   const [board, setBoard] = usePersistedBoard(defaultBoard);
+
+  const messageRef = useRef(false);
 
   const shiftBoard = useCallback(
     (direction: Directions) => {
-      setBoard(moveBoard(board, direction));
+      if (hardMode) {
+        if (!messageRef.current) {
+          sendToast("You cannot move letters in hard mode");
+
+          // Prevent spamming the toast while its active, roughly 2s feels good.
+          messageRef.current = true;
+          setTimeout(() => {
+            messageRef.current = false;
+          }, 2000);
+        }
+      } else {
+        setBoard(moveBoard(board, direction));
+      }
     },
-    [board] // eslint-disable-line react-hooks/exhaustive-deps
+    [board, hardMode] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const moveCursorInDirection = useCallback(
@@ -125,6 +141,27 @@ export const useBoard = () => {
       setBoard((board) => {
         const newTiles = resetBoardTileState(board).tiles;
 
+        console.info(tiles.map((l) => l.letter.id));
+        console.info(newTiles.map((l) => l));
+
+        // Check to see if any of the given tiles are already on the board.
+        // If so, we should remove them first.
+        for (let r = 0; r < newTiles.length; r++) {
+          for (let c = 0; c < newTiles[0].length; c++) {
+            const isGivenTileOnBoard = tiles.find(
+              (givenTile) => givenTile.letter.id === newTiles[r][c].letter?.id
+            );
+
+            if (isGivenTileOnBoard) {
+              newTiles[r][c].letter = null;
+              newTiles[r][c].changeReason = undefined;
+              newTiles[r][c].state = TileState.IDLE;
+              newTiles[r][c].isLocked = false;
+            }
+          }
+        }
+
+        // Place all given tiles on the board.
         for (const { letter, row, col } of tiles) {
           // Set new tile.
           newTiles[row][col].letter = letter;

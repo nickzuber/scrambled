@@ -75,9 +75,9 @@ export const useGame = () => {
       position: { row: number; col: number };
     }> = [];
 
-    for (let r = 0; r < solutionBoard[0].length; r++) {
-      for (let c = 0; c < solutionBoard.length; c++) {
-        const tile: string | undefined = solutionBoard[c][r];
+    for (let r = 0; r < solutionBoard.length; r++) {
+      for (let c = 0; c < solutionBoard[0].length; c++) {
+        const tile: string | undefined = solutionBoard[r][c];
         if (tile) {
           denseBoardWithPositions.push({
             letter: tile,
