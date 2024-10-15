@@ -28,14 +28,14 @@ export const useBoard = () => {
     (direction: Directions) => {
       setBoard(moveBoard(board, direction));
     },
-    [board], // eslint-disable-line react-hooks/exhaustive-deps
+    [board] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const moveCursorInDirection = useCallback(
     (direction: Directions) => {
       setBoard(updateCursorInDirection(board, direction));
     },
-    [board], // eslint-disable-line react-hooks/exhaustive-deps
+    [board] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const setLetterOnBoard = useCallback(
@@ -49,14 +49,17 @@ export const useBoard = () => {
       const newCursor = incrementCursor(board);
       const newTiles = resetBoardTileState(board).tiles;
 
-      // Set new tile.
-      newTiles[row][col].letter = letter;
-      newTiles[row][col].state = TileState.IDLE;
-      newTiles[row][col].changeReason = TileChangeReason.LETTER;
+      // If the tile that we're going to delete is locked, we can't delete it.
+      if (!newTiles[row][col].isLocked) {
+        // Set new tile.
+        newTiles[row][col].letter = letter;
+        newTiles[row][col].state = TileState.IDLE;
+        newTiles[row][col].changeReason = TileChangeReason.LETTER;
+      }
 
       setBoard({ cursor: newCursor, tiles: newTiles });
     },
-    [board], // eslint-disable-line react-hooks/exhaustive-deps
+    [board] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const backspaceBoard = useCallback(() => {
@@ -70,7 +73,8 @@ export const useBoard = () => {
 
     // Letter on current tile, just delete it but don't move cursor backwards.
     // This is how the NYT crossword UX works and its nice.
-    if (currentTileHasLetter.letter) {
+    // If the current tile is locked, you cannot edit it.
+    if (currentTileHasLetter.letter && !currentTileHasLetter.isLocked) {
       const newTiles = resetBoardTileState(board).tiles;
 
       // Set new tile.
@@ -86,10 +90,13 @@ export const useBoard = () => {
     const newCursor = decrementCursor(board);
     const newTiles = board.tiles.slice();
 
-    // Set new tile.
-    newTiles[newCursor.row][newCursor.col].letter = null;
-    newTiles[newCursor.row][newCursor.col].state = TileState.IDLE;
-    newTiles[newCursor.row][newCursor.col].changeReason = undefined;
+    // If the tile that we're going to delete is locked, we can't delete it.
+    if (!newTiles[newCursor.row][newCursor.col].isLocked) {
+      // Set new tile.
+      newTiles[newCursor.row][newCursor.col].letter = null;
+      newTiles[newCursor.row][newCursor.col].state = TileState.IDLE;
+      newTiles[newCursor.row][newCursor.col].changeReason = undefined;
+    }
 
     setBoard({ cursor: newCursor, tiles: newTiles });
   }, [board]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -98,14 +105,44 @@ export const useBoard = () => {
     setBoard({
       ...board,
       tiles: board.tiles.map((row) =>
-        row.map((tile) => ({ ...tile, letter: null, changeReason: undefined })),
+        row.map((tile) => ({ ...tile, letter: null, changeReason: undefined }))
       ),
     });
   }, [board]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const setLockedLettersOnBoard = useCallback(
+    (tiles: Array<{ letter: Letter; row: number; col: number }>) => {
+      setBoard((board) => {
+        const newTiles = resetBoardTileState(board).tiles;
+
+        for (const { letter, row, col } of tiles) {
+          // Set new tile.
+          newTiles[row][col].letter = letter;
+          newTiles[row][col].state = TileState.IDLE;
+          newTiles[row][col].changeReason = TileChangeReason.LETTER;
+          newTiles[row][col].isLocked = true;
+        }
+
+        return { ...board, tiles: newTiles };
+      });
+    },
+    [setBoard]
+  );
+
+  const unlockAllTilesOnBoard = useCallback(() => {
+    setBoard((board) => {
+      return {
+        ...board,
+        tiles: board.tiles.map((row) =>
+          row.map((tile) => ({ ...tile, isLocked: false }))
+        ),
+      };
+    });
+  }, [setBoard]);
+
   const publicSetBoard = useCallback(
     (board: Board) => setBoard(board),
-    [], // eslint-disable-line react-hooks/exhaustive-deps
+    [] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const flipCursorDirection = useCallback(() => {
@@ -147,8 +184,12 @@ export const useBoard = () => {
         }
       });
     },
-    [setBoard],
+    [setBoard]
   );
+
+  const lockedTilesCount = board.tiles
+    .flat()
+    .reduce((prev, tile) => (tile.isLocked ? prev + 1 : prev), 0);
 
   return {
     board,
@@ -160,6 +201,9 @@ export const useBoard = () => {
     backspaceBoard,
     shiftBoard,
     moveCursorInDirection,
+    setLockedLettersOnBoard,
+    unlockAllTilesOnBoard,
+    lockedTilesCount,
   };
 };
 
@@ -178,7 +222,7 @@ function initalizeBoard(): Board {
       letter: null,
       state: TileState.IDLE,
       changeReason: undefined,
-    })),
+    }))
   );
 
   return { cursor: initalCursor, tiles };

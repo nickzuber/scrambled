@@ -348,6 +348,7 @@ const GridTile: FC<GridTileProps> = ({
           }
           hasLetter={!!tile.letter?.letter}
           hasCursor={hasCursor && !isGameOver}
+          isLocked={tile.isLocked ?? false}
           hasCursorHighlight={hasCursorHighlight && !isGameOver}
           state={gridTileState}
           revealDelay={tile.row * 100 + tile.col * 100}
@@ -602,11 +603,20 @@ const TileContents = styled.div<{
   hasLetter: boolean;
   hasCursor: boolean;
   hasCursorHighlight: boolean;
+  isLocked: boolean;
   state: GridTileState;
   revealDelay: number;
   theme: AppTheme;
 }>(
-  ({ hasLetter, hasCursor, hasCursorHighlight, state, revealDelay, theme }) => {
+  ({
+    hasLetter,
+    hasCursor,
+    hasCursorHighlight,
+    isLocked,
+    state,
+    revealDelay,
+    theme,
+  }) => {
     let animation;
     let animationDelay = "0ms";
 
@@ -665,18 +675,23 @@ const TileContents = styled.div<{
     const cursorColor = theme.colors.app;
     const cursorColorBgTemp = theme.colors.appAlt;
 
-    const backgroundColor = hasCursor
+    let backgroundColor = hasCursor
       ? `${cursorColorBgTemp}`
       : hasLetter && hasCursorHighlight
       ? `${theme.colors.highlight}`
       : hasCursorHighlight
       ? theme.colors.highlight
       : theme.colors.primary;
-    const borderColor = hasCursor
+    let borderColor = hasCursor
       ? cursorColor
       : hasLetter
       ? theme.colors.highlightBorder
       : theme.colors.tileSecondary;
+
+    if (isLocked) {
+      backgroundColor = "#ffd4d2";
+      borderColor = hasCursor ? borderColor : "#ff0000";
+    }
 
     // @NOTE
     // We center the contents of this div using line-height instead of flexbox
