@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { PersistedStates } from "../constants/state";
 import createPersistedState from "../libs/use-persisted-state";
@@ -17,11 +17,15 @@ import {
   TileState,
   updateCursorInDirection,
 } from "../utils/game";
+import { ToastContext } from "../contexts/toast";
+
+const LOCKED_TILE_MESSAGE = "You cannot edit a locked tile in hard mode";
 
 const usePersistedBoard = createPersistedState<Board>(PersistedStates.Board);
 const defaultBoard = initalizeBoard();
 
 export const useBoard = () => {
+  const { sendToast } = useContext(ToastContext);
   const [board, setBoard] = usePersistedBoard(defaultBoard);
 
   const shiftBoard = useCallback(
@@ -55,6 +59,8 @@ export const useBoard = () => {
         newTiles[row][col].letter = letter;
         newTiles[row][col].state = TileState.IDLE;
         newTiles[row][col].changeReason = TileChangeReason.LETTER;
+      } else {
+        sendToast(LOCKED_TILE_MESSAGE);
       }
 
       setBoard({ cursor: newCursor, tiles: newTiles });
@@ -83,6 +89,8 @@ export const useBoard = () => {
       newTiles[row][col].changeReason = undefined;
 
       return setBoard({ cursor: board.cursor, tiles: newTiles });
+    } else if (currentTileHasLetter.letter && currentTileHasLetter.isLocked) {
+      sendToast(LOCKED_TILE_MESSAGE);
     }
 
     // No letter on current tile, we want to delete the letter before the next
@@ -96,6 +104,8 @@ export const useBoard = () => {
       newTiles[newCursor.row][newCursor.col].letter = null;
       newTiles[newCursor.row][newCursor.col].state = TileState.IDLE;
       newTiles[newCursor.row][newCursor.col].changeReason = undefined;
+    } else {
+      sendToast(LOCKED_TILE_MESSAGE);
     }
 
     setBoard({ cursor: newCursor, tiles: newTiles });
