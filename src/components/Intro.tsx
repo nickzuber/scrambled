@@ -296,6 +296,7 @@ const BetaTag = styled.span`
 
 const NewTag = styled(BetaTag)`
   background: #4263eb;
+  visibility: hidden;
 `;
 
 const DisclaimerMessage = styled.span`
