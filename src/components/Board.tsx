@@ -354,6 +354,11 @@ const GridTile: FC<GridTileProps> = ({
           revealDelay={tile.row * 100 + tile.col * 100}
           theme={theme}
         >
+          {tile.isLocked ? (
+            <ShineContainer>
+              <ShineWrapper score={2} />
+            </ShineContainer>
+          ) : null}
           {tile.letter?.letter}
         </TileContents>
       )}
@@ -675,6 +680,8 @@ const TileContents = styled.div<{
     const cursorColor = theme.colors.app;
     const cursorColorBgTemp = theme.colors.appAlt;
 
+    let filter = undefined;
+    let textColor = theme.colors.text;
     let backgroundColor = hasCursor
       ? `${cursorColorBgTemp}`
       : hasLetter && hasCursorHighlight
@@ -689,8 +696,13 @@ const TileContents = styled.div<{
       : theme.colors.tileSecondary;
 
     if (isLocked) {
-      backgroundColor = "#ffd4d2";
-      borderColor = hasCursor ? borderColor : "#ff0000";
+      textColor = "#ffffff";
+      backgroundColor = `
+        radial-gradient(ellipse farthest-corner at right bottom, #c6a818 0%, #ce9b34 8%, #daae53 30%, #ddaf47 40%, #fcc52a 80%, #dbab4b 100%),
+        radial-gradient(ellipse farthest-corner at left top, #c9aa2f 0%, #e2c427 8%, #e3b32c 25%, #9a7a30 62.5%, #c19738 100%)
+      `;
+      borderColor = hasCursor ? cursorColor : "#d3ad4b";
+      filter = "grayscale(1) brightness(1.05)";
     }
 
     // @NOTE
@@ -699,10 +711,11 @@ const TileContents = styled.div<{
     // respect flexbox for some reason.
     return css`
       z-index: 2;
+      filter: ${filter};
       background: ${backgroundColor};
       border: 2px solid ${borderColor};
       transition: border 50ms ease-in, background 50ms ease-in;
-      color: ${theme.colors.text};
+      color: ${textColor};
       min-height: 53px;
       min-width: 53px;
       max-height: 53px;
