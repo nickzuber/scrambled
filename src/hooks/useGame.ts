@@ -81,7 +81,7 @@ export const useGame = () => {
         if (tile) {
           denseBoardWithPositions.push({
             letter: tile,
-            position: { row: c, col: r },
+            position: { row: r, col: c },
           });
         }
       }
