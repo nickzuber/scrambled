@@ -1,5 +1,6 @@
 import { toBlob } from "html-to-image";
-import React, { useCallback, useContext, useMemo } from "react";
+import generator from "random-seed";
+import React, { useCallback, useContext, useEffect, useMemo } from "react";
 import { ToastContext } from "../contexts/toast";
 
 import { GlobalStatesContext } from "../contexts/global";
@@ -39,7 +40,6 @@ export const useGame = () => {
     setHighestStreak,
     lastCompletedPuzzleNumber,
   } = useContext(GlobalStatesContext);
-  const { letters, solutionBoard, shuffleLetters, positionOfShuffle } = useLetters();
   const {
     board,
     setLetterOnBoard,
@@ -50,7 +50,84 @@ export const useGame = () => {
     flipCursorDirection,
     shiftBoard,
     moveCursorInDirection,
+    setLockedLettersOnBoard,
+    unlockAllTilesOnBoard,
+    lockedTilesCount,
   } = useBoard();
+  const { letters, solutionBoard, shuffleLetters, positionOfShuffle } =
+    useLetters();
+
+  // Hard-mode listener: sets and locks some letters onto the board.
+  useEffect(() => {
+    // If hard mode is disabled, just make sure every tile on the board is unlocked.
+    if (!hardMode) {
+      unlockAllTilesOnBoard();
+      return;
+    }
+    // We've already locked the max tiles, so no-op.
+    else if (lockedTilesCount >= 2) {
+      return;
+    }
+    // Otherwise, go set and lock some random tiles on the board.
+
+    const denseBoardWithPositions: Array<{
+      letter: string;
+      position: { row: number; col: number };
+    }> = [];
+
+    for (let r = 0; r < solutionBoard.length; r++) {
+      for (let c = 0; c < solutionBoard[0].length; c++) {
+        const tile: string | undefined = solutionBoard[r][c];
+        if (tile) {
+          denseBoardWithPositions.push({
+            letter: tile,
+            position: { row: r, col: c },
+          });
+        }
+      }
+    }
+
+    // Step 1.
+    // =======
+    // Randomly choose two letters from two positions from the dense board.
+    const date = new Date();
+    const seed = `${date.getMonth()}${date.getDate()}${date.getFullYear()}`;
+    const randomGenerator = generator.create(seed);
+    const firstIndex = randomGenerator.range(denseBoardWithPositions.length);
+    const firstChosenTile = denseBoardWithPositions[firstIndex];
+    // Remove the first chosen letter from the board altogether.
+    denseBoardWithPositions.splice(firstIndex, 1);
+    const secondIndex = randomGenerator.range(denseBoardWithPositions.length);
+    const secondChosenTile = denseBoardWithPositions[secondIndex];
+
+    // Step 2.
+    // =======
+    // Select separate Letter objects from the letters array.
+    const firstChosenLetter = letters.find(
+      (letter) => letter.letter === firstChosenTile.letter
+    );
+    const secondChosenLetter = letters.find(
+      (letter) =>
+        letter.letter === secondChosenTile.letter &&
+        letter.id !== firstChosenLetter?.id
+    );
+
+    if (!firstChosenLetter || !secondChosenLetter) return;
+
+    // Step 3.
+    // =======
+    // Place the letters on the board.
+    setLockedLettersOnBoard([
+      {
+        letter: firstChosenLetter,
+        ...firstChosenTile.position,
+      },
+      {
+        letter: secondChosenLetter,
+        ...secondChosenTile.position,
+      },
+    ]);
+  }, [hardMode]);
 
   const updateBoardWithNewScoreMode = useCallback(
     (newScoreMode: boolean) => {
@@ -66,10 +143,13 @@ export const useGame = () => {
         return;
       }
     },
-    [isGameOver, board, setBoard],
+    [isGameOver, board, setBoard]
   );
 
-  const tilesAreConnected = React.useMemo(() => validateWordIsland(board), [board]);
+  const tilesAreConnected = React.useMemo(
+    () => validateWordIsland(board),
+    [board]
+  );
 
   const boardLetterIds = React.useMemo(
     () =>
@@ -78,14 +158,15 @@ export const useGame = () => {
           .map((row) => row.map((tile) => tile.letter))
           .flat()
           .filter((letter) => letter !== null)
-          .map((letter) => (letter as Letter).id),
+          .map((letter) => (letter as Letter).id)
       ),
-    [board],
+    [board]
   );
 
   const canFinish = useMemo(() => {
     const [_, allWordsAreValid] = validateBoard({ board, mode: "submit" });
-    const isBoardComplete = tilesAreConnected && boardLetterIds.size === Config.MaxLetters;
+    const isBoardComplete =
+      tilesAreConnected && boardLetterIds.size === Config.MaxLetters;
 
     // Hard mode lets you submit without every word guarenteed to be valid.
     if (hardMode) {
@@ -106,7 +187,7 @@ export const useGame = () => {
     const finalBoard = scoreMode ? createScoredBoard(newBoard) : newBoard;
 
     // Count the score on the board.
-    const finalScore = countBoardScore(createScoredBoard(newBoard))
+    const finalScore = countBoardScore(createScoredBoard(newBoard));
 
     publishEvent("submit", {
       final_score: scoreMode ? finalScore : -1,
@@ -130,7 +211,7 @@ export const useGame = () => {
       if (!lastCompletedPuzzleNumber) {
         // First completion.
         // Initial highest streak setting as well.
-        setHighestStreak(prevHighestStreak => Math.max(prevHighestStreak, 1))
+        setHighestStreak((prevHighestStreak) => Math.max(prevHighestStreak, 1));
         return 1;
       } else if (getPuzzleNumber() - lastCompletedPuzzleNumber <= 1) {
         // If the current puzzle is 1 away from the last completed puzzle, then
@@ -140,8 +221,10 @@ export const useGame = () => {
         //
         // Note that this supports the same puzzle being completed twice as a streak;
         // this is for testing since its not normally possible.
-        const nextStreakCount = prevStreak + 1
-        setHighestStreak(prevHighestStreak => Math.max(prevHighestStreak, nextStreakCount))
+        const nextStreakCount = prevStreak + 1;
+        setHighestStreak((prevHighestStreak) =>
+          Math.max(prevHighestStreak, nextStreakCount)
+        );
         return nextStreakCount;
       } else {
         // If this wasn't the next puzzle, reset the streak.
@@ -149,7 +232,9 @@ export const useGame = () => {
         return 1;
       }
     });
-    setHighestScore(prevHighestScore => Math.max(prevHighestScore, finalScore))
+    setHighestScore((prevHighestScore) =>
+      Math.max(prevHighestScore, finalScore)
+    );
     setLastCompletedPuzzleNumber(getPuzzleNumber());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -165,7 +250,9 @@ export const useGame = () => {
     lastCompletedPuzzleNumber,
   ]);
 
-  const unusedLetters = letters.filter((letter) => !boardLetterIds.has(letter.id));
+  const unusedLetters = letters.filter(
+    (letter) => !boardLetterIds.has(letter.id)
+  );
   const hasStartedGame = unusedLetters.length !== Config.MaxLetters;
 
   const getShareClipboardItem = useCallback(async () => {
@@ -185,15 +272,23 @@ export const useGame = () => {
       const clipboardItem = new ClipboardItem({
         "image/png": imgBlob as Blob,
       });
-      const blobFile = new File([imgBlob], `Scrambled #${getPuzzleNumber()}.png`, {
-        type: "image/png",
-      });
+      const blobFile = new File(
+        [imgBlob],
+        `Scrambled #${getPuzzleNumber()}.png`,
+        {
+          type: "image/png",
+        }
+      );
       return [clipboardItem, blobFile] as [ClipboardItem, File];
     } catch (error) {
       console.error(error);
-      const blobFile = new File([imgBlob], `Scrambled #${getPuzzleNumber()}.png`, {
-        type: "image/png",
-      });
+      const blobFile = new File(
+        [imgBlob],
+        `Scrambled #${getPuzzleNumber()}.png`,
+        {
+          type: "image/png",
+        }
+      );
       return [null, blobFile] as [null, File];
     }
   }, []);
@@ -221,9 +316,13 @@ export const useGame = () => {
       const clipboardItem = new ClipboardItem({
         "image/png": imgBlob as Blob,
       });
-      const blobFile = new File([imgBlob], `Scrambled #${getPuzzleNumber()}.png`, {
-        type: "image/png",
-      });
+      const blobFile = new File(
+        [imgBlob],
+        `Scrambled #${getPuzzleNumber()}.png`,
+        {
+          type: "image/png",
+        }
+      );
 
       keyboardNode.style.cssText = prevKeyboardStyles;
       scoreNode.style.cssText = prevScoreStyles;
@@ -300,13 +399,13 @@ function printEmojiScoredSolutionBoard(board: ScoredSolutionBoard) {
   const score = countSolutionBoardScore(board);
   console.info(
     `Score: %c${score}`,
-    `color: ${score > 30 ? "green" : score > 24 ? "blue" : "#aaa"}`,
+    `color: ${score > 30 ? "green" : score > 24 ? "blue" : "#aaa"}`
   );
   console.info(
     `%c1, %c2, %c3, %c4`,
     "color: #da77f2",
     "color: #ffd43b",
     "color: #40c057",
-    "color: #fa5252",
+    "color: #fa5252"
   );
 }
