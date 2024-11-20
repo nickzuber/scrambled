@@ -82,7 +82,7 @@ export function Intro() {
           <span>{"🍳"}</span>
         </Logo>
         <Title id="intro-title" className="slideUp">
-          Scrambled<NewTag className="popIn">New</NewTag>
+          Scrambled
         </Title>
         <Divider className="slideUpAndWidenOut" theme={theme} />
         {isGameOver ? (

@@ -56,13 +56,23 @@ export const Board: FC = () => {
     [board, isGameOver]
   );
 
+  const preventDoubleFiresRef = useRef(false);
+
   const handleTileClick = useCallback(
     (tile: Tile) => {
+      if (preventDoubleFiresRef.current) {
+        return;
+      }
+
       const activeElement = document.activeElement as HTMLElement;
       if (activeElement) {
         activeElement?.blur();
       }
 
+      preventDoubleFiresRef.current = true;
+      setTimeout(() => {
+        preventDoubleFiresRef.current = false;
+      }, 20);
       updateCursor(tile.row, tile.col);
     },
     [updateCursor]
