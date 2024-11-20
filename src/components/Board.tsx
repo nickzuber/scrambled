@@ -57,25 +57,31 @@ export const Board: FC = () => {
   );
 
   const preventDoubleFiresRef = useRef(false);
-
-  const handleTileClick = useCallback(
-    (tile: Tile) => {
+  const safeUpdateCursor = useCallback(
+    (row: number, col: number): void => {
       if (preventDoubleFiresRef.current) {
         return;
-      }
-
-      const activeElement = document.activeElement as HTMLElement;
-      if (activeElement) {
-        activeElement?.blur();
       }
 
       preventDoubleFiresRef.current = true;
       setTimeout(() => {
         preventDoubleFiresRef.current = false;
-      }, 20);
-      updateCursor(tile.row, tile.col);
+      }, 100);
+      updateCursor(row, col);
     },
     [updateCursor]
+  );
+
+  const handleTileClick = useCallback(
+    (tile: Tile) => {
+      const activeElement = document.activeElement as HTMLElement;
+      if (activeElement) {
+        activeElement?.blur();
+      }
+
+      safeUpdateCursor(tile.row, tile.col);
+    },
+    [safeUpdateCursor]
   );
 
   const [isShifting, setIsShifting] = useState(false);
