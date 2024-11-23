@@ -88,6 +88,7 @@ export const words = [
   "ta",
   "ti",
   "to",
+  "tv",
   "uh",
   "um",
   "un",
