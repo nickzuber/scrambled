@@ -1,9 +1,3 @@
-import { useCallback, useState } from "react";
-import { PersistedStates } from "../constants/state";
-import createPersistedState from "../libs/use-persisted-state";
-
-const useFirstTime = createPersistedState(PersistedStates.FirstTime);
-
 export type ModalsOptions = {
   openInstructions: () => void;
   openStats: () => void;
@@ -15,27 +9,10 @@ export type ModalsOptions = {
   closeModal: () => void;
 };
 
-enum Modal {
-  Instructions,
-  Stats,
-  Settings,
-}
-
 /**
  * @deprecated Use the `<BottomDrawer />` pattern instead.
  */
 export const useModals = (): ModalsOptions => {
-  const [, setIsFirstTime] = useFirstTime(true);
-  const [openModal, setOpenModal] = useState<Modal | null>(null);
-
-  const closeModal = useCallback(() => {
-    setIsFirstTime(false);
-    setOpenModal(null);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const openInstructions = useCallback(() => setOpenModal(Modal.Instructions), []);
-  const openStats = useCallback(() => setOpenModal(Modal.Stats), []);
-  const openSettings = useCallback(() => setOpenModal(Modal.Settings), []);
-
   return {
     openInstructions: () => {},
     openStats: () => {},
@@ -46,15 +23,4 @@ export const useModals = (): ModalsOptions => {
     isAnyModalOpen: false,
     closeModal: () => {},
   };
-
-  // return {
-  //   openInstructions,
-  //   openStats,
-  //   openSettings,
-  //   isInstructionsOpen: openModal === Modal.Instructions,
-  //   isStatsOpen: openModal === Modal.Stats,
-  //   isSettingsOpen: openModal === Modal.Settings,
-  //   isAnyModalOpen: openModal !== null,
-  //   closeModal,
-  // };
 };

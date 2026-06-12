@@ -1,7 +1,8 @@
 import { css, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
+import { Description } from "@radix-ui/react-dialog";
 import { FC, useContext, useMemo, useState } from "react";
-import { FadeIn, Shine, createSuccessReveal } from "../../constants/animations";
+import { createSuccessReveal, FadeIn, Shine } from "../../constants/animations";
 import { AppTheme } from "../../constants/themes";
 import { GameContext } from "../../contexts/game";
 import { GlobalStatesContext } from "../../contexts/global";
@@ -25,7 +26,6 @@ import {
 import { Toggle } from "../core/Toggle";
 import { Modal } from "./Modal";
 import { Label, Name, Setting } from "./SettingsModal";
-import { Description } from "@radix-ui/react-dialog";
 
 // Make this `true` to a a valid solution for today's board.
 const DEBUGGING = false;
@@ -40,15 +40,10 @@ export const StatsModal: FC = () => {
 
 export const StatsModalImpl: FC = () => {
   const theme = useTheme() as AppTheme;
-  const {
-    board,
-    solutionBoard,
-    getShareClipboardItem,
-    getScoredShareClipboardItem,
-    isGameOver,
-  } = useContext(GameContext);
+  const { board, solutionBoard, getShareClipboardItem, isGameOver } =
+    useContext(GameContext);
   const { sendToast } = useContext(ToastContext);
-  const [showPreview, setShowPreview] = useState(true);
+  const [showPreview] = useState(true);
   const {
     scoreMode,
     showTimer,
@@ -69,11 +64,11 @@ export const StatsModalImpl: FC = () => {
   // Used for "today's" stats.
   const currentScore = useMemo(
     () => countBoardScore(createScoredBoard(board)),
-    [board]
+    [board],
   );
   const currentWordCount = useMemo(
     () => countValidWordsOnBoard(board),
-    [board]
+    [board],
   );
 
   // const getShareClipboardItemForBoard = scoreMode
@@ -84,12 +79,12 @@ export const StatsModalImpl: FC = () => {
   // Solution board but with a score for each tile.
   const scoredSolutionBoard = useMemo(
     () => createScoredSolutionBoard(solutionBoard),
-    [solutionBoard]
+    [solutionBoard],
   );
 
   const yourBoard = useMemo(
     () => (scoreMode ? createScoredBoard(board) : createUnscoredBoard(board)),
-    [board, scoreMode]
+    [board, scoreMode],
   );
 
   const showScoredBoard = scoreMode && isBoardScored(yourBoard);
@@ -142,7 +137,7 @@ export const StatsModalImpl: FC = () => {
       onShareTextResults();
     } else {
       console.error(
-        "[Image] Failed to access meaningful navigator properties."
+        "[Image] Failed to access meaningful navigator properties.",
       );
       onShareTextResults();
     }
@@ -525,7 +520,8 @@ const Tag = styled.span`
   padding: 7px 12px;
   border-radius: 18px;
   text-transform: uppercase;
-  box-shadow: rgba(50, 50, 93, 0.15) 0px 6px 12px -2px,
+  box-shadow:
+    rgba(50, 50, 93, 0.15) 0px 6px 12px -2px,
     rgba(0, 0, 0, 0.2) 0px 3px 7px -3px;
 `;
 
@@ -581,20 +577,6 @@ const StatItemByline = styled.div`
       width: 12px;
     }
   }
-`;
-
-const StatItemSubTitle = styled(StatItemByline)`
-  // background: #cc5de8;
-  // color: #fff;
-
-  // position: absolute;
-  bottom: 0;
-  border-radius: 24px;
-
-  font-size: 0.8em;
-  line-height: 1em;
-
-  padding: 5px 8px 3px;
 `;
 
 const Divider = styled.div<{ theme: AppTheme }>`
@@ -673,7 +655,9 @@ const MiniTileWrapper = styled.div`
 const MiniTileContents = styled.div<{ theme: AppTheme }>`
   background: ${(p) => p.theme.colors.primary};
   border: 2px solid ${(p) => p.theme.colors.tileSecondary};
-  transition: border 50ms ease-in, background 50ms ease-in;
+  transition:
+    border 50ms ease-in,
+    background 50ms ease-in;
   color: ${(p) => p.theme.colors.text};
   min-height: 36px;
   min-width: 36px;
@@ -701,7 +685,7 @@ const MiniTileContentsSuccess = styled(MiniTileContents)<{
         p.theme.colors.text,
         p.theme.colors.tileSecondary,
         p.theme.colors.primary,
-        p.score
+        p.score,
       )}
     500ms ease-in;
   animation-delay: ${(p) => p.animationDelay}ms;
@@ -709,15 +693,6 @@ const MiniTileContentsSuccess = styled(MiniTileContents)<{
 `;
 
 // ====================================================
-
-const Title = styled.h1`
-  margin: 0 0 24px;
-  font-weight: 700;
-  font-size: 1.3rem;
-  letter-spacing: 0.025rem;
-  text-transform: uppercase;
-  text-align: center;
-`;
 
 const Paragraph = styled.p<{ italic?: boolean; left?: boolean }>`
   font-weight: 500;
@@ -728,15 +703,6 @@ const Paragraph = styled.p<{ italic?: boolean; left?: boolean }>`
   margin: 18px auto 8px;
 
   font-style: ${(p) => (p.italic ? "italic" : "normal")};
-`;
-
-const Result = styled.span`
-  font-weight: 700;
-  text-align: center;
-  font-size: 1.5rem;
-  text-shadow: 0px 1px 2px #5d5d5d4f;
-  margin: 8px auto;
-  display: block;
 `;
 
 const Score = styled.div<{ revealDelay: number }>(({ revealDelay }) => {
@@ -754,13 +720,6 @@ const Score = styled.div<{ revealDelay: number }>(({ revealDelay }) => {
     animation-fill-mode: forwards;
   `;
 });
-
-const SmallSpan = styled.span`
-  display: inline-block;
-  font-size: 14px;
-  line-height: 14px;
-  margin-left: 4px;
-`;
 
 const ShineContainer = styled.div`
   position: absolute;
@@ -805,78 +764,6 @@ const ShineWrapper = styled.div<{ score: number | undefined }>(({ score }) => {
 
 // Icons
 
-const SparkleSvg = () => {
-  const theme = useTheme() as AppTheme;
-  return (
-    <svg
-      width="20px"
-      height="20px"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      color="#000000"
-      strokeWidth="1"
-    >
-      <path
-        d="M8 15C12.8747 15 15 12.949 15 8C15 12.949 17.1104 15 22 15C17.1104 15 15 17.1104 15 22C15 17.1104 12.8747 15 8 15Z"
-        fill={"#be4bdb"}
-        stroke={theme.colors.iconBorder}
-        strokeWidth="1.25"
-        strokeLinejoin="round"
-      ></path>
-      <path
-        d="M2 6.5C5.13376 6.5 6.5 5.18153 6.5 2C6.5 5.18153 7.85669 6.5 11 6.5C7.85669 6.5 6.5 7.85669 6.5 11C6.5 7.85669 5.13376 6.5 2 6.5Z"
-        fill={"#be4bdb"}
-        stroke={theme.colors.iconBorder}
-        strokeWidth="1.25"
-        strokeLinejoin="round"
-      ></path>
-    </svg>
-  );
-};
-
-const TimerSvg = () => {
-  const theme = useTheme() as AppTheme;
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
-      viewBox="0 0 22 25"
-      fill={"#51cf66"}
-      stroke={theme.colors.iconBorder}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="6" />
-      <polyline points="12 10 12 12 13 13" />
-      <path d="m16.13 7.66-.81-4.05a2 2 0 0 0-2-1.61h-2.68a2 2 0 0 0-2 1.61l-.78 4.05" />
-      <path d="m7.88 16.36.8 4a2 2 0 0 0 2 1.61h2.72a2 2 0 0 0 2-1.61l.81-4.05" />
-    </svg>
-  );
-};
-
-const PauseSvg = () => {
-  const theme = useTheme() as AppTheme;
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 22 25"
-      fill={"#51cf66"}
-      stroke={theme.colors.iconBorder}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="14" y="4" width="4" height="16" rx="1" />
-      <rect x="6" y="4" width="4" height="16" rx="1" />
-    </svg>
-  );
-};
-
 const LightningSvg = () => {
   const theme = useTheme() as AppTheme;
   return (
@@ -895,44 +782,6 @@ const LightningSvg = () => {
         d="M13.2319 2.28681C13.5409 2.38727 13.75 2.6752 13.75 3.00005V9.25005H19C19.2821 9.25005 19.5403 9.40834 19.6683 9.65972C19.7963 9.9111 19.7725 10.213 19.6066 10.4412L11.6066 21.4412C11.4155 21.7039 11.077 21.8137 10.7681 21.7133C10.4591 21.6128 10.25 21.3249 10.25 21.0001V14.7501H5C4.71791 14.7501 4.45967 14.5918 4.33167 14.3404C4.20366 14.089 4.22753 13.7871 4.39345 13.5589L12.3935 2.55892C12.5845 2.2962 12.923 2.18635 13.2319 2.28681Z"
         fill={theme.colors.app}
         stroke={theme.colors.iconBorder}
-      ></path>
-    </svg>
-  );
-};
-
-const LeaderboardSvg = () => {
-  const theme = useTheme() as AppTheme;
-  return (
-    <svg
-      width="18px"
-      height="18px"
-      viewBox="0 0 24 24"
-      style={{ transform: "translate(2px, -1px)" }}
-      xmlns="http://www.w3.org/2000/svg"
-      strokeWidth="2"
-      fill="#fd7e14"
-      stroke={theme.colors.iconBorder}
-    >
-      <path
-        d="M15 19H9V12.5V8.6C9 8.26863 9.26863 8 9.6 8H14.4C14.7314 8 15 8.26863 15 8.6V14.5V19Z"
-        stroke={theme.colors.iconBorder}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      ></path>
-      <path
-        d="M20.4 19H15V15.1C15 14.7686 15.2686 14.5 15.6 14.5H20.4C20.7314 14.5 21 14.7686 21 15.1V18.4C21 18.7314 20.7314 19 20.4 19Z"
-        stroke={theme.colors.iconBorder}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      ></path>
-      <path
-        d="M9 19V13.1C9 12.7686 8.73137 12.5 8.4 12.5H3.6C3.26863 12.5 3 12.7686 3 13.1V18.4C3 18.7314 3.26863 19 3.6 19H9Z"
-        stroke={theme.colors.iconBorder}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
       ></path>
     </svg>
   );
@@ -998,30 +847,6 @@ const FireSvg = () => {
       strokeLinejoin="round"
     >
       <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
-    </svg>
-  );
-};
-
-const PaperSvg = () => {
-  const theme = useTheme() as AppTheme;
-  return (
-    <svg
-      width="16px"
-      height="16px"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      color="#37b24d"
-      strokeWidth="1.5"
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M7.78415 1.35644C6.28844 1.0927 4.86213 2.09142 4.5984 3.58713L2.16732 17.3744C1.90359 18.8701 2.9023 20.2965 4.39801 20.5602L16.2157 22.644C17.7114 22.9077 19.1377 21.909 19.4015 20.4133L21.8325 6.62597C22.0963 5.13026 21.0976 3.70395 19.6018 3.44022L7.78415 1.35644ZM9.05919 5.64323C8.65127 5.5713 8.26228 5.84368 8.19035 6.2516C8.11842 6.65952 8.3908 7.04851 8.79872 7.12044L16.6772 8.50963C17.0851 8.58155 17.4741 8.30918 17.546 7.90126C17.618 7.49334 17.3456 7.10434 16.9377 7.03242L9.05919 5.64323ZM7.49577 10.1911C7.5677 9.78313 7.95669 9.51076 8.36461 9.58268L16.2431 10.9719C16.651 11.0438 16.9234 11.4328 16.8514 11.8407C16.7795 12.2486 16.3905 12.521 15.9826 12.4491L8.10414 11.0599C7.69622 10.988 7.42384 10.599 7.49577 10.1911ZM7.67003 13.5212C7.26211 13.4492 6.87312 13.7216 6.80119 14.1295C6.72926 14.5374 7.00164 14.9264 7.40956 14.9984L12.3336 15.8666C12.7415 15.9385 13.1305 15.6662 13.2024 15.2582C13.2744 14.8503 13.002 14.4613 12.5941 14.3894L7.67003 13.5212Z"
-        fill="#37b24d"
-        stroke="#000000"
-        strokeWidth={1.5}
-      ></path>
     </svg>
   );
 };
@@ -1092,54 +917,6 @@ const ShareSvg = () => {
         d="M8.5 13.5L15.5 17.5"
         stroke={theme.colors.invertedText}
         strokeWidth="1.5"
-      ></path>
-    </svg>
-  );
-};
-
-const ShareAltSvg = () => {
-  const theme = useTheme() as AppTheme;
-
-  return (
-    <svg
-      width="20px"
-      height="20px"
-      stroke-width="1.5"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      color={theme.colors.invertedText}
-    >
-      <path
-        d="M18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C16.3431 16 15 17.3431 15 19C15 20.6569 16.3431 22 18 22Z"
-        stroke={theme.colors.invertedText}
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      ></path>
-      <path
-        d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z"
-        stroke={theme.colors.invertedText}
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      ></path>
-      <path
-        d="M6 15C7.65685 15 9 13.6569 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15Z"
-        stroke={theme.colors.invertedText}
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      ></path>
-      <path
-        d="M15.5 6.5L8.5 10.5"
-        stroke={theme.colors.invertedText}
-        stroke-width="1.5"
-      ></path>
-      <path
-        d="M8.5 13.5L15.5 17.5"
-        stroke={theme.colors.invertedText}
-        stroke-width="1.5"
       ></path>
     </svg>
   );

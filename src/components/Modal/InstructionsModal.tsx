@@ -24,7 +24,9 @@ export function InstructionsModalImpl() {
   const theme = useTheme() as AppTheme;
 
   const timezoneAbrev = useMemo(() => {
-    const tz = new Date().toLocaleTimeString("en-us", { timeZoneName: "short" }).split(" ");
+    const tz = new Date()
+      .toLocaleTimeString("en-us", { timeZoneName: "short" })
+      .split(" ");
     if (tz[2]) {
       return `${tz[2]}.`;
     }
@@ -38,8 +40,8 @@ export function InstructionsModalImpl() {
         Create words on the board by connecting all of the letters provided.
       </Paragraph>
       <Paragraph>
-        Each word must be a real English word. Words must be connected to each other, like a
-        crossword.
+        Each word must be a real English word. Words must be connected to each
+        other, like a crossword.
       </Paragraph>
 
       <MiniBoardDemo />
@@ -47,35 +49,44 @@ export function InstructionsModalImpl() {
       <MiniTitle>Submitting your solution</MiniTitle>
 
       <List>
-        <ListItem>When you've placed all of today's letters, submit your puzzle!</ListItem>
         <ListItem>
-          If all of your words are connected and valid, you win! Otherwise, we'll let you know
-          which words need to be fixed.
+          When you've placed all of today's letters, submit your puzzle!
         </ListItem>
-        <ListItem>You can attempt to submit as many times as you'd like.</ListItem>
+        <ListItem>
+          If all of your words are connected and valid, you win! Otherwise,
+          we'll let you know which words need to be fixed.
+        </ListItem>
+        <ListItem>
+          You can attempt to submit as many times as you'd like.
+        </ListItem>
       </List>
 
       <MiniTitle>Tips and tricks</MiniTitle>
 
       <List>
         <ListItem>
-          You can place letters anywhere on the entire board by tapping any tile you'd like.
+          You can place letters anywhere on the entire board by tapping any tile
+          you'd like.
         </ListItem>
 
         <ListItem>
-          You can control if your next letter will appear left-to-right or top-to-bottom by
-          pressing the <DemoActionButton theme={theme}>Pivot cursor</DemoActionButton> button
+          You can control if your next letter will appear left-to-right or
+          top-to-bottom by pressing the{" "}
+          <DemoActionButton theme={theme}>Pivot cursor</DemoActionButton> button
           or by pressing the highlighted yellow square.
         </ListItem>
 
         <ListItem>
-          Move all the letters around the board to make space for new words by pressing the{" "}
-          <DemoActionButton theme={theme}>Move letters</DemoActionButton> button or using your
-          finger to drag the board around.
+          Move all the letters around the board to make space for new words by
+          pressing the{" "}
+          <DemoActionButton theme={theme}>Move letters</DemoActionButton> button
+          or using your finger to drag the board around.
         </ListItem>
       </List>
 
-      <Paragraph>New puzzles are released daily at 12 a.m. {timezoneAbrev}</Paragraph>
+      <Paragraph>
+        New puzzles are released daily at 12 a.m. {timezoneAbrev}
+      </Paragraph>
       <Paragraph>
         Think a word is wrong or missing? Email me at{" "}
         <EmailLink theme={theme} href="mailto:zuber.nicholas@gmail.com">
@@ -167,7 +178,11 @@ const MiniBoardDemo = () => {
           <MiniTileContents theme={theme} />
         </MiniTileWrapper>
         <MiniTileWrapper>
-          <MiniTileContentsAnimated position={100 + 200} order={9} theme={theme}>
+          <MiniTileContentsAnimated
+            position={100 + 200}
+            order={9}
+            theme={theme}
+          >
             D
           </MiniTileContentsAnimated>
         </MiniTileWrapper>
@@ -186,32 +201,56 @@ const MiniBoardDemo = () => {
       </MiniRow>
       <MiniRow>
         <MiniTileWrapper>
-          <MiniTileContentsAnimated position={200 + 100} order={2} theme={theme}>
+          <MiniTileContentsAnimated
+            position={200 + 100}
+            order={2}
+            theme={theme}
+          >
             G
           </MiniTileContentsAnimated>
         </MiniTileWrapper>
         <MiniTileWrapper>
-          <MiniTileContentsAnimated position={200 + 200} order={3} theme={theme}>
+          <MiniTileContentsAnimated
+            position={200 + 200}
+            order={3}
+            theme={theme}
+          >
             R
           </MiniTileContentsAnimated>
         </MiniTileWrapper>
         <MiniTileWrapper>
-          <MiniTileContentsAnimated position={200 + 300} order={4} theme={theme}>
+          <MiniTileContentsAnimated
+            position={200 + 300}
+            order={4}
+            theme={theme}
+          >
             O
           </MiniTileContentsAnimated>
         </MiniTileWrapper>
         <MiniTileWrapper>
-          <MiniTileContentsAnimated position={200 + 400} order={5} theme={theme}>
+          <MiniTileContentsAnimated
+            position={200 + 400}
+            order={5}
+            theme={theme}
+          >
             O
           </MiniTileContentsAnimated>
         </MiniTileWrapper>
         <MiniTileWrapper>
-          <MiniTileContentsAnimated position={200 + 500} order={6} theme={theme}>
+          <MiniTileContentsAnimated
+            position={200 + 500}
+            order={6}
+            theme={theme}
+          >
             V
           </MiniTileContentsAnimated>
         </MiniTileWrapper>
         <MiniTileWrapper>
-          <MiniTileContentsAnimated position={200 + 600} order={7} theme={theme}>
+          <MiniTileContentsAnimated
+            position={200 + 600}
+            order={7}
+            theme={theme}
+          >
             Y
           </MiniTileContentsAnimated>
         </MiniTileWrapper>
@@ -221,7 +260,11 @@ const MiniBoardDemo = () => {
           <MiniTileContentsAnimatedEmpty order={8} theme={theme} />
         </MiniTileWrapper>
         <MiniTileWrapper>
-          <MiniTileContentsAnimated position={300 + 100} order={10} theme={theme}>
+          <MiniTileContentsAnimated
+            position={300 + 100}
+            order={10}
+            theme={theme}
+          >
             I
           </MiniTileContentsAnimated>
         </MiniTileWrapper>
@@ -232,7 +275,11 @@ const MiniBoardDemo = () => {
           <MiniTileContents theme={theme} />
         </MiniTileWrapper>
         <MiniTileWrapper>
-          <MiniTileContentsAnimated position={300 + 400} order={13} theme={theme}>
+          <MiniTileContentsAnimated
+            position={300 + 400}
+            order={13}
+            theme={theme}
+          >
             I
           </MiniTileContentsAnimated>
         </MiniTileWrapper>
@@ -245,27 +292,47 @@ const MiniBoardDemo = () => {
           <MiniTileContents theme={theme} />
         </MiniTileWrapper>
         <MiniTileWrapper>
-          <MiniTileContentsAnimated position={400 + 200} order={11} theme={theme}>
+          <MiniTileContentsAnimated
+            position={400 + 200}
+            order={11}
+            theme={theme}
+          >
             P
           </MiniTileContentsAnimated>
         </MiniTileWrapper>
         <MiniTileWrapper>
-          <MiniTileContentsAnimated position={400 + 300} order={16} theme={theme}>
+          <MiniTileContentsAnimated
+            position={400 + 300}
+            order={16}
+            theme={theme}
+          >
             R
           </MiniTileContentsAnimated>
         </MiniTileWrapper>
         <MiniTileWrapper>
-          <MiniTileContentsAnimated position={400 + 400} order={17} theme={theme}>
+          <MiniTileContentsAnimated
+            position={400 + 400}
+            order={17}
+            theme={theme}
+          >
             O
           </MiniTileContentsAnimated>
         </MiniTileWrapper>
         <MiniTileWrapper>
-          <MiniTileContentsAnimated position={400 + 500} order={14} theme={theme}>
+          <MiniTileContentsAnimated
+            position={400 + 500}
+            order={14}
+            theme={theme}
+          >
             B
           </MiniTileContentsAnimated>
         </MiniTileWrapper>
         <MiniTileWrapper>
-          <MiniTileContentsAnimated position={400 + 600} order={18} theme={theme}>
+          <MiniTileContentsAnimated
+            position={400 + 600}
+            order={18}
+            theme={theme}
+          >
             E
           </MiniTileContentsAnimated>
         </MiniTileWrapper>
@@ -284,7 +351,11 @@ const MiniBoardDemo = () => {
           <MiniTileContents theme={theme} />
         </MiniTileWrapper>
         <MiniTileWrapper>
-          <MiniTileContentsAnimated position={600 + 500} order={15} theme={theme}>
+          <MiniTileContentsAnimated
+            position={600 + 500}
+            order={15}
+            theme={theme}
+          >
             E
           </MiniTileContentsAnimated>
         </MiniTileWrapper>
@@ -326,7 +397,9 @@ const MiniTileWrapper = styled.div`
 const MiniTileContents = styled.div<{ theme: AppTheme }>`
   background: ${(p) => p.theme.colors.primary};
   border: 2px solid ${(p) => p.theme.colors.tileSecondary};
-  transition: border 50ms ease-in, background 50ms ease-in;
+  transition:
+    border 50ms ease-in,
+    background 50ms ease-in;
   color: ${(p) => p.theme.colors.text};
   min-height: 26px;
   min-width: 26px;
@@ -351,11 +424,19 @@ const MiniTileContentsAnimated = styled(MiniTileContents)<{
   theme: AppTheme;
 }>`
   color: transparent;
-  animation: ${(p) =>
-        createAnimatedCursorTile(p.theme.colors.primary, p.theme.colors.tileSecondary)}
+  animation:
+    ${(p) =>
+        createAnimatedCursorTile(
+          p.theme.colors.primary,
+          p.theme.colors.tileSecondary,
+        )}
       ${TypingDelay}ms ease-in
       ${(p) =>
-        p.firstTile ? 0 : TypingDelay * p.order ? BaseDelay + TypingDelay * p.order : 0}ms,
+        p.firstTile
+          ? 0
+          : TypingDelay * p.order
+            ? BaseDelay + TypingDelay * p.order
+            : 0}ms,
     ${(p) =>
         createAnimatedTile(
           p.theme.colors.primary,
@@ -364,7 +445,10 @@ const MiniTileContentsAnimated = styled(MiniTileContents)<{
           p.theme.colors.tileSecondary,
         )}
       500ms ease-in
-      ${(p) => (TypingDelay * p.order ? TypingDelay + BaseDelay + TypingDelay * p.order : 0)}ms,
+      ${(p) =>
+        TypingDelay * p.order
+          ? TypingDelay + BaseDelay + TypingDelay * p.order
+          : 0}ms,
     ${(p) =>
         createSuccessReveal(
           p.theme.colors.primary,
@@ -381,23 +465,21 @@ const MiniTileContentsAnimatedEmpty = styled(MiniTileContents)<{
   theme: AppTheme;
 }>`
   animation: ${(p) =>
-      createAnimatedCursorTile(p.theme.colors.primary, p.theme.colors.tileSecondary)}
+      createAnimatedCursorTile(
+        p.theme.colors.primary,
+        p.theme.colors.tileSecondary,
+      )}
     ${(p) => (p.firstTile ? TypingDelay + 800 : TypingDelay)}ms ease-in
     ${(p) =>
-      p.firstTile ? 0 : TypingDelay * p.order ? BaseDelay + TypingDelay * p.order : 0}ms;
+      p.firstTile
+        ? 0
+        : TypingDelay * p.order
+          ? BaseDelay + TypingDelay * p.order
+          : 0}ms;
   animation-fill-mode: forwards;
 `;
 
 // ====================================================
-
-const Title = styled.h1`
-  margin: 0 0 24px;
-  font-weight: 700;
-  font-size: 1.3rem;
-  letter-spacing: 0.025rem;
-  text-transform: uppercase;
-  text-align: center;
-`;
 
 const Paragraph = styled.p`
   margin: 0;
@@ -423,11 +505,4 @@ const ListItem = styled.li`
   font-size: 16px;
   line-height: 20px;
   text-align: left;
-`;
-
-const Divider = styled.div<{ theme: AppTheme }>`
-  background: ${(p) => p.theme.colors.text};
-  width: 100%;
-  height: 1px;
-  margin: 14px auto 16px;
 `;

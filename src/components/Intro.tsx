@@ -128,8 +128,8 @@ const Container = styled.div<{
     p.fadeOut
       ? p.theme.colors.primary
       : p.fadeOutLoading
-      ? p.theme.colors.app
-      : p.theme.colors.app};
+        ? p.theme.colors.app
+        : p.theme.colors.app};
 
   color: ${(p) => p.theme.colors.introText} !important;
   padding-top: 20vh;
@@ -290,25 +290,7 @@ const BetaTag = styled.span`
   padding: 7px 12px;
   border-radius: 18px;
   text-transform: uppercase;
-  box-shadow: rgba(50, 50, 93, 0.15) 0px 6px 12px -2px,
+  box-shadow:
+    rgba(50, 50, 93, 0.15) 0px 6px 12px -2px,
     rgba(0, 0, 0, 0.2) 0px 3px 7px -3px;
-`;
-
-const NewTag = styled(BetaTag)`
-  background: #4263eb;
-`;
-
-const DisclaimerMessage = styled.span`
-  animation-delay: 300ms;
-
-  display: block;
-  font-size: 1em;
-  line-height: 1.25;
-  font-weight: 600;
-  letter-spacing: 0.005em;
-
-  text-align: center;
-  padding-inline: 24px;
-
-  margin-top: 24px;
 `;

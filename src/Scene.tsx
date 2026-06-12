@@ -5,16 +5,16 @@ import { Canvas } from "./components";
 import { Controls } from "./components/Controls";
 import { Header } from "./components/Header";
 import { Intro } from "./components/Intro";
+import { Origin } from "./constants/app";
 import { AppTheme } from "./constants/themes";
 import { GameContext } from "./contexts/game";
 import { GlobalStatesContext } from "./contexts/global";
 import { PageContext } from "./contexts/page";
 import { TimerStateContext } from "./contexts/timer";
+import { ToastContext } from "./contexts/toast";
 import { useLocalStorageGC } from "./hooks/useLocalStorageGC";
 import { Page } from "./hooks/usePage";
 import { useSyncTimerToSession } from "./hooks/useSyncTimerToSession";
-import { Origin } from "./constants/app";
-import { ToastContext } from "./contexts/toast";
 
 export interface SceneProps {
   darkTheme: boolean;
@@ -57,7 +57,7 @@ export const Scene: FC<SceneProps> = ({
         setTimeout(() => sendToast(greeting), 500);
       }
     }
-  }, [userOrigin]);
+  }, [userOrigin]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function renderScene() {
     switch (page) {
@@ -129,13 +129,3 @@ const Container = styled.div`
     z-index: 9999 !important;
   }
 `;
-
-function useResetScoreMode() {
-  const { scoreMode, setScoreMode } = useContext(GlobalStatesContext);
-
-  useEffect(() => {
-    if (scoreMode) {
-      setScoreMode(false);
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-}

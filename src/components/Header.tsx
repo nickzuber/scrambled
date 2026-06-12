@@ -44,10 +44,10 @@ export const Header: FC<HeaderProps> = ({
   const [secret, setSecret] = useState(false);
   const tapsRef = useRef(0);
   const tapsTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined
+    undefined,
   );
   const openStatsRef = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined
+    undefined,
   );
   const updaterRef = useRef(false);
 
@@ -86,7 +86,7 @@ export const Header: FC<HeaderProps> = ({
 
   const viewportHeight = Math.max(
     document.documentElement.clientHeight || 0,
-    window.innerHeight || 0
+    window.innerHeight || 0,
   );
 
   return (
@@ -306,21 +306,5 @@ const BackButton = styled(Button)`
     cursor: pointer;
     opacity: 0.5;
     background-color: transparent;
-  }
-`;
-
-const Title = styled.h1<{ theme: AppTheme }>`
-  margin: 0;
-  font-weight: 700;
-  font-size: 26px;
-  letter-spacing: 0.025rem;
-  text-transform: uppercase;
-  text-align: center;
-  color: ${(p) => p.theme.colors.text} @media (max-width: 430px) {
-    font-size: 24px;
-  }
-
-  @media (max-width: 380px) {
-    font-size: 20px;
   }
 `;
