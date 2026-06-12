@@ -50,6 +50,7 @@ export const SettingsModalImpl: FC<SettingsModalImplProps> = ({
     setScoreMode,
     showTimer,
     setShowTimer,
+    isGameOver,
   } = useContext(GlobalStatesContext);
   const { updateBoardWithNewScoreMode, clearBoard, hasStartedGame } =
     useContext(GameContext);
@@ -72,7 +73,7 @@ export const SettingsModalImpl: FC<SettingsModalImplProps> = ({
       <Setting>
         <Label>
           <Name>Hard mode</Name>
-          <Description>You only get one attempt to submit</Description>
+          <Description>You cannot use any 2 letter words</Description>
         </Label>
         <ToggleContainer>
           <Toggle onClick={() => setHardMode(!hardMode)} enabled={hardMode} />
@@ -110,8 +111,8 @@ export const SettingsModalImpl: FC<SettingsModalImplProps> = ({
         <Button
           theme={theme}
           onClick={clearBoard}
-          disabled={!hasStartedGame}
-          presentAsDisabled={!hasStartedGame}
+          disabled={!hasStartedGame || isGameOver}
+          presentAsDisabled={!hasStartedGame || isGameOver}
         >
           {"Clear all letters from puzzle"}
         </Button>
