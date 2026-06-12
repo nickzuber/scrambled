@@ -159,10 +159,16 @@ export function countValidWordsOnBoard(board: Board): number {
 export function validateBoard({
   board,
   mode,
+  smallestValidWordLength,
 }: {
   board: Board;
   mode: "validate" | "submit";
-}): [Board, boolean] {
+  smallestValidWordLength: number; // inclusive
+}): {
+  validatedBoard: Board;
+  allWordsAreValid: boolean;
+  allWordsMeetLengthRequirement: boolean;
+} {
   const tiles = board.tiles;
   const gridBounds = tiles.length;
   const validTileState = mode === "validate" ? TileState.IDLE : TileState.VALID;
@@ -179,9 +185,12 @@ export function validateBoard({
   const foundWords = leftToRight.concat(topToBottom);
 
   // Validate entire board (easier this way).
-  let allWordsAreValid = foundWords.every(({ word }) => dictionary.has(word));
+  const allWordsAreValid = foundWords.every(({ word }) => dictionary.has(word));
 
-  console.info(foundWords);
+  // Validate minimum word length requirement.
+  const allWordsMeetLengthRequirement = foundWords.every(
+    ({ word }) => word.length >= smallestValidWordLength,
+  );
 
   // Initialize all tiles to be invalid.
   const validatedBoard = {
@@ -246,7 +255,37 @@ export function validateBoard({
     }
   }
 
-  return [validatedBoard, allWordsAreValid];
+  // Only if the board has all valid words, only then can we validate the length requirement and
+  // mark those tiles as invalid so they can shake.
+  if (allWordsAreValid) {
+    const invalidLengthWords = foundWords.filter(
+      ({ word }) => word.length < smallestValidWordLength,
+    );
+    for (const word of invalidLengthWords) {
+      const length = word.word.length;
+      const direction = word.direction;
+
+      switch (direction) {
+        case WordDirection.LeftToRight:
+          for (let c = 0; c < length; c++) {
+            const tile = validatedBoard.tiles[word.row][word.col + c];
+            tile.state =
+              tile.state === validTileState ? invalidTileState : tile.state;
+          }
+          break;
+        case WordDirection.TopToBottom:
+          for (let r = 0; r < length; r++) {
+            if (word.row + r > gridBounds - 1) continue;
+            const tile = validatedBoard.tiles[word.row + r][word.col];
+            tile.state =
+              tile.state === validTileState ? invalidTileState : tile.state;
+          }
+          break;
+      }
+    }
+  }
+
+  return { validatedBoard, allWordsAreValid, allWordsMeetLengthRequirement };
 }
 
 export function countSolutionBoardScore(board: ScoredSolutionBoard): number {

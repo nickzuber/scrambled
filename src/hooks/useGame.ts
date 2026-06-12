@@ -39,7 +39,8 @@ export const useGame = () => {
     setHighestStreak,
     lastCompletedPuzzleNumber,
   } = useContext(GlobalStatesContext);
-  const { letters, solutionBoard, shuffleLetters, positionOfShuffle } = useLetters();
+  const { letters, solutionBoard, shuffleLetters, positionOfShuffle } =
+    useLetters();
   const {
     board,
     setLetterOnBoard,
@@ -69,7 +70,10 @@ export const useGame = () => {
     [isGameOver, board, setBoard],
   );
 
-  const tilesAreConnected = React.useMemo(() => validateWordIsland(board), [board]);
+  const tilesAreConnected = React.useMemo(
+    () => validateWordIsland(board),
+    [board],
+  );
 
   const boardLetterIds = React.useMemo(
     () =>
@@ -84,15 +88,17 @@ export const useGame = () => {
   );
 
   const canFinish = useMemo(() => {
-    const [_, allWordsAreValid] = validateBoard({ board, mode: "submit" });
-    const isBoardComplete = tilesAreConnected && boardLetterIds.size === Config.MaxLetters;
+    const { allWordsAreValid, allWordsMeetLengthRequirement } = validateBoard({
+      board,
+      mode: "submit",
+      smallestValidWordLength: hardMode
+        ? Config.HardModeMinWordLength
+        : Config.RegularModeMinWordLength,
+    });
+    const isBoardComplete =
+      tilesAreConnected && boardLetterIds.size === Config.MaxLetters;
 
-    // Hard mode lets you submit without every word guarenteed to be valid.
-    if (hardMode) {
-      return isBoardComplete;
-    } else {
-      return isBoardComplete && allWordsAreValid;
-    }
+    return isBoardComplete && allWordsAreValid && allWordsMeetLengthRequirement;
   }, [hardMode, board, tilesAreConnected, boardLetterIds]);
 
   const requestFinish = useCallback(() => {
@@ -100,13 +106,19 @@ export const useGame = () => {
     clearToast();
 
     // Validate the board.
-    const [newBoard] = validateBoard({ board, mode: "submit" });
+    const { validatedBoard: newBoard } = validateBoard({
+      board,
+      mode: "submit",
+      smallestValidWordLength: hardMode
+        ? Config.HardModeMinWordLength
+        : Config.RegularModeMinWordLength,
+    });
 
     // Score the board's tiles if needed.
     const finalBoard = scoreMode ? createScoredBoard(newBoard) : newBoard;
 
     // Count the score on the board.
-    const finalScore = countBoardScore(createScoredBoard(newBoard))
+    const finalScore = countBoardScore(createScoredBoard(newBoard));
 
     publishEvent("submit", {
       final_score: scoreMode ? finalScore : -1,
@@ -130,7 +142,7 @@ export const useGame = () => {
       if (!lastCompletedPuzzleNumber) {
         // First completion.
         // Initial highest streak setting as well.
-        setHighestStreak(prevHighestStreak => Math.max(prevHighestStreak, 1))
+        setHighestStreak((prevHighestStreak) => Math.max(prevHighestStreak, 1));
         return 1;
       } else if (getPuzzleNumber() - lastCompletedPuzzleNumber <= 1) {
         // If the current puzzle is 1 away from the last completed puzzle, then
@@ -140,8 +152,10 @@ export const useGame = () => {
         //
         // Note that this supports the same puzzle being completed twice as a streak;
         // this is for testing since its not normally possible.
-        const nextStreakCount = prevStreak + 1
-        setHighestStreak(prevHighestStreak => Math.max(prevHighestStreak, nextStreakCount))
+        const nextStreakCount = prevStreak + 1;
+        setHighestStreak((prevHighestStreak) =>
+          Math.max(prevHighestStreak, nextStreakCount),
+        );
         return nextStreakCount;
       } else {
         // If this wasn't the next puzzle, reset the streak.
@@ -149,11 +163,14 @@ export const useGame = () => {
         return 1;
       }
     });
-    setHighestScore(prevHighestScore => Math.max(prevHighestScore, finalScore))
+    setHighestScore((prevHighestScore) =>
+      Math.max(prevHighestScore, finalScore),
+    );
     setLastCompletedPuzzleNumber(getPuzzleNumber());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     board,
+    hardMode,
     canFinish,
     clearToast,
     scoreMode,
@@ -165,7 +182,9 @@ export const useGame = () => {
     lastCompletedPuzzleNumber,
   ]);
 
-  const unusedLetters = letters.filter((letter) => !boardLetterIds.has(letter.id));
+  const unusedLetters = letters.filter(
+    (letter) => !boardLetterIds.has(letter.id),
+  );
   const hasStartedGame = unusedLetters.length !== Config.MaxLetters;
 
   const getShareClipboardItem = useCallback(async () => {
@@ -185,15 +204,23 @@ export const useGame = () => {
       const clipboardItem = new ClipboardItem({
         "image/png": imgBlob as Blob,
       });
-      const blobFile = new File([imgBlob], `Scrambled #${getPuzzleNumber()}.png`, {
-        type: "image/png",
-      });
+      const blobFile = new File(
+        [imgBlob],
+        `Scrambled #${getPuzzleNumber()}.png`,
+        {
+          type: "image/png",
+        },
+      );
       return [clipboardItem, blobFile] as [ClipboardItem, File];
     } catch (error) {
       console.error(error);
-      const blobFile = new File([imgBlob], `Scrambled #${getPuzzleNumber()}.png`, {
-        type: "image/png",
-      });
+      const blobFile = new File(
+        [imgBlob],
+        `Scrambled #${getPuzzleNumber()}.png`,
+        {
+          type: "image/png",
+        },
+      );
       return [null, blobFile] as [null, File];
     }
   }, []);
@@ -221,9 +248,13 @@ export const useGame = () => {
       const clipboardItem = new ClipboardItem({
         "image/png": imgBlob as Blob,
       });
-      const blobFile = new File([imgBlob], `Scrambled #${getPuzzleNumber()}.png`, {
-        type: "image/png",
-      });
+      const blobFile = new File(
+        [imgBlob],
+        `Scrambled #${getPuzzleNumber()}.png`,
+        {
+          type: "image/png",
+        },
+      );
 
       keyboardNode.style.cssText = prevKeyboardStyles;
       scoreNode.style.cssText = prevScoreStyles;

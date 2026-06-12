@@ -14,7 +14,7 @@ import { GameContext } from "../contexts/game";
 import { GlobalStatesContext } from "../contexts/global";
 import { ToastContext } from "../contexts/toast";
 import { validateBoard } from "../utils/board-validator";
-import { Directions, Letter } from "../utils/game";
+import { Config, Directions, Letter } from "../utils/game";
 import { BottomDrawer } from "./BottomDrawer";
 
 export const Controls: FC = () => {
@@ -43,9 +43,20 @@ export const Controls: FC = () => {
   const [isInShiftBoardMode, setIsInShiftBoardMode] = useState(false);
 
   const disableEnterButton = !canFinish || isGameOver;
-  const [checkedBoard, allWordsAreValid] = useMemo(
-    () => validateBoard({ board, mode: "validate" }),
-    [board],
+  const {
+    validatedBoard: checkedBoard,
+    allWordsAreValid,
+    allWordsMeetLengthRequirement,
+  } = useMemo(
+    () =>
+      validateBoard({
+        board,
+        mode: "validate",
+        smallestValidWordLength: hardMode
+          ? Config.HardModeMinWordLength
+          : Config.RegularModeMinWordLength,
+      }),
+    [board, hardMode],
   );
 
   // If submit is pressed, it will successfully complete the puzzle.
@@ -60,35 +71,29 @@ export const Controls: FC = () => {
           ? `You have ${unusedLetters.length} letter${unusedLetters.length > 1 ? "s" : ""} left to place on the board`
           : !allWordsAreValid
             ? "At least one of your words aren't valid"
-            : "All words must be connected like a crossword"; // Assumed based on this is the only scenario left
+            : !allWordsMeetLengthRequirement
+              ? `All words must be at least ${hardMode ? Config.HardModeMinWordLength : Config.RegularModeMinWordLength} letters long`
+              : "All words must be connected like a crossword"; // Assumed based on this is the only scenario left
       sendToast(message);
 
       // If every letter is used and there are some invalid words, call those out.
       // Intentionally allow for a shake-check even if all the letters aren't placed.
-      if (!allWordsAreValid) {
+      if (!allWordsAreValid || !allWordsMeetLengthRequirement) {
         setBoard(checkedBoard);
       }
     } else {
-      if (hardMode) {
-        const shouldContinue = window.confirm(
-          "You're playing on hard mode, so you only get one chance to submit! Are you sure you're done?",
-        );
-        if (shouldContinue) {
-          requestFinish();
-        }
-      } else {
-        requestFinish();
-      }
+      requestFinish();
     }
   }, [
-    hardMode,
     sendToast,
     disableEnterButton,
     unusedLetters,
     requestFinish,
     setBoard,
+    hardMode,
     setSubmitCount,
     checkedBoard,
+    allWordsMeetLengthRequirement,
     allWordsAreValid,
   ]);
 
