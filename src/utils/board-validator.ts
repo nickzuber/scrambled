@@ -1,6 +1,10 @@
 import { words as dictionary } from "../constants/words";
 import { Board, ScoredBoard, ScoredTile, Tile, TileState } from "./game";
-import { ScoredSolutionBoard, ScoredSolutionLetter, SolutionBoard } from "./words-helper";
+import {
+  ScoredSolutionBoard,
+  ScoredSolutionLetter,
+  SolutionBoard,
+} from "./words-helper";
 
 enum WordDirection {
   LeftToRight,
@@ -126,7 +130,9 @@ export function resetBoardTileState(board: Board): Board {
   // Default all tiles to be idle.
   const defaultBoard = {
     cursor: board.cursor,
-    tiles: tiles.map((row) => row.map((tile) => ({ ...tile, state: TileState.IDLE }))),
+    tiles: tiles.map((row) =>
+      row.map((tile) => ({ ...tile, state: TileState.IDLE })),
+    ),
   };
 
   return defaultBoard;
@@ -160,7 +166,8 @@ export function validateBoard({
   const tiles = board.tiles;
   const gridBounds = tiles.length;
   const validTileState = mode === "validate" ? TileState.IDLE : TileState.VALID;
-  const invalidTileState = mode === "validate" ? TileState.INCORRECT : TileState.INVALID;
+  const invalidTileState =
+    mode === "validate" ? TileState.INCORRECT : TileState.INVALID;
 
   // Get all words going left to right.
   const leftToRight = getWordsFromTilesLTR(tiles);
@@ -173,6 +180,8 @@ export function validateBoard({
 
   // Validate entire board (easier this way).
   let allWordsAreValid = foundWords.every(({ word }) => dictionary.has(word));
+
+  console.info(foundWords);
 
   // Initialize all tiles to be invalid.
   const validatedBoard = {
@@ -211,7 +220,9 @@ export function validateBoard({
 
   // Mark any mixed tiles (partially correct).
   // It's easier to do this after we mark the correct tiles.
-  const invalidFoundWords = foundWords.filter(({ word }) => !dictionary.has(word));
+  const invalidFoundWords = foundWords.filter(
+    ({ word }) => !dictionary.has(word),
+  );
   for (const word of invalidFoundWords) {
     const length = word.word.length;
     const direction = word.direction;
@@ -220,14 +231,16 @@ export function validateBoard({
       case WordDirection.LeftToRight:
         for (let c = 0; c < length; c++) {
           const tile = validatedBoard.tiles[word.row][word.col + c];
-          tile.state = tile.state === validTileState ? invalidTileState : tile.state;
+          tile.state =
+            tile.state === validTileState ? invalidTileState : tile.state;
         }
         break;
       case WordDirection.TopToBottom:
         for (let r = 0; r < length; r++) {
           if (word.row + r > gridBounds - 1) continue;
           const tile = validatedBoard.tiles[word.row + r][word.col];
-          tile.state = tile.state === validTileState ? invalidTileState : tile.state;
+          tile.state =
+            tile.state === validTileState ? invalidTileState : tile.state;
         }
         break;
     }
@@ -351,7 +364,9 @@ function scoreClusterOfTiles(args: {
   return tiles;
 }
 
-export function createScoredSolutionBoard(board: SolutionBoard): ScoredSolutionBoard {
+export function createScoredSolutionBoard(
+  board: SolutionBoard,
+): ScoredSolutionBoard {
   const scoredLetters: ScoredSolutionLetter[][] = board.map((row) =>
     row.map((letter) => ({ letter, score: 0 })),
   );
@@ -544,7 +559,10 @@ function countValidTiles(tiles: Tile[][]) {
     tiles
       .map((row) =>
         row
-          .filter((tile) => tile.state === TileState.VALID || tile.state === TileState.MIXED)
+          .filter(
+            (tile) =>
+              tile.state === TileState.VALID || tile.state === TileState.MIXED,
+          )
           .map((letter) => letter.id),
       )
       .flat(),

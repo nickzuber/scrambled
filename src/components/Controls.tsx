@@ -33,6 +33,7 @@ export const Controls: FC = () => {
     isGameOver,
     flipCursorDirection,
     unusedLetters,
+    hasStartedGame,
     setBoard,
   } = useContext(GameContext);
   const { sendToast } = useContext(ToastContext);
@@ -44,7 +45,7 @@ export const Controls: FC = () => {
   const disableEnterButton = !canFinish || isGameOver;
   const [checkedBoard, allWordsAreValid] = useMemo(
     () => validateBoard({ board, mode: "validate" }),
-    [board]
+    [board],
   );
 
   // If submit is pressed, it will successfully complete the puzzle.
@@ -54,31 +55,23 @@ export const Controls: FC = () => {
     setSubmitCount((curCount) => curCount + 1);
 
     if (disableEnterButton) {
-      if (hardMode) {
-        const message =
-          unusedLetters.length > 0
-            ? "You have to place every letter on the board"
-            : "All words must be connected like a crossword"; // Assumed based on this is the only scenario left
-        sendToast(message);
-      } else {
-        const message =
-          unusedLetters.length > 0
-            ? "You have to place every letter on the board"
-            : !allWordsAreValid
+      const message =
+        unusedLetters.length > 0
+          ? `You have ${unusedLetters.length} letter${unusedLetters.length > 1 ? "s" : ""} left to place on the board`
+          : !allWordsAreValid
             ? "At least one of your words aren't valid"
             : "All words must be connected like a crossword"; // Assumed based on this is the only scenario left
-        sendToast(message);
+      sendToast(message);
 
-        // If every letter is used and there are some invalid words, call those out.
-        // Intentionally allow for a shake-check even if all the letters aren't placed.
-        if (!allWordsAreValid) {
-          setBoard(checkedBoard);
-        }
+      // If every letter is used and there are some invalid words, call those out.
+      // Intentionally allow for a shake-check even if all the letters aren't placed.
+      if (!allWordsAreValid) {
+        setBoard(checkedBoard);
       }
     } else {
       if (hardMode) {
         const shouldContinue = window.confirm(
-          "You're playing on hard mode, so you only get one chance to submit! Are you sure you're done?"
+          "You're playing on hard mode, so you only get one chance to submit! Are you sure you're done?",
         );
         if (shouldContinue) {
           requestFinish();
@@ -103,7 +96,7 @@ export const Controls: FC = () => {
     (letter: Letter) => {
       setLetterOnBoard(letter);
     },
-    [setLetterOnBoard]
+    [setLetterOnBoard],
   );
 
   useEffect(() => {
@@ -144,7 +137,7 @@ export const Controls: FC = () => {
           const letterForKeypress = letters.find(
             (letter) =>
               letter.letter.toLowerCase() === key &&
-              !boardLetterIds.has(letter.id)
+              !boardLetterIds.has(letter.id),
           );
           if (letterForKeypress) {
             setLetterOnBoard(letterForKeypress);
@@ -242,7 +235,7 @@ export const Controls: FC = () => {
               >
                 {letter.letter}
               </LetterButton>
-            )
+            ),
           )}
         </LettersRow>
 
@@ -263,7 +256,7 @@ export const Controls: FC = () => {
               >
                 {letter.letter}
               </LetterButton>
-            )
+            ),
           )}
         </LettersRow>
 
@@ -274,11 +267,11 @@ export const Controls: FC = () => {
                 ? `submit-will-succeed${scoreMode ? "--scored" : ""}`
                 : undefined
             }
-            disabled={isGameOver}
+            disabled={isGameOver || !hasStartedGame}
             onClick={() => onEnterPress()}
             theme={theme}
           >
-            {"Submit"}
+            {unusedLetters.length > 0 ? "Check" : "Submit"}
           </ActionButton>
           {bottomLetters.map((letter) =>
             boardLetterIds.has(letter.id) ? (
@@ -296,7 +289,7 @@ export const Controls: FC = () => {
               >
                 {letter.letter}
               </LetterButton>
-            )
+            ),
           )}
           <ActionButton
             disabled={isGameOver}
