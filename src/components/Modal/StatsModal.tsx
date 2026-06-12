@@ -57,6 +57,7 @@ export const StatsModalImpl: FC = () => {
     fastedCompletion,
     shareHideSolution,
     setShareHideSolution,
+    hardMode,
   } = useContext(GlobalStatesContext);
 
   const { timer } = useContext(TimerStateContext);
@@ -110,6 +111,7 @@ export const StatsModalImpl: FC = () => {
           text: getTextShareMessagePuzzleOfTheDay({
             finalScore: scoreMode ? currentScore : undefined,
             completedTime: showTimer ? formatAsTimer(timer) : undefined,
+            isHardMode: hardMode,
           }),
           files: [imageFile],
         })
@@ -151,6 +153,7 @@ export const StatsModalImpl: FC = () => {
 
     const shareText = getTextShareMessage({
       board,
+      isHardMode: hardMode,
       finalScore: scoreMode ? currentScore : undefined,
       completedTime: showTimer ? formatAsTimer(timer) : undefined,
     });
