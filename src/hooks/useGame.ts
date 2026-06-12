@@ -293,7 +293,7 @@ export const useGame = () => {
   };
 };
 
-function printEmojiScoredSolutionBoard(board: ScoredSolutionBoard) {
+export function printEmojiScoredSolutionBoard(board: ScoredSolutionBoard) {
   const parts = [""];
   const styles = [];
   for (let c = 0; c < 6; c++) {

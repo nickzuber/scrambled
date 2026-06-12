@@ -172,32 +172,6 @@ const Button = styled.button<{ theme: AppTheme; presentAsDisabled?: boolean }>`
   opacity: ${(p) => (p.presentAsDisabled ? 0.5 : 1)};
 `;
 
-const Badge = styled.span`
-  position: absolute;
-  text-transform: uppercase;
-  letter-spacing: 0.025rem;
-  font-size: 12px;
-  line-height: 11px;
-  background: #fa5252;
-  color: #ffffff;
-  padding: 4px 6px;
-  padding-top: 6px;
-  border-radius: 6px;
-  margin-left: 2px;
-  margin-top: 0px;
-  border: 0;
-  transform: scale(0.9);
-`;
-
-const Title = styled.h1`
-  margin: 0 0 24px;
-  font-weight: 700;
-  font-size: 1.3rem;
-  letter-spacing: 0.025rem;
-  text-transform: uppercase;
-  text-align: center;
-`;
-
 export const Setting = styled.div`
   display: flex;
   justify-content: space-between;
