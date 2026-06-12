@@ -1,5 +1,7 @@
+import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { FC, useContext, useMemo } from "react";
+import { AppTheme } from "../../constants/themes";
 import { GameContext } from "../../contexts/game";
 import { GlobalStatesContext } from "../../contexts/global";
 import { deleteEphemeralData } from "../../hooks/useLocalStorageGC";
@@ -40,9 +42,17 @@ export const SettingsModalImpl: FC<SettingsModalImplProps> = ({
   setDarkTheme,
   secret,
 }) => {
-  const { hardMode, setHardMode, scoreMode, setScoreMode, showTimer, setShowTimer } =
-    useContext(GlobalStatesContext);
-  const { updateBoardWithNewScoreMode } = useContext(GameContext);
+  const theme = useTheme() as AppTheme;
+  const {
+    hardMode,
+    setHardMode,
+    scoreMode,
+    setScoreMode,
+    showTimer,
+    setShowTimer,
+  } = useContext(GlobalStatesContext);
+  const { updateBoardWithNewScoreMode, clearBoard, hasStartedGame } =
+    useContext(GameContext);
   const hash = useMemo(() => getAppHash(), []);
 
   return (
@@ -53,7 +63,10 @@ export const SettingsModalImpl: FC<SettingsModalImplProps> = ({
           <Description>Toggles the theme to appear dark</Description>
         </Label>
         <ToggleContainer>
-          <Toggle onClick={() => setDarkTheme(!darkTheme)} enabled={darkTheme} />
+          <Toggle
+            onClick={() => setDarkTheme(!darkTheme)}
+            enabled={darkTheme}
+          />
         </ToggleContainer>
       </Setting>
       <Setting>
@@ -71,7 +84,10 @@ export const SettingsModalImpl: FC<SettingsModalImplProps> = ({
           <Description>See your speed in stats</Description>
         </Label>
         <ToggleContainer>
-          <Toggle onClick={() => setShowTimer(!showTimer)} enabled={showTimer} />
+          <Toggle
+            onClick={() => setShowTimer(!showTimer)}
+            enabled={showTimer}
+          />
         </ToggleContainer>
       </Setting>
       <Setting>
@@ -90,10 +106,20 @@ export const SettingsModalImpl: FC<SettingsModalImplProps> = ({
           />
         </ToggleContainer>
       </Setting>
+      <Setting>
+        <Button
+          theme={theme}
+          onClick={clearBoard}
+          disabled={!hasStartedGame}
+          presentAsDisabled={!hasStartedGame}
+        >
+          {"Clear all letters from puzzle"}
+        </Button>
+      </Setting>
       {secret ? (
         <Setting>
           <Label>
-            <Name>Reset puzzle</Name>
+            <Name>Redo puzzle</Name>
             <Description>Start today's puzzle over again</Description>
           </Label>
           <ToggleContainer>
@@ -118,6 +144,32 @@ export const SettingsModalImpl: FC<SettingsModalImplProps> = ({
     </>
   );
 };
+
+const Button = styled.button<{ theme: AppTheme; presentAsDisabled?: boolean }>`
+  animation-delay: 0ms;
+  user-select: none;
+
+  padding: 14px 32px;
+  text-transform: none;
+  white-space: nowrap;
+
+  width: 100%;
+  font-size: 1em;
+  font-weight: 600;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 32px;
+  cursor: pointer;
+
+  color: ${(p) => p.theme.colors.invertedText};
+  border: 1px solid ${(p) => p.theme.colors.text};
+  background: ${(p) => p.theme.colors.text};
+
+  opacity: ${(p) => (p.presentAsDisabled ? 0.5 : 1)};
+`;
 
 const Badge = styled.span`
   position: absolute;

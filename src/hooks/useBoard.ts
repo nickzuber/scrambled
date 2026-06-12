@@ -84,7 +84,7 @@ export const useBoard = () => {
     // No letter on current tile, we want to delete the letter before the next
     // decemented cursor.
     const newCursor = decrementCursor(board);
-    const newTiles = board.tiles.slice();
+    const newTiles = resetBoardTileState(board).tiles;
 
     // Set new tile.
     newTiles[newCursor.row][newCursor.col].letter = null;
